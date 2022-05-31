@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "inlineSourceMap": true,
+    "target": "ES6"
+  },
+  "include"  : [
+    "web.root/application/peanut/components/**/*",
+    "web.root/application/peanut/tests/components/**/*",
+    "web.root/application/peanut/tests/vm/**/*",
+    "web.root/application/peanut/vm/**/*",
+    "web.root/application/tests/peanut/vm/**/*",
+    "web.root/nutshell/pnut/admin/**/*",
+    "web.root/nutshell/pnut/components/**/*",
+    "web.root/nutshell/pnut/core/**/*",
+    "web.root/nutshell/pnut/extensions/**/*",
+    "web.root/nutshell/pnut/packages/**/*",
+    "web.root/nutshell/pnut/packages/**/*",
+    "web.root/tests/js/**/*"
+  ],
+  "exclude": [
+    "web.root/modules/typings/**/*"
+  ]
+}

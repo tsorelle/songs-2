@@ -1,0 +1,42 @@
+<div id="service-message-block">
+    <!-- modified for Bootstrap 5 -->
+    <style>
+
+        #service-message-block {
+            width: 100%;
+        }
+        #service-message-block ul {
+            margin-bottom: 0;
+
+        }
+        #service-message-block button {
+            float: right;
+        }
+
+    </style>
+    <div id="error-messages"  data-bind="visible:errorMessages().length" class="alert alert-danger" role="alert">
+        <button class="btn-close" aria-label="Close" data-bind="click: clearErrorMessages"></button>
+        <ul data-bind="foreach: errorMessages"><li><span data-bind="text: text"></span></li></ul></div>
+
+    <div id="warning-messages" data-bind="visible:warningMessages().length" class="alert alert-warning" role="alert">
+        <button class="btn-close" aria-label="Close" data-bind="click: clearWarningMessages"></button>
+        <ul data-bind="foreach: warningMessages"><li><span data-bind="text: text"></span></li></ul></div>
+
+    <div id="info-message"  data-bind="visible:infoMessages().length" class="alert alert-success" role="alert">
+        <button class="btn-close" aria-label="Close" data-bind="click: clearInfoMessages"></button>
+        <ul data-bind="foreach: infoMessages"><li><span data-bind="text: text"></span></li></ul></div>
+
+    <div id="waiter-message" style="padding-left:10px; padding-right:10px; width:100%;height:100%; position:fixed;top:0; left:0; bottom: 0; z-index: 999; display: none;" >
+        <div style="border: 1px solid black; background: white; padding: 10px; padding-left: 20px;box-shadow: 5px 10px lightgray;border-radius: 10px;">
+            <span style="font-size: small; font-weight: bold;" id="peanut-toast-message">Please wait . . .</span>
+            <span style="padding-right: 10px"><i class="fa fa-spinner fa-pulse fa-1x fa-fw"></i></span>
+            <span style="float:right; padding-right:10px"><a href="#"  style="text-decoration: none" onclick="Peanut.MessageManager.instance.hideWaitMessage()">
+        <i class="fa fa-times" data-bind="visible:fontSet()=='FA'"></i>
+        <stong data-bind="visible:fontSet()!=='FA'">close</stong>
+    </a>
+    </span>
+        </div>
+    </div>
+
+</div>
+

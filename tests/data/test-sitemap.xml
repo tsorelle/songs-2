@@ -1,0 +1,18 @@
+<site-map>
+	<about title='About' description='' roles=''>
+		<us title='About Us' description='' roles='' />
+		<music title='About the Music' uri='' description='' roles='' />
+	</about>
+	<songs title='Songs' uri='songs' description='' roles=''>
+		<cowboy	title='Cowboy Songs' uri='' description='Songs of the open plains.' roles=''>
+			<tex-ritter title = "Tex Ritter" uri="https://tex.com" description='Songs of Tex Ritter'/>
+			<roy-rogers title = "Roy Rogers" description='Songs of Roy Rogers' />
+			<gene-autry  title = "Gene Autry"  description='Songs of Gene Autry' />
+		</cowboy>
+		<blues title='Blues and African American' uri='' description='Blues, Hollers and Gospel' roles='' />
+	</songs>
+	<instruments title='Instruments' uri='instruments' description='' roles='' />
+	<tools title='Tools' uri='' description='' roles='administrator' />
+	<folklore title="Texas Folklore" uri="https://www.texasfolkloresociety.org/" description="Texas Folklore Society" />
+	<!-- page title='' uri='' description='' roles='' / -->
+</site-map>

@@ -1,0 +1,28 @@
+div.nutshell-vertical-menu {
+
+  background-color: $light;
+  border-radius: $border-radius;
+
+  .nav-item {
+    .nav-link {
+      color: $dark;
+
+      &:hover {
+        background-color: #e0dede;
+        text-decoration: underline;
+      }
+
+      &.active {
+        color: $primary;
+        font-weight: bold;
+      }
+
+      font-size: 20px;
+      background-color: white;
+
+      text-decoration: none;
+
+    }
+  }
+}
+

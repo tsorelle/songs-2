@@ -1,0 +1,35 @@
+<site-map>
+	<about title='About' description='About Nutshell' roles=''>
+		<us title='About Us' description='' roles='' />
+		<terry title='About The Author' description='' roles='' />
+		<nutshell title='About Nutshell' description='' roles='' >
+			<libs title="Components" description="" roles=""/>
+			<design title="Design" description="" roles=""/>
+		</nutshell>
+	</about>
+	<help title="Help Pages" icon="fas fa-question-circle" description="help"/>
+	<tools title="Tools" description="Utilities for administration" icon="fas fa-cog">
+		<tests title="Test Pages" description="Pages for testing.">
+			<simpletest title="Simple Test" description="Basic smoke test" roles="" />
+			<modaltest title="Modal Test" description="Test modal dialogs" roles="" />
+			<servicetest title="Service Test" description="Test remote service call" roles="" />
+			<componentstest title="Component Test" description="Test component loading" roles="" />
+			<smoketest title="Smoke Test" description="Full Peanut Features test" roles="" />
+			<multiselect title="Multiselect Test" description="Demo multiselect component" roles="" />
+			<password title="Password Test" description="Demo change password component" roles="" />
+			<pager title="Pager Test" description="Demo pager component" roles="" />
+		</tests>
+
+		<users title="Users" description="User management" roles="administrator" />
+		<contacts title="Contact Management" description="Manage contacts" />
+		<scheduler title="Task Scheduler" description="Manage automated tasks"  />
+		<email title="Email Tools" description="Mailing list management" >
+			<lists title="Lists" uri="tools/email/admin/lists" description="Email Lists and subscriptions" />
+			<send title="Send Messages" description="Mailing form" uri="tools/email/admin/message"  />
+			<mailboxes title="Mailboxes" uri="tools/email/admin/mailboxes" description="Maintain Mailboxes" />
+			<queue title="Message Queue" uri="tools/email/admin/queue" description="Message queue" />
+		</email>
+
+	</tools>
+	<!-- page title='' uri='' description='' roles='' / -->
+</site-map>

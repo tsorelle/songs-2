@@ -1,0 +1,40 @@
+// Top Navigation Bar
+$top-navbar-bg: #f3f3f3 !default;
+
+// Colors - custom for theme
+$primary: #2D7AC0 !default;
+$secondary: #005E5D !default;
+$light: #F3F3F3 !default;
+// $light-accent: #c49a96 !default; // blue/green
+$light-accent: #e39f82 !default; // cinnamon
+$accent: #45b8ac !default; // blue/green
+$dark-accent: #2A293E !default; // evening blue
+
+// Body Font
+// Note we have copied the bootstrap defaults.
+// added trebuchet ms TLS
+$font-family-base: "Lato", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+
+// Hero Image
+$hero-image-title-color: #fff !default;
+// $hero-image-title-font-size: 6.5rem !default;
+$hero-image-title-font-size: 5rem !default;
+$hero-image-text-font-size: 1.5rem !default;
+// $hero-image-cover-bg: rgba(0, 0, 0, 0.4) !default;
+$hero-image-cover-bg: rgba(0, 0, 0, 0.137) !default;
+
+// Image Slider
+$image-slider-cover-bg: rgba(58, 58, 58, .86) !default;
+$image-slider-arrow-bg: rgb(255, 255, 255) !default;
+$image-slider-cover-color: rgb(255, 255, 255) !default;
+
+// Stripes/Containers
+$stripe-padding-y: 3em;
+
+// Footer
+$theme-footer-bg: #f3f3f3 !default;
+$theme-footer-color: #6B7075 !default;
+$theme-footer-link-color: #6B7075 !default;
+
+
+

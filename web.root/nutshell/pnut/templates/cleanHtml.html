@@ -1,0 +1,77 @@
+<p><a href="#" data-bind="click:showModal">Clean HTML</a> </p>
+<div class="modal" id="html-cleanup-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="visible:bootstrapVersion() !== 4" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Clean up HTML</h4>
+                <button data-bind="visible:bootstrapVersion() === 4" type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <h3>Blank lines:</h3>
+                    <div class="form-group" style="padding-left: 2em">
+                        <div  class="checkbox">
+                            <label><input type="checkbox" data-bind="checked:removeBlanks">Remove blank lines</label>
+                        </div>
+                    </div>
+
+                    <h3>Headings:</h3>
+                    <div class="form-group"  style="padding-left: 2em">
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="convertHeadings" id="convertHeadings2" value="h2"
+                                       data-bind="checked: convertHeadings">
+                                All H2
+                            </label>
+                        </div>
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="convertHeadings" id="convertHeadings3" value="h3"
+                                       data-bind="checked: convertHeadings">
+                                All H3
+                            </label>
+                        </div>
+
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="convertHeadings" id="convertHeadings12" value="h12"
+                                       data-bind="checked: convertHeadings">
+                                First H1, remaining H2
+                            </label>
+                        </div>
+
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="convertHeadings" id="convertHeadings23" value="h23"
+                                       data-bind="checked: convertHeadings">
+                                First H2, remaining H3
+                            </label>
+                        </div>
+
+                        <div class="radio">
+                            <label>
+                                <input type="radio" name="convertHeadings" id="convertHeadingsNone" value=""
+                                       data-bind="checked: convertHeadings">
+                                No conversion
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div data-bind="visible:!cleaning()">
+                    <button type="button" class="btn btn-primary" data-bind="click: doCleanup">
+                        Ok
+                    </button>
+                    <button type="button" class="btn btn-default"  data-dismiss="modal">
+                        Cancel
+                    </button>
+                </div>
+                <div data-bind="visible:cleaning">
+                    <span class="fa fa-spinner fa-pulse fa-1x" style="color:lightgrey"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

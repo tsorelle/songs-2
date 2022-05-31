@@ -1,0 +1,59 @@
+/*!
+ * Bootstrap v5.1.3 (https://getbootstrap.com/)
+ * Copyright 2011-2021 The Bootstrap Authors
+ * Copyright 2011-2021 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+
+// scss-docs-start import-stack
+// Configuration
+@import "../assets/bootstrap/scss/functions";
+@import "../assets/bootstrap/scss/variables";
+@import "variables";
+@import "../default/nutshell/customizable-variables";
+@import "../assets/bootstrap/scss/mixins";
+@import "../assets/bootstrap/scss/utilities";
+
+// Layout & components
+@import "../assets/bootstrap/scss/root";
+@import "../assets/bootstrap/scss/reboot";
+@import "../assets/bootstrap/scss/type";
+@import "../assets/bootstrap/scss/images";
+@import "../assets/bootstrap/scss/containers";
+@import "../assets/bootstrap/scss/grid";
+@import "../assets/bootstrap/scss/tables";
+@import "../assets/bootstrap/scss/forms";
+@import "../assets/bootstrap/scss/buttons";
+@import "../assets/bootstrap/scss/transitions";
+@import "../assets/bootstrap/scss/dropdown";
+@import "../assets/bootstrap/scss/button-group";
+@import "../assets/bootstrap/scss/nav";
+@import "../assets/bootstrap/scss/navbar";
+@import "../assets/bootstrap/scss/card";
+@import "../assets/bootstrap/scss/accordion";
+@import "../assets/bootstrap/scss/breadcrumb";
+@import "../assets/bootstrap/scss/pagination";
+@import "../assets/bootstrap/scss/badge";
+@import "../assets/bootstrap/scss/alert";
+@import "../assets/bootstrap/scss/progress";
+@import "../assets/bootstrap/scss/list-group";
+@import "../assets/bootstrap/scss/close";
+@import "../assets/bootstrap/scss/toasts";
+@import "../assets/bootstrap/scss/modal";
+@import "../assets/bootstrap/scss/tooltip";
+@import "../assets/bootstrap/scss/popover";
+@import "../assets/bootstrap/scss/carousel";
+@import "../assets/bootstrap/scss/spinners";
+@import "../assets/bootstrap/scss/offcanvas";
+@import "../assets/bootstrap/scss/placeholders";
+
+// Helpers
+@import "../assets/bootstrap/scss/helpers";
+
+// Utilities
+@import "../assets/bootstrap/scss/utilities/api";
+
+@import "../default/nutshell/autonav";
+
+@import "theme";
+// scss-docs-end import-stack
