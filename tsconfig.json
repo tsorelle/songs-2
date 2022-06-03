@@ -2,7 +2,8 @@
   "compilerOptions": {
     "removeComments": true,
     "preserveConstEnums": true,
-    "inlineSourceMap": true,
+    "sourceMap": true,
+    // "inlineSourceMap": true,
     "target": "ES6"
   },
   "include"  : [
