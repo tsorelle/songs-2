@@ -16,19 +16,21 @@ namespace PeanutYoutube {
             let me = this;
 
             if (!params) {
-                console.error('componentnameComponent: Params not defined in translateComponent');
+                console.error('youtubeFrameComponent: Params not defined in translateComponent');
                 return;
             }
             if (params.data) {
                 params = params.data;
             }
             if (!params.ytcode) {
-                console.error('componentnameComponent: Parameter "parameterName" is required');
+                console.error('youtubeFrameComponent: Parameter "ytcode" is required');
                 return;
             }
 
             if (params.id) {
-                me.playerElementId(params.id);
+                let id  = ko.isObservable(params.id) ?
+                    params.id() : params.id;
+                me.playerElementId(id);
             }
 
             if (params.onready) {
@@ -43,9 +45,12 @@ namespace PeanutYoutube {
                 params.options :
                 me.getOptions;
 
+            let ytcode = ko.isObservable(params.ytcode) ?
+                params.ytcode() : params.ytcode;
+
             let url =
                 'https://www.youtube.com/embed/' +
-                params.ytcode +
+                 ytcode +
                 '?rel=0&modestbranding=1' +
                 '&enablejsapi=1';
 

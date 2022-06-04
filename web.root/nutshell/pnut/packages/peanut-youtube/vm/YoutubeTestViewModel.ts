@@ -3,8 +3,6 @@
 /// <reference path='../../../../pnut/core/peanut.d.ts' />
 
 namespace PeanutYoutube {
-
-
     export class YoutubeTestViewModel extends Peanut.ViewModelBase implements IYouTubeClient{
         // observables
 
@@ -14,6 +12,11 @@ namespace PeanutYoutube {
         ready = false;
         player: YT.Player;
         controller : PeanutYoutube.YTFrameController;
+        youtubeCode = ko.observable('IGA1XC0NivE');
+        videoOn = ko.observable(false);
+        videoModal : any;
+        songTitle = ko.observable('Home on the Range');
+
 
         init(successFunction?: () => void) {
             let me = this;
@@ -22,38 +25,41 @@ namespace PeanutYoutube {
              */
 
             me.application.loadResources('@pkg/peanut-youtube/YTFrameController.js', () => {
-                Peanut.logger.write('YoutubeTest Init');
-                let youTubeUri =
-                    'https://www.youtube.com/embed/' +
-                    'IGA1XC0NivE' +
-                    '?rel=0&modestbranding=1' +
-                    '&enablejsapi=1'
-
-                me.youtubeUrl(youTubeUri);
-                this.controller =  PeanutYoutube.YTFrameController.register(me)
-                me.bindDefaultSection();
-                PeanutYoutube.YTFrameController.initApi();
-                successFunction();
+                me.application.registerComponents('@pkg/peanut-youtube/youtube-frame',() => {
+                    me.bindDefaultSection();
+                    // InitApi must be called after binding
+                    YTFrameController.initApi();
+                    me.controller = YTFrameController.instance;
+                    successFunction();
+                });
             });
         }
 
+        showVideo  = () => {
+            if (!this.videoModal) {
+                let modalElement = document.getElementById('songPlayer1');
+                modalElement.addEventListener('hidden.bs.modal',this.closeVideo);
+                this.videoModal = new bootstrap.Modal(document.getElementById('songPlayer1'));
+            }
+            this.videoModal.show();
+            this.videoOn(true);
+        }
+
+        closeVideo  = () => {
+            let player = this.getPlayer()
+            let state = player.getPlayerState();
+            if (state == YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            }
+            this.videoOn(false);
+        }
+
+
         getPlayer = () => {
-            return this.controller.getPlayer(this.playerElementId)
-        }
-
-        pause = () => {
-            this.getPlayer().pauseVideo();
-        }
-
-        stop = () => {
-            this.getPlayer().stopVideo();
-        }
-
-        play = () => {
-            this.getPlayer().playVideo();
-        }
-
-        initVideo = () => {
+            if (!this.player) {
+                this.player = this.controller.getPlayer(this.playerElementId);
+            }
+            return this.player;
         }
 
         createPlayers = () => {
@@ -79,5 +85,4 @@ namespace PeanutYoutube {
             this.status(YTFrameController.getPlayerStatus(event.data));
         }
     }
-
 }

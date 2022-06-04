@@ -31,5 +31,6 @@ namespace Peanut {
             this.testModal.hide();
             alert('Save changes');
         }
+
     }
 }
