@@ -39,7 +39,7 @@ namespace PeanutYoutube {
             if (!this.videoModal) {
                 let modalElement = document.getElementById('songPlayer1');
                 modalElement.addEventListener('hidden.bs.modal',this.closeVideo);
-                this.videoModal = new bootstrap.Modal(document.getElementById('songPlayer1'));
+                this.videoModal = new bootstrap.Modal(modalElement);
             }
             this.videoModal.show();
             this.videoOn(true);
