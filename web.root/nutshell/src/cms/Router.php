@@ -36,7 +36,7 @@ class Router
             throw new \Exception('Value "method" is required in service routing configuration.');
         }
         $handler = new ServiceRequestHandler();
-        $argValues = $routeData->argValues ?? [];
+        $argValues = $routeData['argValues'] ?? [];
         if (!empty($argValues)) {
             $handler->$method(...$argValues);
         }

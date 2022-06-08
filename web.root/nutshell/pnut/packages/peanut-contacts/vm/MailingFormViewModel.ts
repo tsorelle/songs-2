@@ -178,7 +178,6 @@ namespace PeanutContacts {
                             me.application.hideWaiter();
                             me.bindDefaultSection();
 
-
                             let startTab = me.getPageVarialble('start-tab');
                             if (!startTab) {
                                 startTab = me.getRequestVar('tab');
@@ -322,39 +321,43 @@ namespace PeanutContacts {
             me.editorView(format);
         };
 
-        cleanHtml = () => {
-            let request = {
-                blanks: true,
-                headings: 'h2'
-            };
-            let editor = tinymce.get('messagehtml');
-            let content = editor.getContent();
-            if (content) {
-                let lines = content.split("\n");
-                if (request.blanks) {
-                    lines = lines.filter((item: string) => {
-                        return !(item == '<p>&nbsp;</p>' || item == '<p><strong>&nbsp;</strong></p>');
-                        
-                    });
-                }
-                if (request.headings) {
-                    let hStart = '<'+request.headings+'>';
-                    let hEnd = '</'+request.headings+'>';
-                    let pStart = '<p><strong>';
-                    let pEnd = '</strong></p>';
-                    let count = lines.length;
-                    for (let i = 0;i<count;i++) {
-                        let item = lines[i];
-                        if (item.substr(0,11) == pStart && item.substr(-13) == pEnd) {
-                            lines[i] = item.replace(pStart,hStart).replace(pEnd,hEnd);
+
+            /*
+
+            cleanHtml = () => {
+                let request = {
+                    blanks: true,
+                    headings: 'h2'
+                };
+                let editor = tinymce.get('messagehtml');
+                let content = editor.getContent();
+                if (content) {
+                    let lines = content.split("\n");
+                    if (request.blanks) {
+                        lines = lines.filter((item: string) => {
+                            return !(item == '<p>&nbsp;</p>' || item == '<p><strong>&nbsp;</strong></p>');
+
+                        });
+                    }
+                    if (request.headings) {
+                        let hStart = '<'+request.headings+'>';
+                        let hEnd = '</'+request.headings+'>';
+                        let pStart = '<p><strong>';
+                        let pEnd = '</strong></p>';
+                        let count = lines.length;
+                        for (let i = 0;i<count;i++) {
+                            let item = lines[i];
+                            if (item.substr(0,11) == pStart && item.substr(-13) == pEnd) {
+                                lines[i] = item.replace(pStart,hStart).replace(pEnd,hEnd);
+                            }
                         }
                     }
+
+                    editor.setContent(lines.join("\n"));
                 }
+            };
 
-                editor.setContent(lines.join("\n"));
-            }
-        };
-
+    */
 
         createMessage = () => {
             let me = this;

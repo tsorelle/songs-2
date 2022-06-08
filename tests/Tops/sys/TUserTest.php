@@ -7,8 +7,16 @@ use PHPUnit\Framework\TestCase;
 
 class TUserTest extends TestCase
 {
+/*
+    public function testSetAdmin()
+    {
+        $manager = new AccountManager();
+        $manager->setAdminAccount('Banjoboy');
+        self::assertTrue(true);
 
-    public function testSignIn()
+    }
+*/
+        public function testSignIn()
     {
         $password = 'password';
         $username = 'testuser';

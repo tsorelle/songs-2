@@ -1,23 +1,46 @@
 /// <reference path="../../../../pnut/core/ViewModelBase.ts" />
 /// <reference path='../../../../typings/knockout/knockout.d.ts' />
 /// <reference path='../../../../pnut/core/peanut.d.ts' />
+/// <reference path='../../../../typings/tinymce/tinymce.d.ts' />
+/// <reference path='../../../../pnut/js/ViewModelHelpers.ts' />
 /// <reference path="../js/peanutcontent.d.ts" />
 namespace PeanutContent {
+
+    // noinspection JSUnusedGlobalSymbols
+    /*** Required in owning ViewModel init() ***
+     *	me.application.loadResources([
+     *		'@lib:tinymce',
+     *		'@pnut/ViewModelHelpers.js'], () => {
+     *		me.application.registerComponents([
+     *   			'@pnut/modal-confirm',
+     *   			'@pnut/clean-html'
+     *   			'@pkg/peanut-content/content-block'
+     *   			], () => {
+     *			me.bindDefaultSection();
+     *			successFunction();
+     *		});
+     *	});
+     ***/
+
     export class contentBlockComponent implements PeanutContent.IContentComponent {
         contentId: string;
         contentSource: KnockoutObservable<string>;
         controller: IContentController = null;
 
         isHtml = ko.observable(true);
-        state = ko.observable('readonly');
+        editing = ko.observable(false);
         canedit : KnockoutObservable<boolean>;
 
         editorModal : any;
         editorTitle = ko.observable('');
         textBuffer = ko.observable('');
 
+        editorModalId = ko.observable('');
+        htmlEditorId = ko.observable('');
+        textEditorId = ko.observable('')
 
-        // include constructor if any params used
+        editorInitialized = false;
+
         constructor(params: any) {
             let me = this;
 
@@ -56,27 +79,48 @@ namespace PeanutContent {
             if (params.contenttype) {
                 me.isHtml(params.contenttype === 'html')
             }
+
             if (params.title) {
                 me.editorTitle(params.title)
             }
+
+            let editorId = me.contentId+'-html';
+            me.htmlEditorId(editorId);
+            me.textEditorId(me.contentId+'-text');
+            me.editorModalId(me.contentId+'-modal')
         }
 
+        editHtml = () => {
+            this.showModal();
+
+        }
+
+
         edit = () => {
-            this.loadContent();
+            if (this.isHtml()) {
+                let id = this.htmlEditorId();
+                let editor = tinymce.get(id);
+                let content = this.contentSource();
+                editor.setContent(content);
+            }
+            else {
+                let text = this.contentSource();
+                this.textBuffer(text);
+            }
+            this.showModal();
             if (this.controller) {
                 this.controller.sendNotification(this.contentId,'edit');
             }
-            this.state('edit');
-            this.showModal();
+            this.editing(true);
         }
 
         cancel = () => {
-            if (this.state() !== 'readonly') {
+            if (this.editing()) {
                 if (this.controller) {
                     this.controller.sendNotification(this.contentId, 'cancelled');
                 }
                 this.editorModal.hide();
-                this.state('readonly');
+                this.editing(false);
             }
         }
 
@@ -93,22 +137,20 @@ namespace PeanutContent {
                 this.controller.sendNotification(this.contentId,'saved');
             }
             this.editorModal.hide()
-            this.state('readonly');
+            this.editing(false);
         }
 
-        loadContent = () => {
-            if (this.isHtml) {
-
-                // observable to editor
-            }
-            else {
-                let text = this.contentSource();
-                this.textBuffer(text);
-            }
+        getEditorContent = () => {
+            let element = <HTMLInputElement> document.getElementById(this.htmlEditorId());
+            return element ? element.value : '';
         }
+
         postContent = () => {
+            let me = this;
             if (this.isHtml) {
-                // editor  to observable
+                tinymce.triggerSave();
+                let content = me.getEditorContent();
+                me.contentSource(content);
             }
             else {
                 let text = this.textBuffer();
@@ -118,16 +160,35 @@ namespace PeanutContent {
 
         showModal = ()  => {
             if (!this.editorModal) {
-                let modalElement = document.getElementById(this.contentId);
+                let id = this.editorModalId();
+                let modalElement = document.getElementById(id);
                 modalElement.addEventListener('hidden.bs.modal',this.cancel);
-                this.editorModal = new bootstrap.Modal(document.getElementById(this.contentId));
+                this.editorModal = new bootstrap.Modal(document.getElementById(id));
             }
             this.editorModal.show();
         }
 
-        hideModal = () => {
-            this.editorModal.hide()
+        initEditor = () => {
+            if (!this.isHtml()) {
+                return;
+            }
+            // calculate min_hight as 50% of view port height
+            this.editorInitialized = true;
+            let mh = Math.floor((Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)) / 100) * 50;
+            let id = this.htmlEditorId();
+            tinymce.init({
+                selector: '#' + id,
+                toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | image | code",
+                plugins: "image imagetools link lists code paste",
+                min_height: mh,
+                default_link_target: "_blank",
+                document_base_url : Peanut.Helper.getHostUrl() + '/',
+                branding: false,
+                paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,p,a,ul,li",
+                relative_urls : false,
+                convert_urls: false,
+                remove_script_host : false
+            });
         }
     }
-
 }

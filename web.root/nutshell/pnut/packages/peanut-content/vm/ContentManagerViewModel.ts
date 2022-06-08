@@ -1,6 +1,7 @@
 /// <reference path="../../../../pnut/core/ViewModelBase.ts" />
 /// <reference path='../../../../typings/knockout/knockout.d.ts' />
 /// <reference path='../../../../pnut/core/peanut.d.ts' />
+/// <reference path='../js/contentController.ts' />
 
 namespace PeanutContent {
 
@@ -12,19 +13,32 @@ namespace PeanutContent {
         active: any;
     }
 
-    export class ContentManagerViewModel extends Peanut.ViewModelBase {
+    export class ContentManagerViewModel extends Peanut.ViewModelBase implements IContentOwner {
         // observables
-        htmlContent = ko.observable('');
+        content = ko.observable('');
+        canedit = ko.observable(true);
+        controller: PeanutContent.contentController;
 
         init(successFunction?: () => void) {
             let me = this;
             Peanut.logger.write('Content Manager Init');
 
-            me.getContent(1,()=> {
-                me.bindDefaultSection();
-                successFunction();
+            me.application.loadResources([
+                '@pkg/peanut-content/contentController.js',
+                '@lib:tinymce',
+                '@pnut/ViewModelHelpers.js'], () => {
+                me.application.registerComponents([
+                    '@pnut/modal-confirm',
+                    '@pnut/clean-html',
+                    '@pkg/peanut-content/content-block'
+                ], () => {
+                    me.controller = new PeanutContent.contentController(me);
+                    me.getContent(1,()=> {
+                        me.bindDefaultSection();
+                        successFunction();
+                    });
+                });
             });
-
         }
 
         getContent =  (id : any, successFunction?: () => void) => {
@@ -37,7 +51,7 @@ namespace PeanutContent {
                     if (serviceResponse.Result == Peanut.serviceResultSuccess) {
                         me.application.hideWaiter();
                         let contentItem = <IContentItem>serviceResponse.Value;
-                        me.htmlContent(contentItem.content);
+                        me.content(contentItem.content);
                         if (successFunction) {
                             successFunction()
                         }
@@ -48,6 +62,13 @@ namespace PeanutContent {
                 me.application.hideWaiter();
             });
 
+        }
+        handleContentNotification(contentId: string, message: string) {
+            console.log(contentId = ': '+message);
+        }
+
+        afterDatabind = () => {
+            this.controller.initialize();
         }
     }
 }

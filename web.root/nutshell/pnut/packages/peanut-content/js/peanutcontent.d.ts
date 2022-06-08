@@ -17,11 +17,13 @@ declare namespace PeanutContent {
         save();
         cancel();
         open(contentObservable: KnockoutObservable<string>);
+        initEditor();
     }
 
     interface IContentController {
         contentOwner: IContentOwner;
         register(contentId: string, component: IContentComponent);
+        initialize();
         save(contentId: string);
         saveAll();
         cancel(contentId: string);

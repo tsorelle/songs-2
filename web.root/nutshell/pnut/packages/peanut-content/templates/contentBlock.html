@@ -1,0 +1,56 @@
+<style>
+    .content-container {
+        width: 100%;
+    }
+    .content-container textarea {
+        width: 100%;
+        height: 100%;
+    }
+    .content-edit-icon {
+        float:right;
+    }
+    .content-edit-icon-button {
+        width: 2rem;
+        height: 2rem;
+    }
+
+    .editor-block textarea {
+    }
+
+</style>
+
+<div class="content-container">
+    <div class="content-edit-icon" data-bind="visible:canedit" >
+        <a href="#" data-bind="click:edit"><i class="far fa-edit content-edit-icon-button"></i></a>
+    </div>
+    <div data-bind="css: {'text-black-50': editing }">
+        <div data-bind="visible:isHtml, html:contentSource"></div>
+        <div data-bind="hidden:isHtml, text:contentSource"></div>
+    </div>
+</div>
+
+<div data-bind="attr: {id: editorModalId}"   class="modal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p data-bind="text:htmlEditorId"></p>
+                <h5 class="modal-title" data-bind="text:editorTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="editor-block" data-bind="visible:isHtml">
+                    <!-- textarea  id="mycontent-hml" class="form-control"></textarea -->
+                    <textarea  data-bind="attr: {id: htmlEditorId}" class="form-control"></textarea>
+                </div>
+                <div class="editor-block" data-bind="hidden:isHtml">
+                    <textarea rows="6" class="form-control" data-bind="value:textBuffer, attr: {id: textEditorId}"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary me-5" data-bind="click:save">Save changes</button>
+                <a href="#" data-bs-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+</div>
+

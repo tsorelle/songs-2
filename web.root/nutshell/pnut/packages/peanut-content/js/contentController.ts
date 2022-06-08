@@ -1,11 +1,17 @@
 /// <reference path="./peanutcontent.d.ts" />
 namespace PeanutContent {
-    class contentController implements IContentController {
+    export class contentController implements IContentController {
         contentOwner: PeanutContent.IContentOwner;
         components: IContentComponent[] = [];
 
         constructor(owner: IContentOwner) {
             this.contentOwner = owner;
+        }
+
+        initialize = () => {
+            this.components.forEach((component: IContentComponent) => {
+                component.initEditor();
+            } )
         }
 
         register = (contentId: string, component: PeanutContent.IContentComponent) => {
