@@ -17,6 +17,9 @@ class Songpage  extends \Tops\db\TAbstractEntity
     public $contenttype;
     public $pageimage;
     public $imagecaption;
+    public $youtubeId;
+    public $hasicon;
+    public $hasthumbnail;
 
     public function getDtoDataTypes()
     {

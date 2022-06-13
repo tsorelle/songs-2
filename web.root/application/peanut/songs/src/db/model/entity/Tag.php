@@ -12,5 +12,6 @@ class Tag  extends \Tops\db\TAbstractEntity
     public $name;
     public $description;
     public $type;
-
+    public $code;
+    public $active;
 }

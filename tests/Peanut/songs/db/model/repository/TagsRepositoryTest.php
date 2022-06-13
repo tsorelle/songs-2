@@ -14,4 +14,15 @@ class TagsRepositoryTest extends TestCase
         $this->assertNotEmpty($actual);
 
     }
+
+    public function testGetLookupList() {
+        $repo = new TagsRepository();
+        $actual = $repo->getLookupList('type');
+        $this->assertNotEmpty($actual);
+
+        $actual = $repo->getLookupList('instrument');
+        $this->assertNotEmpty($actual);
+
+
+    }
 }

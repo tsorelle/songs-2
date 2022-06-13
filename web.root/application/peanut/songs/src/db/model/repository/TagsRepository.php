@@ -30,6 +30,13 @@ class TagsRepository extends \Tops\db\TEntityRepository
         'id'=>PDO::PARAM_INT,
         'name'=>PDO::PARAM_STR,
         'description'=>PDO::PARAM_STR,
-        'type'=>PDO::PARAM_STR);
+        'type'=>PDO::PARAM_STR,
+        'code'=>PDO::PARAM_STR,
+        'active'=>PDO::PARAM_STR
+        );
+    }
+
+    public function getLookupList($type,$includeInactive = false) {
+        return $this->getEntityCollection('type=?',[$type],$includeInactive,'order by name');
     }
 }

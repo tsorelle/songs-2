@@ -1,0 +1,22 @@
+/** Replace 'VmName' then remove this line **/
+// required for all view models:
+/// <reference path='../../../../nutshell/pnut/core/ViewModelBase.ts' />
+/// <reference path='../../../../nutshell/typings/knockout/knockout.d.ts' />
+
+// Module
+namespace Peanut {
+    export class VmNameViewModel extends Peanut.ViewModelBase {
+        // observables
+
+        // for initial smoke test.  Remove this and binding from the view later.
+        planet = ko.observable('Mars');
+
+        init(successFunction?: () => void) {
+            let me = this;
+            Peanut.logger.write('VmName Init');
+
+			me.bindDefaultSection();
+            successFunction();
+        }
+    }
+}

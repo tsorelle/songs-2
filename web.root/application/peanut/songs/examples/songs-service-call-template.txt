@@ -1,0 +1,15 @@
+        let me = this;
+        let request = null; // assign request, e.g. {'this' : 1, 'that' : 2}
+        me.application.hideServiceMessages();
+        me.application.showWaiter('Message here...');
+        me.services.executeService('Peanut.songs::ServiceName',request,
+            (serviceResponse: Peanut.IServiceResponse) => {
+                    if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                        me.application.hideWaiter();
+
+                    }
+                }
+            ).fail(() => {
+                let trace = me.services.getErrorInformation();
+                me.application.hideWaiter();
+            });

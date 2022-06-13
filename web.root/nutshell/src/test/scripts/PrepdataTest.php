@@ -2,20 +2,69 @@
 
 namespace PeanutTest\scripts;
 
+use Peanut\songs\db\model\entity\Song;
 use Peanut\songs\db\model\entity\Songpage;
 use Peanut\songs\db\model\repository\SongpagesRepository;
 use Peanut\songs\db\model\repository\SongsRepository;
+use Peanut\songs\SongsManager;
 use Tops\db\TQuery;
 
-class UpdateurlsTest extends TestScript
+class PrepdataTest extends TestScript
 {
 
     public function execute()
     {
         $repo = new SongpagesRepository();
+        $this->updateIndex($repo);
+        // $this->updateIcons($repo);
         // $this->tempFix($repo);
         // $this->parseSongData($repo);
     }
+
+    private function updateIcons(SongpagesRepository $repo) {
+        $songRepo = new SongsRepository();
+        /**
+         * @var $songs Songpage[];
+         */
+        $songpages = $repo->getAll();
+        $imgpath = 'D:\dev\twoquakers\songs-2\web.root\assets\img\songs\icons';
+        /**
+         * @var $page Songpage
+         */
+        foreach ($songpages as $page) {
+            /**
+             * @var $song Song
+             */
+            $song = $songRepo->get($page->songId);
+            if (!$song) {
+                print "$page->songId - Song not found\n";
+                continue;
+            }
+            $path = sprintf('%s\%s.jpg', $imgpath,$song->contentid);
+            if (file_exists($path)) {
+                $page->hasicon = 1;
+            }
+            else {
+                print "needs icon: $song->contentid\n";
+            }
+
+            $content = trim($page->commentary);
+            if ($content) {
+                $updated++;
+                $lines = explode("\n",$content);
+                $intro = strip_tags($lines[0]);
+                // $page->introduction = strip_tags($lines[0]);
+                if (strlen($intro > 2056)) {
+                    print( $page->id.": Truncated \n");
+                }
+            }
+            $repo->update($page);
+
+
+        }
+    }
+
+
 
     private function tempFix($repo) {
         $query = new TQuery();
@@ -179,5 +228,34 @@ class UpdateurlsTest extends TestScript
             $repo->update($songpage);
         }
         print "Count: $count\n";
+    }
+
+    private function updateIntros(SongpagesRepository $repo)
+    {
+        /**
+         * @var $pages Songpage[];
+         */
+        $pages = $repo->getAll();
+        $count = count( $pages);
+        $updated = 0;
+        foreach ($pages as $page) {
+            $content = trim($page->commentary);
+            if ($content) {
+                $updated++;
+                $lines = explode("\n",$content);
+                $page->introduction = strip_tags($lines[0]);
+                $repo->update($page);
+            }
+        }
+        print "Updated $updated of $count\n";
+    }
+
+    private function updateIndex(SongpagesRepository $repo)
+    {
+        $pages = $repo->getAll();
+        $manager = new SongsManager();
+        foreach ($pages as $page) {
+            $manager->updateSongIndex($page);
+        }
     }
 }
