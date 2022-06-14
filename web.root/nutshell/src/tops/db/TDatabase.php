@@ -51,12 +51,13 @@ class TDatabase
                         ) {
                             throw new \Exception("Incomplete database configuration in database.ini, section:$key");
                         }
+                        $charSet = empty($settings['charset']) ? 'UTF8' : $settings['charset'];
                         $server = empty($settings['server']) ? 'localhost' : $settings['server'];
                         $dbname = $settings['database'];
                         $params = new \stdClass();
                         $params->user = $settings['user'];
                         $params->pwd = $settings["pwd"];
-                        $params->dsn = "mysql:host=$server;dbname=$dbname";
+                        $params->dsn = "mysql:host=$server;dbname=$dbname;charset=$charSet";
                         self::$dbconfig[$key] = $params;
                     }
                 }
@@ -176,7 +177,5 @@ class TDatabase
         return false;
 
     }
-
-
 
 }
