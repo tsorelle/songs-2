@@ -10,7 +10,8 @@
         "ext-pdo": "*",
         "ext-json": "*",
       "ext-simplexml": "*",
-        "soundasleep/html2text": "1.1.0"
+        "soundasleep/html2text": "1.1.0",
+      "ext-mbstring": "*"
     },
     "authors": [
         {
