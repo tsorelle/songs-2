@@ -76,6 +76,32 @@ class SongpagesRepositoryTest extends TestCase
 
     }
 
+    public function testSongCount() {
+        $repo = new SongpagesRepository();
+        $request = null;
+        $actual = $repo->getSongPageList($request);
+        $expected = count($actual);
+        $actual = $repo->getSongCount($request);
+        $this->assertEquals($expected,$actual);
+
+
+        $request = new \stdClass();
+        $request->filter = 'cowboy';
+        $actual = $repo->getSongPageList($request);
+        $expected = count($actual);
+        $actual = $repo->getSongCount($request);
+        $this->assertEquals($expected,$actual);
+
+        $request = new \stdClass();
+        $request->filter = 'empty';
+        $actual = $repo->getSongPageList($request);
+        $expected = count($actual);
+        $actual = $repo->getSongCount($request);
+        $this->assertEquals($expected,$actual);
+
+
+    }
+
     public function testParseSearchTerms()
     {
         $repo = new SongpagesRepository();

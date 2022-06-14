@@ -34,11 +34,21 @@ class InitSonglistCommand extends \Tops\services\TServiceCommand
 
     protected function run()
     {
-        $response = new \stdClass();
+        $request = $this->getRequest();
         $manager = new SongsManager();
-        $response->pages = $manager->getSongPages();
+        $response = new \stdClass();
+        $pageNo = $request->page ?? 1;
+        $pageSize = $request->pageSize ?? null;
+        if ($pageSize && $pageNo == 1) {
+            $response->songCount = $manager->getSongCount($request);
+            $response->pageCount = (int)ceil($response->songCount / $pageSize);
+        }
+
+        $response->pages = $manager->getSongPages($request);;
         $response->types = $manager->getSongTypesLookup();
         $response->instruments = $manager->getInstrumentsLookup();
+
         $this->setReturnValue($response);
+
     }
 }

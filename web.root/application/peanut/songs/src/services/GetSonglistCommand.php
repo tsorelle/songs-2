@@ -12,7 +12,7 @@ use Peanut\songs\SongsManager;
  *				searchTerms?: string,
  *				filter?: number,
  *				order?: number,
- *				pageNo?: number,
+ *				page?: number,
  *				pageSize?: number,
  *				returnLookups? : any
  *			}
@@ -31,23 +31,23 @@ use Peanut\songs\SongsManager;
  *        Response:
  *            interface ISongSearchResponse {
  *            	pages: ISongListItem[],
- *            	types?: ILookupItem[],
- *            	instruments?: ILookupItem[]
+ *              pageCount?: number,
  *            }
  */
 class GetSonglistCommand extends \Tops\services\TServiceCommand
 {
-
     protected function run()
     {
         $request = $this->getRequest();
         $manager = new SongsManager();
         $response = new \stdClass();
-        $response->pages = $manager->getSongPages($request);
-        if (!empty($request->returnLookups)) {
-            $response->types = $manager->getSongTypesLookup();
-            $response->instruments = $manager->getInstrumentsLookup();
+        $pageNo = $request->page ?? 1;
+        $pageSize = $request->pageSize ?? null;
+        if ($pageSize && $pageNo == 1) {
+            $response->songCount = $manager->getSongCount($request);
+            $response->pageCount = (int)ceil($response->songCount / $pageSize);
         }
+        $response->pages = $manager->getSongPages($request);;
         $this->setReturnValue($response);
     }
 }

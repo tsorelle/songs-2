@@ -1,7 +1,27 @@
 <div id="songlist-load-message"><span class="fa fa-spinner fa-pulse fa-2x" style="color:lightgrey"></span></div>
-<div id="songlist-view-container" class="row" style="display: none">
-  <div class="col-md-12">
-    <!-- view model bindings -->
-    <h1>Hello <span data-bind="text: planet"></span> </h1>
+<div id="songlist-view-container" style="display: none">
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Description</th>
+        </tr>
+        </thead>
+        <tbody data-bind="foreach:songlist">
+          <tr>
+            <!-- th scope="row">1</th -->
+            <td data-bind="text:name">Mark</td>
+            <td data-bind="text:description"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <pager params='click:changePage,page:currentPage,max:maxPages,owner:self'></pager>
+    </div>
   </div>
 </div>

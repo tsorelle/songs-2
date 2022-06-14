@@ -5,6 +5,8 @@ declare namespace Peanut {
         introduction: string;
         iconsrc: string;
         thumbnailsrc: string;
+        songUrl: string;
+        active?: any;
     }
 
     interface ISong {
@@ -46,7 +48,7 @@ declare namespace Peanut {
         /**
          * Filter : id value from tls_tags
          */
-        filter?: number,
+        filter?: number | string,
         /**
          * Order
          *  0=title (default)
@@ -54,13 +56,13 @@ declare namespace Peanut {
          *  2=date asc
          */
         order?: number,
-        pageNo?: number,
-        pageSize?: number,
-        returnLookups? : any
+        page?: number,
+        pageSize?: number
     }
 
     interface ISongSearchResponse {
         pages: ISongListItem[],
+        pageCount?: number,
         types?: ILookupItem[],
         instruments?: ILookupItem[]
     }

@@ -56,7 +56,31 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
         return $this->getEntity($songId, $indludeInactive, 'songid');
     }
 
+    public function getSongCount($request = null) {
+        $countReq = is_object($request) ? clone $request : $request;
+        if ($countReq !== null) {
+            unset($countReq->pageSize);
+            unset($countReq->page);
+            unset($countReq->order);
+        }
+        $stmt = $this->executeSearch('SELECT COUNT(*) ',$countReq);
+        return (int)$stmt->fetchColumn();
+    }
+
     public function getSongPageList($request = null) {
+        $sql =
+            'select s.id, s.title as `name`, s.description,s.contentid as `code`,p.youtubeId, p.introduction, '.
+            "if(p.hasicon = 1,concat('/assets/img/songs/icons/',s.contentId,'.jpg'),'/assets/img/songs/icons/default.jpg') as iconsrc, ".
+            "if(p.hasicon = 1,concat('/assets/img/songs/thumbnails/',s.contentId,'.jpg'),'/assets/img/songs/thumbnails/default.jpg') as thumbnailsrc, ".
+            "concat('/songs/',s.contentid) as songUrl, p.active ";
+
+        $stmt = $this->executeSearch($sql,$request);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+
+    }
+
+    public function executeSearch($sql, $request = null) {
+        $request = $request ?? new \stdClass();
         $searchType = $request->searchType ?? 'basic';
         $searchTerms = $request->searchTerms ?? null;
         $filter = $request->filter ?? null;
@@ -64,13 +88,7 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
         $pageNo = $request->page ?? 1;
         $pageSize =  $request->pageSize ?? 0;
 
-        $sql =
-            'select s.id, s.title, s.description,s.contentid as `code`,p.youtubeId,p.introduction, '.
-            "if(p.hasicon = 1,concat('/assets/img/songs/icons/',s.contentId,'.jpg'),'/assets/img/songs/icons/default.jpg') as iconsrc, ".
-            "if(p.hasicon = 1,concat('/assets/img/songs/thumbnails/',s.contentId,'.jpg'),'/assets/img/songs/thumbnails/default.jpg') as thumbnailsrc, ".
-            "concat('/songs/',s.contentid) as songUrl, p.active ".
-
-            'FROM '.$this->getTableName().' p JOIN '.$this->getSongTableName().' s ON s.id = p.songId ';
+        $sql .= 'FROM '.$this->getTableName().' p JOIN '.$this->getSongTableName().' s ON s.id = p.songId ';
 
         $conditions = [];
         $params = [];
@@ -116,18 +134,8 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
             $sql .=  sprintf('LIMIT %d,%d',$offset,$pageSize);
         }
 
-        $stmt = $this->executeStatement($sql,$params);
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
-    }
+        return $this->executeStatement($sql,$params);
 
-    // for test only
-    public function findByTitle($title) {
-        $sql = 'SELECT * FROM tls_songs where title like ?';
-        $params = [];
-        $params[] = "%$title%";
-
-        $stmt = $this->executeStatement($sql,$params);
-        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function parseSearchTerms($searchTerms)
