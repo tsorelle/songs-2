@@ -57,6 +57,9 @@ class SongsManager
         return $this->getSongpagesRepository()->getSongPageList($request);
     }
 
+    public function getAllSongsCount() {
+        return $this->getSongPagesRepository()->getAllSongsCount();
+    }
     public function getSongCount($request=null) {
         return $this->getSongpagesRepository()->getSongCount($request);
     }

@@ -39,11 +39,11 @@ declare namespace Peanut {
     interface ISongSearchRequest {
         /**
          * Search type:
-         *       none (default)
-         *      'title' - title field only
-         *      'text' - Title, description, introduction, comentary
+         *     0 - none (default)
+         *     1 - 'title' - title field only
+         *     2 - 'text' - Title, description, introduction, comentary
          */
-        searchType?: string,
+        searchType?: number,
         searchTerms?: string,
         /**
          * Filter : id value from tls_tags
@@ -51,9 +51,9 @@ declare namespace Peanut {
         filter?: number | string,
         /**
          * Order
-         *  0=title (default)
-         *  1=date desc
-         *  2=date asc
+         *  1=title (default)
+         *  2=date desc
+         *  3=date asc
          */
         order?: number,
         page?: number,

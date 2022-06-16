@@ -2,26 +2,89 @@
 <div id="songlist-view-container" style="display: none">
   <div class="row">
     <div class="col-md-12">
-      <table class="table">
-        <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Description</th>
-        </tr>
-        </thead>
-        <tbody data-bind="foreach:songlist">
-          <tr>
-            <!-- th scope="row">1</th -->
-            <td data-bind="text:name">Mark</td>
-            <td data-bind="text:description"></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="accordion" id="searchsection">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="searchheading">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#searchpanel" aria-expanded="true" aria-controls="searchpanel">
+              <i class="fas fa-search-plus"></i>&nbsp;Search and Filter
+            </button>
+          </h2>
+          <div id="searchpanel" class="accordion-collapse collapse" aria-labelledby="searchheading" data-bs-parent="#searchsection">
+            <div class="accordion-body">
+               <form>
+                 <div class="row mb-3">
+                    <div class="col-md-12">
+                      <lookup-select params="controller: filterController, label:'Filter',caption: 'Select...'"></lookup-select>
+                    </div>
+                 </div>
+                 <div class="row  mb-3">
+                    <div class="col-md-3">
+                      <lookup-select params="controller: searchTypeController, label:'Search',caption: 'Select search type...'"></lookup-select>
+                    </div>
+                   <div class="col-md-9" data-bind="visible:showSearchTerms">
+                      <label for="search-terms">Search terms</label>
+                     <input data-bind="value:searchTerms" class="form-control" id="search-terms" type="text" />
+                     <div class="form-text" data-bind="visible:showTextInfo">
+                        Enclose literal phrases in quotes.
+                     </div>
+                   </div>
+                 </div>
+                 <div class="row">
+                   <div class="col-md-6">
+
+                     <lookup-select params="controller: sortOrderController, label:'Sort',caption: 'Sort by title'">
+                     </lookup-select>
+
+
+
+                   </div>
+                   <div class="col-md-6">
+                     <div style="float:right">
+                     <button class="btn btn-outline-secondary me-3" data-bind="click:clearSearch,hidden:searchClear" >Clear</button>
+                     <button class="btn btn-primary" data-bind="click:submitSearch" >Search</button>
+                     </div>
+                   </div>
+                 </div>
+               </form>
+            </div>
+          </div>
+        </div>
+    </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-md-12">
-      <pager params='click:changePage,page:currentPage,max:maxPages,owner:self'></pager>
+  <div data-bind="hidden:songsFound">
+    <h4>No songs found</h4>
+  </div>
+  <div data-bind="visible:songsFound">
+    <div class="row">
+      <div class="col-md-12 pt-2">
+        <h4 data-bind="visible:filterTitle,text:filterTitle"></h4>
+        <pager params='click:changePage,page:currentPage,max:maxPages,owner:self'></pager>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table">
+          <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+          </tr>
+          </thead>
+          <tbody data-bind="foreach:songlist">
+            <tr>
+              <!-- th scope="row">1</th -->
+              <td data-bind="text:name"></td>
+              <td data-bind="text:description"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <pager params='click:changePage,page:currentPage,max:maxPages,owner:self'></pager>
+      </div>
     </div>
   </div>
 </div>

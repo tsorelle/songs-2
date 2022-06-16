@@ -53,7 +53,8 @@ class SongpagesRepositoryTest extends TestCase
     public function testFullTextSearch() {
         $repo = new SongpagesRepository();
         $request = new \stdClass();
-        $request->searchType = 'text';
+        // $request->searchType = 'text';
+        $request->searchType = SongpagesRepository::searchTypeText;
         $request->searchTerms = 'boggs';
         $actual = $repo->getSongPageList($request);
         $this->assertNotEmpty($actual);

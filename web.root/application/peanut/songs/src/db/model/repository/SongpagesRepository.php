@@ -15,6 +15,13 @@ use \Tops\db\TEntityRepository;
 
 class SongpagesRepository extends \Tops\db\TEntityRepository
 {
+    const searchTypeNone = 0;
+    const searchTypeTitle = 1;
+    const searchTypeText = 2;
+    const orderTitle = 1;
+    const orderDate = 2;
+    const orderDateDesc = 3;
+
     protected function getTableName() {
         return 'tls_songpages';
     }
@@ -56,6 +63,11 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
         return $this->getEntity($songId, $indludeInactive, 'songid');
     }
 
+    public function getAllSongsCount() {
+        $stmt = $this->executeStatement('SELECT COUNT(*) FROM '.$this->getTableName());
+        return $stmt->fetchColumn();
+    }
+
     public function getSongCount($request = null) {
         $countReq = is_object($request) ? clone $request : $request;
         if ($countReq !== null) {
@@ -81,10 +93,21 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
 
     public function executeSearch($sql, $request = null) {
         $request = $request ?? new \stdClass();
-        $searchType = $request->searchType ?? 'basic';
+        $searchType = $request->searchType ?? self::searchTypeNone;
         $searchTerms = $request->searchTerms ?? null;
         $filter = $request->filter ?? null;
-        $order = $request->order ?? 'title';
+        $order = $request->order ?? self::orderTitle;
+        switch ($order) {
+            case self::orderDate:
+                $order = 'p.postedDate ASC';
+                break;
+            case self::orderDateDesc:
+                $order = 'p.postedDate DESC';
+                break;
+            default:
+                $order = 's.title';
+                break;
+        }
         $pageNo = $request->page ?? 1;
         $pageSize =  $request->pageSize ?? 0;
 
@@ -105,11 +128,11 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
             $params = [$filter];
         }
 
-        if ($searchType == 'title') {
+        if ($searchType == self::searchTypeTitle) {
             $conditions[] = 'title like ?';
             $params[] = "%$searchTerms%";
         }
-        else if ($searchType == 'text') {
+        else if ($searchType == self::searchTypeText) {
             $terms = $this->parseSearchTerms($searchTerms);
             if (count($terms) > 0) {
                 $sql .= ' join tls_songindex idx on p.songId = idx.id ';
@@ -127,7 +150,8 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
             $sql .= ' WHERE '. implode(' AND ',$conditions);
         }
 
-        $sql .= ' ORDER BY s.'.$order.' ';
+
+        $sql .= " ORDER BY $order ";
 
         if ($pageSize) {
             $offset = ($pageNo > 0) ? ($pageNo - 1) * $pageSize : 0;

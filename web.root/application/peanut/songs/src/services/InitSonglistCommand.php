@@ -37,16 +37,28 @@ class InitSonglistCommand extends \Tops\services\TServiceCommand
         $request = $this->getRequest();
         $manager = new SongsManager();
         $response = new \stdClass();
+        $filter = $request->filter ?? null;
+        $response->types = $manager->getSongTypesLookup();
+        if (!is_numeric($filter)) {
+            $a = array_filter($response->types, function ($item) use ($filter) {
+                return $item->code == $filter;
+            });
+            $found = array_shift($a);
+            if ($found) {
+                $request->filter = $found->id;
+                $response->filtered = $found;
+            }
+        }
         $pageNo = $request->page ?? 1;
         $pageSize = $request->pageSize ?? null;
         if ($pageSize && $pageNo == 1) {
             $response->songCount = $manager->getSongCount($request);
             $response->pageCount = (int)ceil($response->songCount / $pageSize);
         }
-
+        // $response->allSongsCount = $manager->getAllSongsCount();
         $response->pages = $manager->getSongPages($request);;
-        $response->types = $manager->getSongTypesLookup();
         $response->instruments = $manager->getInstrumentsLookup();
+
 
         $this->setReturnValue($response);
 
