@@ -84,7 +84,7 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
             'select s.id, s.title as `name`, s.description,s.contentid as `code`,p.youtubeId, p.introduction, '.
             "if(p.hasicon = 1,concat('/assets/img/songs/icons/',s.contentId,'.jpg'),'/assets/img/songs/icons/default.jpg') as iconsrc, ".
             "if(p.hasicon = 1,concat('/assets/img/songs/thumbnails/',s.contentId,'.jpg'),'/assets/img/songs/thumbnails/default.jpg') as thumbnailsrc, ".
-            "concat('/songs/',s.contentid) as songUrl, p.active ";
+            "concat('/song/',s.contentid) as songUrl, p.active ";
 
         $stmt = $this->executeSearch($sql,$request);
         return $stmt->fetchAll(PDO::FETCH_OBJ);

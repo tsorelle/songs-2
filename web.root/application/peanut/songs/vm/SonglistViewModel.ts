@@ -37,7 +37,7 @@ namespace Peanut {
         songsFound = ko.observable(false);
 
         currentSearchRequest : ISongSearchRequest = {
-            pageSize: 20,
+            pageSize: 10,
             page: 1
         };
 
@@ -157,7 +157,7 @@ namespace Peanut {
             this.getSongList();
         }
 
-        onFilterChange = (type: ILookupItem) => {
+        onFilterChange = (_type: ILookupItem) => {
             this.searchTypeController.unsubscribe();
             this.searchTypeController.selected(null);
             this.showTextInfo(false );

@@ -1,6 +1,6 @@
 <!-- replace viewname -->
 <div id="viewname-load-message"><span class="fa fa-spinner fa-pulse fa-2x" style="color:lightgrey"></span></div>
-<div id="songlist-view-container" class="row" style="display: none">
+<div id="viewname-view-container" class="row" style="display: none">
   <div class="col-md-12">
      <!-- view model bindings -->
      <!-- for smoke test - define planet in the view model -->

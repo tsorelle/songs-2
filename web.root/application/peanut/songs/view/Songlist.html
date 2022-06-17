@@ -1,3 +1,10 @@
+<style>
+  .songlistlink {
+    font-size: 105%;
+    font-weight: bold;
+    color: #41464b;
+  }
+</style>
 <div id="songlist-load-message"><span class="fa fa-spinner fa-pulse fa-2x" style="color:lightgrey"></span></div>
 <div id="songlist-view-container" style="display: none">
   <div class="row">
@@ -31,12 +38,8 @@
                  </div>
                  <div class="row">
                    <div class="col-md-6">
-
                      <lookup-select params="controller: sortOrderController, label:'Sort',caption: 'Sort by title'">
                      </lookup-select>
-
-
-
                    </div>
                    <div class="col-md-6">
                      <div style="float:right">
@@ -67,6 +70,7 @@
         <table class="table">
           <thead>
           <tr>
+            <th>&nbsp;</th>
             <th scope="col">Name</th>
             <th scope="col">Description</th>
           </tr>
@@ -74,7 +78,8 @@
           <tbody data-bind="foreach:songlist">
             <tr>
               <!-- th scope="row">1</th -->
-              <td data-bind="text:name"></td>
+              <td><a data-bind="attr:{href:songUrl}"> <img class="img img-thumbnail" data-bind="attr:{src:iconsrc,alt:name}"></a></td>
+              <td><a class="songlistlink" data-bind="attr:{href:songUrl},text:name"></a></td>
               <td data-bind="text:description"></td>
             </tr>
           </tbody>
