@@ -1,3 +1,31 @@
+#nutshell-main-section {
+  background-color: #fdf8de0d;
+}
+
+nav#top-navbar {
+  border: solid;
+  background-color: $panel-background; // #FDF6DE;
+  border-radius: 10px;
+  border-color: $panel-border;
+  border-width: thin;
+}
+
+#site-footer {
+  border-top: solid;
+  background-color: $panel-background; // #FDF6DE;
+  // border-radius: 10px;
+  border-color: $panel-border;
+  border-width: thin;
+
+}
+
+
+.img-thumbnail {
+  border-color: $tls-texas-turq-light;
+}
+
+
+
 .landing-page-image {
   img {
     width: 100%;

@@ -51,10 +51,10 @@ class InitSonglistCommand extends \Tops\services\TServiceCommand
         }
         $pageNo = $request->page ?? 1;
         $pageSize = $request->pageSize ?? null;
-        if ($pageSize && $pageNo == 1) {
+        // if ($pageSize && $pageNo == 1) {
             $response->songCount = $manager->getSongCount($request);
             $response->pageCount = (int)ceil($response->songCount / $pageSize);
-        }
+        // }
         // $response->allSongsCount = $manager->getAllSongsCount();
         $response->pages = $manager->getSongPages($request);;
         $response->instruments = $manager->getInstrumentsLookup();

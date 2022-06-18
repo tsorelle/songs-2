@@ -60,6 +60,27 @@ namespace Peanut {
             }
         }
 
+        public getLocalReferrer() {
+            let ref = document.referrer;
+            if (ref) {
+                let url = new URL(document.referrer);
+                let host = window.location.hostname;
+                let refhost = url.hostname;
+                if (host === refhost) {
+                    return url.pathname;
+                }
+            }
+            return null;
+        }
+
+        public fetchSessionItem(name: string) {
+            let item = sessionStorage.getItem(name);
+            if (item) {
+                sessionStorage.removeItem('songsearch');
+            }
+            return item;
+        }
+
         public getApplication = () => {
             return this.application;
         }

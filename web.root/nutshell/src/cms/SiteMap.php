@@ -39,7 +39,7 @@ class SiteMap
         if (empty($path) || $path=='/') {
             $path = '/*';
         }
-        $n = $this->xmldata->xpath($path);
+        $n = @$this->xmldata->xpath($path);
         if ($n) {
             $root = $n[0];
             $node = $root->$itemName ?? null;

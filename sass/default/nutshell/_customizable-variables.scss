@@ -1,14 +1,35 @@
+// terrys palette for song site
+$tls-texas-brown:  #8C4014; // saddlebrown
+$tls-texas-turq:   #0D97A6;
+$tls-texas-turq-light: rgba(13, 151, 166, 0.14);
+$tls-texas-sand:   #F2EED8;
+$tls-texas-clay:   #D97373;
+$tls-texas-dark:   #0D0D0D;
+$tls-texas-light:  #FDDCDA;
+$tls-texas-blue:   #2A293E; //evening blue
+$tls-texas-ivory: #FDF6DE;
 // Top Navigation Bar
-$top-navbar-bg: #f3f3f3 !default;
+// $top-navbar-bg: #f3f3f3 !default;
+$top-navbar-bg: $tls-texas-clay !default;
 
 // Colors - custom for theme
-$primary: #2D7AC0 !default;
-$secondary: #005E5D !default;
-$light: #F3F3F3 !default;
+//$primary: #2D7AC0 !default;
+//$secondary: #005E5D !default;
+//$light: #F3F3F3 !default;
 // $light-accent: #c49a96 !default; // blue/green
-$light-accent: #e39f82 !default; // cinnamon
-$accent: #45b8ac !default; // blue/green
-$dark-accent: #2A293E !default; // evening blue
+//$light-accent: rgba(110, 78, 78, 0.41) !default; // cinnamon
+//$accent: #45b8ac !default; // blue/green
+//$dark-accent: #2A293E !default; // evening blue
+
+$primary: $tls-texas-brown !default;
+$secondary: $tls-texas-turq !default;
+$light: $tls-texas-light !default;
+// $light-accent: #c49a96 !default; // blue/green
+$light-accent: $tls-texas-clay;
+$accent: $tls-texas-turq;
+$dark-accent: $tls-texas-blue !default; // evening blue
+$panel-background: $tls-texas-ivory;
+$panel-border: $tls-texas-brown;
 
 // Body Font
 // Note we have copied the bootstrap defaults.

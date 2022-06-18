@@ -1,8 +1,10 @@
-<header class="p-3 bg-light text-dark">
-    <nav class="navbar navbar-expand-sm navbar-light bg-light"
+<header class="p-1 text-dark">
+    <nav id="top-navbar" class="navbar navbar-expand-sm navbar-light bg-light"
          aria-label="Top navigation">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">Site Logo</a>
+            <a class="navbar-brand" href="/">
+                <img style="height:3rem" class="img img-fluid" src="/assets/img/songs-logo.gif">
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#nutshell-top-navigation-menu"
                     aria-controls="nutshell-top-navigation-menu" aria-expanded="false" aria-label="Toggle navigation">
@@ -20,7 +22,7 @@
 
                 </ul>
                 <form>
-                    <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+                    <i class="fas fa-search"></i><a style="text-decoration: none; color:saddlebrown;font-weight: bold" href="/songs"> &nbsp;Search songs</a>
                 </form>
             </div>
         </div>

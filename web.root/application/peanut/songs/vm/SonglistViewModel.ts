@@ -21,6 +21,7 @@ namespace Peanut {
     export class SonglistViewModel extends Peanut.ViewModelBase {
 
         songlist = ko.observableArray<Peanut.ISongListItem>();
+        songlistRight = ko.observableArray<Peanut.ISongListItem>();
         songTypes : ILookupItem[] = [];
         instruments: ILookupItem[] = [];
         currentPage = ko.observable(1);
@@ -37,7 +38,7 @@ namespace Peanut {
         songsFound = ko.observable(false);
 
         currentSearchRequest : ISongSearchRequest = {
-            pageSize: 10,
+            pageSize: 12,
             page: 1
         };
 
@@ -46,9 +47,22 @@ namespace Peanut {
             Peanut.logger.write('Songlist Init');
             let initFilter = me.getPageVarialble('song-type');
             if (initFilter) {
-                me.currentSearchRequest.filter = initFilter;
+                let intval = parseInt(initFilter,10);
+                if ( isNaN(intval) ) {
+                    me.currentSearchRequest.filter = initFilter;
+                    let pg = me.getPageVarialble('pg');
+                    if (pg) {
+                        intval = parseInt(pg, 10);
+                        if (!isNaN(intval) ) {
+                            me.currentSearchRequest.page = intval;
+                        }
+                    }
+                }
+                else {
+                    me.currentSearchRequest.page = intval;
+                }
             }
-                me.application.registerComponents('@pnut/pager,@pnut/lookup-select', () => {
+            me.application.registerComponents('@pnut/pager,@pnut/lookup-select', () => {
                     me.application.loadResources([
                         '@pnut/selectListObservable'
                     ], () => {
@@ -97,11 +111,12 @@ namespace Peanut {
                                 else {
                                     me.filterTitle('All '+response.songCount+' Songs');
                                 }
-
+                                me.setReturnLink();
                                 me.setList(response);
                                 me.searchTypeController.subscribe();
                                 me.filterController.subscribe();
-
+                                this.songsFound(response.songCount > 0);
+                                this.maxPages(response.pageCount);
                                 me.bindDefaultSection();
                                 successFunction();
                             }
@@ -115,12 +130,38 @@ namespace Peanut {
 
         }
 
-        setList = (response: ISongListResponse) => {
-            this.songlist(response.pages);
-            if (this.currentSearchRequest.page === 1) {
-                this.songsFound(response.songCount > 0);
-                this.maxPages(response.pageCount);
+        setReturnLink = () => {
+            let me = this;
+            let link = '/songs';
+            let filter = me.filterController.selected();
+            if (filter) {
+                link += '/' + filter.code;
+                sessionStorage.setItem('songsearchtitle',filter.name);
             }
+            else {
+                sessionStorage.removeItem('songsearchtitle');
+            }
+            if (this.currentSearchRequest.page && this.currentSearchRequest.page > 1) {
+                link += '/' + this.currentSearchRequest.page;
+            }
+            sessionStorage.setItem('songsearch',link);
+        }
+
+        setList = (response: ISongListResponse) => {
+            let left : ISongListItem[] = [];
+            let right: ISongListItem[] = [];
+            let odd = true;
+            response.pages.forEach((song: ISongListItem) => {
+                if (odd) {
+                    left.push(song);
+                }
+                else {
+                    right.push(song);
+                }
+                odd = !odd;
+            })
+            this.songlist(left);
+            this.songlistRight(right);
             this.currentPage(this.currentSearchRequest.page);
         }
 
@@ -189,12 +230,21 @@ namespace Peanut {
                                 (me.currentSearchRequest.searchType && me.currentSearchRequest.searchType > 0) ||
                                 (me.currentSearchRequest.order && me.currentSearchRequest.order > 1))
                         )
+                        if (request.page == 1) {
+                            this.songsFound(response.songCount > 0);
+                            this.maxPages(response.pageCount);
+                        }
+
                         me.setList(response);
+
                         if (me.currentSearchRequest.page == 1) {
                             me.filterController.setValue(me.currentSearchRequest.filter || null);
-                            let filterItem = me.filterController.selected();
+                        }
+                        let filterItem = me.filterController.selected();
+                        if (me.currentSearchRequest.page == 1) {
                             me.filterTitle(filterItem ? filterItem.description : response.songCount + ' Songs');
                         }
+                        me.setReturnLink();
                         if (onSuccess) {
                             onSuccess();
                         }

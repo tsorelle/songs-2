@@ -1,5 +1,14 @@
 <div id="songpage-load-message"><span class="fa fa-spinner fa-pulse fa-2x" style="color:lightgrey"></span></div>
 <div id="songpage-view-container" class="row" style="display: none">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Home</a></li>
+      <li class="breadcrumb-item"><a data-bind="attr:{href:songsLink}">Songs</a></li>
+      <li class="breadcrumb-item" data-bind="visible:returnLink"><a data-bind="attr:{href:returnLink},text:returnTitle"></a></li>
+      <li class="breadcrumb-item active" aria-current="page"><span data-bind="text:contentid"></span></li>
+    </ol>
+  </nav>
+
   <div class="col-md-12">
     <!-- view model bindings -->
     <!-- for smoke test - define planet in the view model -->

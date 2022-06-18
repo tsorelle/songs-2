@@ -8,7 +8,7 @@
 		</nutshell>
 	</about>
 	<help title="Help Pages" icon="fas fa-question-circle" description="help"/>
-	<tools title="Tools" description="Utilities for administration" icon="fas fa-cog">
+	<tools title="Tools" description="Utilities for administration" roles="administrator" icon="fas fa-cog">
 		<tests title="Test Pages" description="Pages for testing.">
 			<simpletest title="Simple Test" description="Basic smoke test" roles="" />
 			<modaltest title="Modal Test" description="Test modal dialogs" roles="" />

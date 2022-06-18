@@ -4,6 +4,10 @@
     font-weight: bold;
     color: #41464b;
   }
+  .song-icon {
+    height: 5.5rem;
+    min-width: 5.5rem;
+  }
 </style>
 <div id="songlist-load-message"><span class="fa fa-spinner fa-pulse fa-2x" style="color:lightgrey"></span></div>
 <div id="songlist-view-container" style="display: none">
@@ -66,21 +70,30 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-6">
         <table class="table">
-          <thead>
-          <tr>
-            <th>&nbsp;</th>
-            <th scope="col">Name</th>
-            <th scope="col">Description</th>
-          </tr>
-          </thead>
           <tbody data-bind="foreach:songlist">
             <tr>
               <!-- th scope="row">1</th -->
-              <td><a data-bind="attr:{href:songUrl}"> <img class="img img-thumbnail" data-bind="attr:{src:iconsrc,alt:name}"></a></td>
-              <td><a class="songlistlink" data-bind="attr:{href:songUrl},text:name"></a></td>
-              <td data-bind="text:description"></td>
+              <td><a data-bind="attr:{href:songUrl}"> <img class="img img-thumbnail song-icon" data-bind="attr:{src:iconsrc,alt:name}"></a></td>
+              <td>
+                <a class="songlistlink" data-bind="attr:{href:songUrl},text:name"></a>
+                <p data-bind="text:description"></p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-6">
+        <table class="table">
+          <tbody data-bind="foreach:songlistRight">
+            <tr>
+              <!-- th scope="row">1</th -->
+              <td><a data-bind="attr:{href:songUrl}"> <img class="img img-thumbnail song-icon" data-bind="attr:{src:iconsrc,alt:name}"></a></td>
+              <td>
+                <a class="songlistlink" data-bind="attr:{href:songUrl},text:name"></a>
+                <p data-bind="text:description"></p>
+              </td>
             </tr>
           </tbody>
         </table>
