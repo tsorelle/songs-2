@@ -31,7 +31,7 @@ class UsersessionsRepository extends \Tops\db\TEntityRepository
     {
         $sql = 'DELETE FROM '.$this->getTableName().' WHERE signedin >= (NOW() - INTERVAL 7 DAY) OR userId = ?';
         $this->executeStatement($sql,[$userId]);
-        $sql = 'INSERT INTO `twoquake_nuts`.`pnut_usersessions` (sessionid,userId) VALUES (?,?)';
+        $sql = 'INSERT INTO '.$this->getTableName().' (sessionid,userId) VALUES (?,?)';
         $this->executeStatement($sql,[$sessionId,$userId]);
     }
 
