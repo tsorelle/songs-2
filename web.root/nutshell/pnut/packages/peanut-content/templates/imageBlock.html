@@ -1,0 +1,37 @@
+<div>
+    <div class="content-edit-icon" data-bind="visible:canedit" >
+        <a href="#" data-bind="click:edit"><i class="far fa-edit content-edit-icon-button"></i></a>
+    </div>
+    <div data-bind="hidden:newimage">
+        <img data-bind="attr:{src:imageSrc()}"
+             class="img img-fluid">
+    </div>
+    <div data-bind="visible:newimage">
+        New image uploaded.
+    </div>
+</div>
+
+<div data-bind="attr: {id: editorModalId}"   class="modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" data-bind="text:editorTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div>
+                <input type="file" class="btn btn-default"
+                       data-bind="attr: {id: imageUploadId}, event: { change: onFileSelection}"
+                       placeholder="Select a file or drag from explorer"/>
+                </div>
+                <p data-bind="visible:invalidFile" class="text-danger" style="background-color: yellow">
+                    Invalid file.  Must be *.jpg, *.gif, or *.png
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary me-5" data-bind="click:save,visible:selected">Save changes</button>
+                <a href="#" data-bs-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+</div>

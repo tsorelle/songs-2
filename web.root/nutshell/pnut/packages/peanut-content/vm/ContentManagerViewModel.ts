@@ -13,7 +13,7 @@ namespace PeanutContent {
         active: any;
     }
 
-    export class ContentManagerViewModel extends Peanut.ViewModelBase implements IContentOwner {
+    export class ContentManagerViewModel extends Peanut.ViewModelBase implements IContentOwner, IImageComponentOwner {
         // observables
         content = ko.observable('');
         canedit = ko.observable(true);
@@ -30,7 +30,8 @@ namespace PeanutContent {
                 me.application.registerComponents([
                     '@pnut/modal-confirm',
                     '@pnut/clean-html',
-                    '@pkg/peanut-content/content-block'
+                    '@pkg/peanut-content/content-block',
+                    '@pkg/peanut-content/image-block'
                 ], () => {
                     me.controller = new PeanutContent.contentController(me);
                     me.getContent(1,()=> {
@@ -69,6 +70,29 @@ namespace PeanutContent {
 
         afterDatabind = () => {
             this.controller.initialize();
+        }
+        onFileSelected(files: any, imagePath: string, imageName: string) {
+            // alert('File selected: ' + imagePath + '/' + imageName);
+            let me=this;
+            let request : IImageUploadRequest = {
+                imageurl: imagePath,
+                filename: imageName
+            }
+            me.showWaitMessage('Uploading image');
+            me.services.postForm( 'peanut.content::UploadImage', request, files, null,
+                function (serviceResponse: Peanut.IServiceResponse) {
+                    if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+
+                    }
+                    else {
+                    }
+                }).fail(() => {
+                    let trace = me.services.getErrorInformation();
+                }).always(() => {
+                    me.application.hideWaiter();
+                });
+
+
         }
     }
 }

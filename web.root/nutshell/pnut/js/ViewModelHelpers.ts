@@ -143,9 +143,12 @@ namespace Peanut {
         };
 
         public static getSelectedFiles(elementId: string) {
-            let element = <any>jQuery(elementId);
-            if (element && element.length && element[0].files) {
-                return element[0].files;
+            let input = <any> document.getElementById(elementId);
+            if (input && input.files) {
+                let filelist = <any>input.files;
+                if (filelist && filelist.length) {
+                    return filelist;
+                }
             }
             return null;
         }

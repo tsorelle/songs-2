@@ -12,6 +12,9 @@ declare namespace PeanutContent {
         handleContentNotification(contentId: string, message: string)
     }
 
+    interface IImageComponentOwner {
+        onFileSelected (files: any, imagePath: string, imageName: string);
+    }
     interface IContentComponent {
         contentId: string;
         save();
@@ -30,5 +33,10 @@ declare namespace PeanutContent {
         cancelAll();
         getComponent(contentId);
         sendNotification(contentId: string, message: string)
+    }
+
+    interface IImageUploadRequest {
+        filename: string;
+        imageurl: string;
     }
 }
