@@ -12,6 +12,15 @@ use \Tops\db\TEntityRepository;
 
 class TagsRepository extends \Tops\db\TEntityRepository
 {
+    public function getLinkList(string $url,string $typeCode)
+    {
+        $sql = 'select id, name, description, type, concat(?,code) as url'.
+            ' FROM '.$this->getTableName().' WHERE `type` = ?'.
+            ' ORDER BY `name`';
+        $stmt = $this->executeStatement($sql,[$url, $typeCode]);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
     protected function getTableName() {
         return 'tls_tags';
     }

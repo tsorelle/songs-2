@@ -60,4 +60,18 @@ a.no-decoration {
       padding: 0;
     }
 }
+.content-container {
+  width: 100%;
+}
+.content-container textarea {
+  width: 100%;
+  height: 100%;
+}
+.content-edit-icon {
+  float:right;
+}
+.content-edit-icon-button {
+  width: 2rem;
+  height: 2rem;
+}
 

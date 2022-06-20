@@ -145,6 +145,10 @@ declare namespace Peanut {
         active? : any;
     }
 
+    export interface ILinkListItem extends ILookupItem {
+        url: string;
+    }
+
     export interface IKeyLookupItem {
         // this was ILookupItem in old scym code
         Key: any;

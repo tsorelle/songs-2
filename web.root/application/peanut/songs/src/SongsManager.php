@@ -21,6 +21,7 @@ class SongsManager
         return $this->songsRepository;
     }
 
+
     private $songpagesRepository;
     private function getSongpagesRepository() : SongpagesRepository {
         if (!isset($this->songpagesRepository)) {
@@ -86,11 +87,23 @@ class SongsManager
     }
 
     public function getSongPage($songId) {
-        $page = $this->getSongpagesRepository()->getPageBySongId($songId);
-        $page->song = $this->getSongsRepository()->get($songId);
-        $songTagsRepo = $this->getSongTagsRepository();
-        $page->types = $songTagsRepo->getTagValues($songId,'type');
-        $page->instruments = $songTagsRepo->getTagValues($songId,'instrument');
+        if (is_numeric($songId)) {
+            $song = $this->getSongsRepository()->get($songId);
+        }
+        else {
+            $song = $this->getSongsRepository()->getSingleEntity('contentid=?',[$songId]);
+        }
+        if (!$song) {
+            return false;
+        }
+        $repo = $this->getSongpagesRepository();
+        $page = $repo->getPageBySongId($song->id);
+        if ($page) {
+            $page->song = $song;
+            $songTagsRepo = $this->getSongTagsRepository();
+            $page->types = $songTagsRepo->getTagValues($song->id, 'type');
+            // $page->instruments = $songTagsRepo->getTagValues($songId, 'instrument');
+        }
 
         return $page;
     }
@@ -214,6 +227,11 @@ class SongsManager
             implode(' ',$textArray));
         
     }
-    
+
+    public function getSongTypeLinks()
+    {
+        return $this->getTagsRepository()->getLinkList('/songs/','type');
+    }
+
 
 }

@@ -15,7 +15,7 @@ declare namespace Peanut {
         title : string,
         description : string,
         lyrics : string,
-        publicdomain : string,
+        publicdomain : any,
         contenttype : string,
     }
 
@@ -26,13 +26,13 @@ declare namespace Peanut {
         commentary : string,
         active : any,
         postedDate : any,
-        contenttype : string,
+        // contenttype : string,
         pageimage : string,
         imagecaption : string,
         youtubeId : string,
         hasicon : any,
         hasthumbnail : any,
-        instruments? : number[],
+        // instruments? : number[],
         types? : number[]
     }
 
