@@ -75,3 +75,23 @@ a.no-decoration {
   height: 2rem;
 }
 
+.song-list-button {
+  position: fixed;
+  top: 8rem;
+  right:0;
+  width:3rem;
+}
+#song-list-button-expanded {
+  width: 12rem;
+  background-color: white;
+  border: 1px solid green;
+  border-right: none;
+  font-weight: bold;
+}
+
+.song-model-header {
+  background-color: $panel-background;
+  h1 {
+    color: $secondary;
+  }
+}

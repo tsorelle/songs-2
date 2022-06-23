@@ -4,7 +4,8 @@
 /// <reference path='../../../../nutshell/pnut/core/peanut.d.ts' />
 /// <reference path='../../../../nutshell/pnut/js/multiSelectObservable.ts' />
 /// <reference path='../../../../nutshell/pnut/packages/peanut-content/js/contentController.ts' />
-
+/// <reference path='../../../../nutshell/pnut/packages/peanut-youtube/js/YTFrameController.ts' />
+/// <reference path='../../../../nutshell/typings/bootstrap-5/index.d.ts' />
 
 // Module
 namespace Peanut {
@@ -172,7 +173,14 @@ namespace Peanut {
         canedit = ko.observable(false);
 
         contentController: PeanutContent.contentController;
-
+        // youtube
+        youtubeController : PeanutYoutube.YTFrameController;
+        videoOn = ko.observable(false);
+        videoModal : any;
+        youTubeEditModal : any;
+        player: YT.Player;
+        playerElementId = 'video-frame-1';
+        youtubeCodeBuffer = ko.observable('');
 
         init(successFunction?: () => void) {
             let me = this;
@@ -202,13 +210,15 @@ namespace Peanut {
                     '@pnut/multiSelectObservable',
                     '@pkg/peanut-content/contentController.js',
                     '@lib:tinymce',
-                    '@pnut/ViewModelHelpers.js'
+                    '@pnut/ViewModelHelpers.js',
+                    '@pkg/peanut-youtube/YTFrameController.js'
                 ], () => {
                     me.application.registerComponents([
                         '@pnut/modal-confirm',
                         '@pnut/clean-html',
                         '@pkg/peanut-content/content-block',
                         '@pkg/peanut-content/image-block',
+                        '@pkg/peanut-youtube/youtube-frame',
                         'songs/lyrics-block'
                     ], () => {
                         me.contentController = new PeanutContent.contentController(me);
@@ -248,6 +258,8 @@ namespace Peanut {
 
         afterDatabind = () => {
             this.contentController.initialize();
+            PeanutYoutube.YTFrameController.initApi();
+            this.youtubeController = PeanutYoutube.YTFrameController.instance;
         }
 
         edit = () => {
@@ -258,7 +270,82 @@ namespace Peanut {
         }
         save = () => {
             this.songform.editMode(false)
+            // todo: implement update
 
         }
+
+        // youtube routines
+        showVideo  = () => {
+            if (!this.videoModal) {
+                let modalElement = document.getElementById('songPlayer1');
+                modalElement.addEventListener('hidden.bs.modal',this.closeVideo);
+                this.videoModal = new bootstrap.Modal(modalElement);
+            }
+            this.videoModal.show();
+            this.videoOn(true);
+        }
+
+        showYoutubeEdit = () => {
+            this.youtubeCodeBuffer(this.songform.youtubeId());
+            if (!this.youTubeEditModal) {
+                let modalElement = document.getElementById('youtube-edit');
+                this.youTubeEditModal = new bootstrap.Modal(modalElement);
+            }
+            this.youTubeEditModal.show();
+        }
+
+        closeVideo  = () => {
+            let player = this.getPlayer()
+            let state = player.getPlayerState();
+            if (state == YT.PlayerState.PLAYING) {
+                player.pauseVideo();
+            }
+            this.videoOn(false);
+        }
+
+
+        getPlayer = () => {
+            if (!this.player) {
+                this.player = this.youtubeController.getPlayer(this.playerElementId);
+            }
+            return this.player;
+        }
+
+        createPlayers = () => {
+            let id = this.playerElementId;
+            this.player = new YT.Player(id, {
+                events: {
+                    'onReady': this.onPlayerReady,
+                    'onStateChange': this.onPlayerStateChange
+                }
+            });
+            // this.ready = true;
+            return [<PeanutYoutube.IPlayerItem> {
+                id: this.playerElementId,
+                player: this.player
+            }]
+        }
+
+        onPlayerReady = (_event) => {
+            // this.status('ready');
+        }
+
+        onPlayerStateChange = (event) => {
+            // this.status(PeanutYoutube.YTFrameController.getPlayerStatus(event.data));
+        }
+
+
+        saveYoutubeCode = () => {
+            let code = this.youtubeCodeBuffer();
+            code = code.trim();
+            if (code.length) {
+
+                let parts = code.split('/');
+                code = parts.pop();
+            }
+            this.songform.youtubeId(code);
+            this.youTubeEditModal.hide();
+        }
+
     }
 }
