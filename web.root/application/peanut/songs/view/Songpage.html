@@ -1,3 +1,19 @@
+<style>
+   .song-list-button {
+     position: fixed;
+     top: 8rem;
+     right:0;
+     width:3rem;
+   }
+   #song-list-button-expanded {
+     width: 12rem;
+     background-color: white;
+     border: 1px solid green;
+     border-right: none;
+     font-weight: bold;
+   }
+
+</style>
 <div id="songpage-load-message"><span class="fa fa-spinner fa-pulse fa-2x" style="color:lightgrey"></span></div>
 <div id="songpage-view-container" class="row" style="display: none">
   <nav aria-label="breadcrumb">
@@ -9,10 +25,76 @@
     </ol>
   </nav>
 
-  <div class="col-md-12">
+  <div data-bind="event: { mouseover: toggleMoreSongs, mouseout: toggleMoreSongs }">
+  <button class="btn btn-secondary song-list-button" id="song-list-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+          aria-controls="offcanvasRight" data-bind="visible:mousingOverButton">
+    <i class="fas fa-music"></i>
+  </button>
+
+  <button class="btn btn-secondary-outline song-list-button" id="song-list-button-expanded" type="button" data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasRight"
+          aria-controls="offcanvasRight" data-bind="hidden:mousingOverButton">
+    More songs ...
+
+  </button>
+  </div>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel">Offcanvas right</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div>
+        Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+      </div>
+      <div class="dropdown mt-3">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
+          Dropdown button
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <li><a class="dropdown-item" href="#">Action</a></li>
+          <li><a class="dropdown-item" href="#">Another action</a></li>
+          <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12" data-bind="descendantsComplete: afterDatabind">
     <!-- view model bindings -->
     <!-- for smoke test - define planet in the view model -->
-    <h1><span data-bind="text: contentid"></span> </h1>
+    <div id="songpage-header" class="row">
+      <div class="col-md-12">
+        <div class="edit-bar" data-bind="visible:canedit">
+          <div data-bind="hidden:songform.editMode">
+            <a href="#" data-bind="click:edit" ><i class="far fa-edit"></i>&nbsp;Edit</a>
+          </div>
+          <div data-bind="visible:songform.editMode">
+            <a href="#"  class="me-3" data-bind="click:save"><i class="fas fa-check"></i>&nbsp;Save</a>
+            <a href="#"  data-bind="click:cancelEdit"><i class="far fa-window-close"></i>&nbsp;Cancel</a>
+          </div>
+        </div>
+        <h1 data-bind="text:songform.title"></h1>
+      </div>
+    </div>
+    <div id="song-page-body" class="row pb-3">
+      <div class="col-md-9">
+        <content-block params="controller: contentController, id: 'commentary-content', source: songform.commentary, canedit:songform.editMode"></content-block>
+        <h4 data-bind="visible:songform.lyrics">Lyrics</h4>
+        <lyrics-block params="lyrics:songform.lyrics, canedit:songform.editMode"></lyrics-block>
+      </div>
+      <div class="col-md-3">
+        <div>
+        <image-block params="id:'page-image',owner:self,
+            imagepath:'/assets/img/songs',imagename:songform.pageimage,
+            canedit:songform.editMode"></image-block>
+        </div>
+        <div>
+          content follows
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

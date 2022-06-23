@@ -1,13 +1,15 @@
-// required for all view models:
 /// <reference path='../../../../nutshell/pnut/core/ViewModelBase.ts' />
 /// <reference path='../../../../nutshell/typings/knockout/knockout.d.ts' />
 /// <reference path='../js/songs.d.ts' />
 /// <reference path='../../../../nutshell/pnut/core/peanut.d.ts' />
 /// <reference path='../../../../nutshell/pnut/js/multiSelectObservable.ts' />
+/// <reference path='../../../../nutshell/pnut/packages/peanut-content/js/contentController.ts' />
 
 
 // Module
 namespace Peanut {
+    import IContentOwner = PeanutContent.IContentOwner;
+
     interface IGetSongPageResponse {
         page: ISongPage;
     }
@@ -40,7 +42,6 @@ namespace Peanut {
         introduction = ko.observable('');
         commentary = ko.observable('');
         postedDate = ko.observable();
-        contenttype = ko.observable('');
         pageimage = ko.observable('');
         imagecaption = ko.observable('');
         youtubeId = ko.observable('');
@@ -77,8 +78,6 @@ namespace Peanut {
             this.title(song.title);
             this.lyrics(song.lyrics);
             this.publicDomain(song.publicdomain == 1);
-            this.contenttype(song.contenttype);
-
         }
 
         clear = () => {
@@ -105,16 +104,13 @@ namespace Peanut {
             this.description('');
             this.title('');
             this.lyrics('');
-            this.contenttype('html');
         }
 
         validate = () => {
             this.errorMessage('');
-            let response: ISongPage = {
+            let request: ISongPage = {
                 id : this.pageid(),
                 active: this.active(),
-                hasicon: this.hasicon() ? 1 : 0,
-                hasthumbnail: this.hasthumbnail() ? 1 : 0,
                 youtubeId: this.youtubeId(),
                 song: this.getSongObject(),
                 imagecaption: this.imagecaption().trim(),
@@ -125,21 +121,21 @@ namespace Peanut {
                 introduction: this.introduction().trim()
             };
 
-            if (!response.introduction) {
+            if (!request.introduction) {
                 this.errorMessage('Introduction required');
                 return false;
             }
 
-            if (!response.song.title) {
+            if (!request.song.title) {
                 this.errorMessage('Song title is required');
                 return false;
             }
-            if (!response.song.description) {
+            if (!request.song.description) {
                 this.errorMessage('Song description is required');
                 return false;
             }
 
-            return response;
+            return request;
 
         }
 
@@ -150,8 +146,7 @@ namespace Peanut {
                 description: this.description().trim(),
                 contentid: this.contentid().trim(),
                 id: this.songid(),
-                publicdomain: this.publicDomain() ? 1 : 0,
-                contenttype: this.contenttype()
+                publicdomain: this.publicDomain() ? 1 : 0
             }
         }
         edit = () => {
@@ -165,7 +160,8 @@ namespace Peanut {
         }
     }
 
-    export class SongpageViewModel extends Peanut.ViewModelBase {
+    export class SongpageViewModel extends Peanut.ViewModelBase
+        implements IContentOwner {
         contentid = ko.observable('Mars');
         returnLink = ko.observable('');
         songsLink = ko.observable('/songs');
@@ -173,6 +169,10 @@ namespace Peanut {
         songTypeLinks = ko.observableArray<ILinkListItem>();
         // typesSelectController : IMultiSelectObservable;
         songform : SongPageObservable;
+        canedit = ko.observable(false);
+
+        contentController: PeanutContent.contentController;
+
 
         init(successFunction?: () => void) {
             let me = this;
@@ -199,26 +199,65 @@ namespace Peanut {
             me.contentid(songid);
             me.application.registerComponents('@pnut/pager,@pnut/lookup-select,@pnut/multi-select', () => {
                 me.application.loadResources([
-                    '@pnut/multiSelectObservable'
+                    '@pnut/multiSelectObservable',
+                    '@pkg/peanut-content/contentController.js',
+                    '@lib:tinymce',
+                    '@pnut/ViewModelHelpers.js'
                 ], () => {
-                    me.services.executeService('Peanut.songs::GetSongPage',songid,
-                        (serviceResponse: Peanut.IServiceResponse) => {
-                            if (serviceResponse.Result == Peanut.serviceResultSuccess) {
-                                let response = <IGetSongPageInitResponse>serviceResponse.Value;
-                                me.songTypeLinks(response.songTypeLinks);
-                                me.songform = new SongPageObservable(response.canedit,
-                                    response.types,response.page);
+                    me.application.registerComponents([
+                        '@pnut/modal-confirm',
+                        '@pnut/clean-html',
+                        '@pkg/peanut-content/content-block',
+                        '@pkg/peanut-content/image-block',
+                        'songs/lyrics-block'
+                    ], () => {
+                        me.contentController = new PeanutContent.contentController(me);
 
-                                me.bindDefaultSection();
-                                successFunction();
+                        me.services.executeService('Peanut.songs::GetSongPage',songid,
+                            (serviceResponse: Peanut.IServiceResponse) => {
+                                if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                                    let response = <IGetSongPageInitResponse>serviceResponse.Value;
+                                    me.songTypeLinks(response.songTypeLinks);
+                                    me.songform = new SongPageObservable(response.canedit,
+                                        response.types,response.page);
+                                    me.canedit(response.canedit);
+
+                                    me.bindDefaultSection();
+                                    successFunction();
+                                }
                             }
-                        }
-                    ).fail(() => {
-                        // let trace = me.services.getErrorInformation();
-                        me.application.hideWaiter();
+                        ).fail(() => {
+                            // let trace = me.services.getErrorInformation();
+                            me.application.hideWaiter();
+                        });
                     });
                 });
             });
+
+        }
+
+        handleContentNotification(contentId: string, message: string) {
+            console.log(contentId = ': '+message);
+        }
+
+        mousingOverButton = ko.observable(true);
+        toggleMoreSongs = () => {
+            let state = this.mousingOverButton();
+            this.mousingOverButton(!state);
+        }
+
+        afterDatabind = () => {
+            this.contentController.initialize();
+        }
+
+        edit = () => {
+            this.songform.editMode(true)
+        }
+        cancelEdit = () => {
+            this.songform.editMode(false)
+        }
+        save = () => {
+            this.songform.editMode(false)
 
         }
     }

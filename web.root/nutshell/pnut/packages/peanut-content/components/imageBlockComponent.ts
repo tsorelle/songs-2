@@ -24,6 +24,7 @@ namespace PeanutContent {
         imageName: string;
         editing = ko.observable(false);
         canedit : KnockoutObservable<boolean>;
+        noimage = ko.observable(false);
 
         editorModal : any;
         editorTitle = ko.observable('Upload or replace');
@@ -55,7 +56,6 @@ namespace PeanutContent {
             if (params.id) {
                 me.editorModalId('modal-'+ params.id);
                 me.imageUploadId('upload-'+params.id);
-
             }
 
             me.imageName = (ko.isObservable(params.imagename)) ?
@@ -65,7 +65,9 @@ namespace PeanutContent {
                 params.imagepath() : params.imagepath;
 
             // let src = me.imagePath + '/' + me.imageName;
-            me.imageSrc(me.imagePath + '/' + me.imageName);
+            if (me.imageName !== null) {
+                me.imageSrc(me.imagePath + '/' + me.imageName);
+            }
 
             if (params.owner) {
                 me.owner = params.owner();

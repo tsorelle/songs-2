@@ -15,7 +15,8 @@ class PrepdataTest extends TestScript
     public function execute()
     {
         $repo = new SongpagesRepository();
-        $this->updateIndex($repo);
+        $this->convertIntro($repo);
+        // $this->updateIndex($repo);
         // $this->updateIcons($repo);
         // $this->tempFix($repo);
         // $this->parseSongData($repo);
@@ -257,5 +258,22 @@ class PrepdataTest extends TestScript
         foreach ($pages as $page) {
             $manager->updateSongIndex($page);
         }
+    }
+
+    private function convertIntro(SongpagesRepository $repo)
+    {
+        $pages = $repo->getEntityCollection('contentType=?',['text']);
+        $count = count($pages);
+        foreach ($pages as $page) {
+            $content = trim($page->commentary);
+            if (substr($content,0,1) !== '<') {
+                $page->commentary = '<p>'.$content.'</p>';
+                print "Updated page# $page->id\n";
+            }
+            // $page->introduction = '<p>'.$page->introduction.'</p>';
+            $repo->update($page);
+        }
+        print "Updated $count\n";
+
     }
 }

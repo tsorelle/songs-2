@@ -50,7 +50,6 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
         'commentary'=>PDO::PARAM_STR,
         'active'=>PDO::PARAM_STR,
         'postedDate'=>PDO::PARAM_STR,
-        'contenttype'=>PDO::PARAM_STR,
         'pageimage'=>PDO::PARAM_STR,
         'imagecaption'=>PDO::PARAM_STR,
         'youtubeId'=>PDO::PARAM_STR,

@@ -15,8 +15,7 @@ declare namespace Peanut {
         title : string,
         description : string,
         lyrics : string,
-        publicdomain : any,
-        contenttype : string,
+        publicdomain : any
     }
 
     interface ISongPage {
@@ -26,13 +25,11 @@ declare namespace Peanut {
         commentary : string,
         active : any,
         postedDate : any,
-        // contenttype : string,
         pageimage : string,
         imagecaption : string,
         youtubeId : string,
-        hasicon : any,
-        hasthumbnail : any,
-        // instruments? : number[],
+        hasicon? : any,
+        hasthumbnail? : any,
         types? : number[]
     }
 

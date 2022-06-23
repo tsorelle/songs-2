@@ -1,0 +1,43 @@
+<div class="row" data-bind="style:{'font-size': textStyle()}">
+    <div class="content-container">
+        <div class="content-edit-icon" data-bind="visible:canedit" style="float: right" >
+            <a href="#" data-bind="click:edit"><i class="far fa-edit content-edit-icon-button"></i></a>
+        </div>
+
+        <div data-bind="foreach:verses1, css:{'col-md-6': twoColumns}">
+            <div data-bind="foreach:lines" style="padding-bottom: 1.5ex">
+                <div>
+                    <span data-bind="text:$data"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" data-bind="visible:twoColumns, foreach:verses2">
+            <div data-bind="foreach:lines" style="padding-bottom: 1.5ex">
+                <div>
+                    <span data-bind="text:$data"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div data-bind="attr: {id: editorModalId}"   class="modal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" data-bind="text:editorTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="editor-block">
+                    <textarea rows="16" class="form-control" data-bind="value:textBuffer, attr: {id: textEditorId}"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary me-5" data-bind="click:save">Save changes</button>
+                <a href="#" data-bs-dismiss="modal">Close</a>
+            </div>
+        </div>
+    </div>
+</div>

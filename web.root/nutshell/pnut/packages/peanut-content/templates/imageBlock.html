@@ -1,13 +1,27 @@
-<div>
-    <div class="content-edit-icon" data-bind="visible:canedit" >
-        <a href="#" data-bind="click:edit"><i class="far fa-edit content-edit-icon-button"></i></a>
+<div data-bind="hidden:imageSrc">
+    <div data-bind="visible:canedit">
+        <span class="me-3"><em><strong>No image uploaded.</strong></em></span> <a href="#" data-bind="click:edit"><i class="far fa-edit content-edit-icon-button"></i></a>
     </div>
-    <div data-bind="hidden:newimage">
+</div>
+<div class="content-container" data-bind="visible:imageSrc">
+    <div data-bind="hidden:newimage"
+        style="overflow: hidden;
+       position: relative;"
+    >
         <img data-bind="attr:{src:imageSrc()}"
-             class="img img-fluid">
+             class="img img-fluid img-thumbnail" style="min-width:100%">
+        <div class="image.content-edit-icon" data-bind="visible:canedit"
+             style="position: absolute;
+                top: 1rem;
+                right: 0.4rem;"
+        >
+            <a href="#" data-bind="click:edit"><i class="far fa-edit content-edit-icon-button"></i></a>
+        </div>
     </div>
-    <div data-bind="visible:newimage">
-        New image uploaded.
+    <div data-bind="visible:newimage" >
+        <div>
+            <span class="me-3"><em><strong>New image uploaded.<br> Refresh to view.</strong></em></span> <a href="#" data-bind="click:edit"><i class="far fa-edit content-edit-icon-button"></i></a>
+        </div>
     </div>
 </div>
 

@@ -14,7 +14,6 @@ class Songpage  extends \Tops\db\TAbstractEntity
     public $commentary;
     public $active;
     public $postedDate;
-    public $contenttype;
     public $pageimage;
     public $imagecaption;
     public $youtubeId;
