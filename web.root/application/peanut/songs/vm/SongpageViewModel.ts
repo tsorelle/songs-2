@@ -6,10 +6,12 @@
 /// <reference path='../../../../nutshell/pnut/packages/peanut-content/js/contentController.ts' />
 /// <reference path='../../../../nutshell/pnut/packages/peanut-youtube/js/YTFrameController.ts' />
 /// <reference path='../../../../nutshell/typings/bootstrap-5/index.d.ts' />
+/// <reference path='../../../../nutshell/pnut/packages/peanut-content/js/peanutcontent.d.ts' />
 
 // Module
 namespace Peanut {
     import IContentOwner = PeanutContent.IContentOwner;
+    import IImageComponentOwner = PeanutContent.IImageComponentOwner;
 
     interface IGetSongPageResponse {
         page: ISongPage;
@@ -37,13 +39,13 @@ namespace Peanut {
 
         songid = ko.observable();
         pageid = ko.observable();
-        contentid = ko.observable('');
+        contentId = ko.observable('');
         title = ko.observable('');
         description = ko.observable('');
         lyrics = ko.observable('');
         introduction = ko.observable('');
         commentary = ko.observable('');
-        postedDate = ko.observable();
+        postedDate = ko.observable('');
         pageimage = ko.observable('');
         imagecaption = ko.observable('');
         youtubeId = ko.observable('');
@@ -52,8 +54,17 @@ namespace Peanut {
         publicDomain = ko.observable(true);
         active = ko.observable(true);
         errorMessage = ko.observable('');
+        defaultImageName = ko.observable('');
+        thumbnailImageName = ko.observable('');
+
+        original : ISongPage;
+
+        revert = ()  => {
+            this.assign(this.original);
+        }
 
         assign = (page: ISongPage) => {
+            this.original = page;
             this.errorMessage('');
             this.typesController.setValues(page.types);
             this.editMode(false);
@@ -70,12 +81,13 @@ namespace Peanut {
             this.youtubeId(page.youtubeId);
             this.hasicon(page.hasicon == 1);
             this.hasthumbnail(page.hasthumbnail == 1);
+            this.defaultImageName(page.song.contentid + '.jpg');
             this.active(page.active == 1);
         }
         
         assignSong = (song: ISong) => {
             this.songid(song.id);
-            this.contentid(song.contentid);
+            this.contentId(song.contentid);
             this.description(song.description);
             this.title(song.title);
             this.lyrics(song.lyrics);
@@ -102,7 +114,7 @@ namespace Peanut {
 
         clearSong = () => {
             this.songid(0);
-            this.contentid('');
+            this.contentId('');
             this.description('');
             this.title('');
             this.lyrics('');
@@ -146,7 +158,7 @@ namespace Peanut {
                 lyrics: this.lyrics().trim(),
                 title: this.title().trim(),
                 description: this.description().trim(),
-                contentid: this.contentid().trim(),
+                contentid: this.contentId().trim(),
                 id: this.songid(),
                 publicdomain: this.publicDomain() ? 1 : 0
             }
@@ -158,12 +170,13 @@ namespace Peanut {
         }
 
         cancel = () => {
+            this.revert();
             this.editMode(false);
         }
     }
 
     export class SongpageViewModel extends Peanut.ViewModelBase
-        implements IContentOwner {
+        implements IContentOwner, IImageComponentOwner {
         contentid = ko.observable('Mars');
         returnLink = ko.observable('');
         songsLink = ko.observable('/songs');
@@ -180,9 +193,11 @@ namespace Peanut {
         videoOn = ko.observable(false);
         videoModal : any;
         youTubeEditModal : any;
+        captionModal : any;
+        dateModal : any;
         player: YT.Player;
         playerElementId = 'video-frame-1';
-        youtubeCodeBuffer = ko.observable('');
+        editBuffer = ko.observable('');
 
         init(successFunction?: () => void) {
             let me = this;
@@ -268,7 +283,9 @@ namespace Peanut {
             this.songform.editMode(true)
         }
         cancelEdit = () => {
-            this.songform.editMode(false)
+            this.songform.cancel();
+            // this.songform.revert();
+            // this.songform.editMode(false)
         }
         save = () => {
             this.songform.editMode(false)
@@ -288,7 +305,7 @@ namespace Peanut {
         }
 
         showYoutubeEdit = () => {
-            this.youtubeCodeBuffer(this.songform.youtubeId());
+            this.editBuffer(this.songform.youtubeId());
             if (!this.youTubeEditModal) {
                 let modalElement = document.getElementById('youtube-edit');
                 this.youTubeEditModal = new bootstrap.Modal(modalElement);
@@ -338,7 +355,7 @@ namespace Peanut {
 
 
         saveYoutubeCode = () => {
-            let code = this.youtubeCodeBuffer();
+            let code = this.editBuffer();
             code = code.trim();
             if (code.length) {
 
@@ -349,5 +366,62 @@ namespace Peanut {
             this.youTubeEditModal.hide();
         }
 
+
+        editCaption = () => {
+            this.editBuffer(this.songform.imagecaption())
+            if (!this.captionModal) {
+                let modalElement = document.getElementById('caption-edit');
+                this.captionModal = new bootstrap.Modal(modalElement);
+            }
+            this.captionModal.show();
+        }
+
+        saveCaption = () => {
+            this.songform.imagecaption(this.editBuffer());
+            this.captionModal.hide();
+            this.editBuffer('');
+        }
+
+        editDate = () => {
+            this.editBuffer(this.songform.postedDate())
+            if (!this.dateModal) {
+                let modalElement = document.getElementById('date-edit');
+                this.dateModal = new bootstrap.Modal(modalElement);
+            }
+            this.dateModal.show();
+        }
+
+        saveDate = () => {
+            this.songform.postedDate(this.editBuffer());
+            this.dateModal.hide();
+        }
+
+        onFileSelected(files: any, imagePath: string, imageName: string) {
+            // todo: replace with upload file routine
+            alert('upload new file');
+        }
+
+        uploadFiles(files: any, imagePath: string, imageName: string) {
+            // alert('File selected: ' + imagePath + '/' + imageName);
+            let me=this;
+            let request : PeanutContent.IImageUploadRequest = {
+                imageurl: imagePath,
+                filename: imageName
+            }
+            me.showWaitMessage('Uploading image');
+            me.services.postForm( 'peanut.content::UploadImage', request, files, null,
+                function (serviceResponse: Peanut.IServiceResponse) {
+                    if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+
+                    }
+                    else {
+                    }
+                }).fail(() => {
+                // let trace = me.services.getErrorInformation();
+            }).always(() => {
+                me.application.hideWaiter();
+            });
+        }
     }
+
 }

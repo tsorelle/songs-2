@@ -1,3 +1,8 @@
+<style>
+    .posted-date {
+      font-style: italic;
+    }
+</style>
 <div id="songpage-load-message"><span class="fa fa-spinner fa-pulse fa-2x" style="color:lightgrey"></span></div>
 <div id="songpage-view-container" class="row" style="display: none">
   <nav aria-label="breadcrumb">
@@ -65,19 +70,32 @@
           </div>
         </div>
         <h1 data-bind="text:songform.title"></h1>
+        <p class="posted-date"> Posted on <span data-bind="text:songform.postedDate"></span>
+          <a href="#" data-bind="click:editDate,visible:songform.editMode">
+            <i class="far fa-edit content-edit-icon-button"></i></a>
+        </p>
       </div>
     </div>
     <div id="song-page-body" class="row pb-3">
       <div class="col-md-9">
-        <content-block params="controller: contentController, id: 'commentary-content', source: songform.commentary, canedit:songform.editMode"></content-block>
+        <content-block params="controller: contentController, id: 'commentary-content',
+        title: 'Edit Song Comentary',
+        source: songform.commentary, canedit:songform.editMode"></content-block>
         <h4 data-bind="visible:songform.lyrics">Lyrics</h4>
         <lyrics-block params="lyrics:songform.lyrics, canedit:songform.editMode"></lyrics-block>
       </div>
       <div class="col-md-3">
         <div>
         <image-block params="id:'page-image',owner:self,
-            imagepath:'/assets/img/songs',imagename:songform.pageimage,
+            imagepath:'/assets/img/songs',
+            imagename:songform.pageimage,
             canedit:songform.editMode"></image-block>
+        </div>
+        <div class="caption-block">
+          <content-block params="controller: contentController,
+            title: 'Edit Image Caption',
+            id: 'caption-content', source: songform.imagecaption,
+            canedit:songform.editMode"></content-block>
         </div>
         <div data-bind="hidden:videoOn" class="row mt-3">
           <div class="col-md-4">
@@ -109,6 +127,56 @@
         </div>
       </div>
     </div>
+    <div id="song-page-properties" class="pb-3" data-bind="visible:songform.editMode">
+      <div class="row">
+        <div class="col-md-12">
+          <hr>
+          <h3>Additional Properties</h3>
+        </div>
+      </div>
+      <div class="row">
+
+        <div class="col-md-2">
+            <h4>Song Icon</h4>
+          <div>
+            <image-block params="id:'icon-image',owner:self,
+            contentId: songform.contentId,
+            imagepath:'/assets/img/songs/icons',
+            canedit:songform.editMode"></image-block>
+          </div>
+
+        </div>
+        <div class="col-md-8">
+          <h4>Song Thumbnail</h4>
+          <div>
+            <image-block params="id:'thumbnail-image',owner:self,
+              contentId: songform.contentId,
+              imagepath:'/assets/img/songs/thumbnails',
+              canedit:songform.editMode"></image-block>
+          </div>
+
+        </div>
+        <div class="col-md-2">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="check-public"
+                   data-bind="checked:songform.publicDomain"
+            >
+            <label class="form-check-label" for="check-public">
+              Public domain
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="" id="check-active"
+                   data-bind="checked:songform.active"
+
+            >
+            <label class="form-check-label" for="check-active">
+              Active
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div id="youtube-edit" class="modal" tabindex="-1">
       <div class="modal-dialog">
@@ -122,7 +190,7 @@
               <div class="p-5">
                 <div class="mb-3">
                   <label for="youtube-update-id" class="form-label">YouTube Link</label>
-                  <input type="text" data-bind="value:youtubeCodeBuffer" class="form-control" id="youtube-update-id" aria-describedby="youtube-update-text">
+                  <input type="text" data-bind="value:editBuffer" class="form-control" id="youtube-update-id" aria-describedby="youtube-update-text">
                   <div id="youtube-update-text" class="form-text">Enter code or full url.</div>
                 </div>
               </div>
@@ -130,6 +198,60 @@
           </div>
           <div class="modal-footer">
             <button type="button" data-bind="click:saveYoutubeCode" class="btn btn-primary">Save changes</button>
+            <a href="#" data-bs-dismiss="modal">Cancel</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="caption-edit" class="modal" tabindex="-1">
+      <div class="modal-dialog   modal-lg">
+        <div class="modal-content">
+          <div class="modal-header song-model-header">
+            <h5 class="modal-title">Edit Image Title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+                <div class="mb-3">
+                  <label for="caption-update" class="form-label">Image caption</label>
+                  <textarea rows="5"
+                         data-bind="value:editBuffer" class="form-control" id="caption-update"
+                         aria-describedby="caption-update-text"
+                  ></textarea>
+                  <div id="caption-update-text" class="form-text">Enter Image caption.</div>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" data-bind="click:saveCaption" class="btn btn-primary">Save changes</button>
+            <a href="#" data-bs-dismiss="modal">Cancel</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="date-edit" class="modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header song-model-header">
+            <h5 class="modal-title">Edit Posted Date</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form>
+                <div class="mb-3">
+                  <label for="date-update" class="form-label">Posted Date</label>
+                  <input type="text" id="date-update"
+                         data-bind="value:editBuffer" class="form-control"
+                         aria-describedby="date-update-text"
+                  >
+                  <div id="date-update-text" class="form-text">Enter posted date as YYYY-MM-DD.</div>
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" data-bind="click:saveDate" class="btn btn-primary">Save changes</button>
             <a href="#" data-bs-dismiss="modal">Cancel</a>
           </div>
         </div>

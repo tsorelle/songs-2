@@ -21,10 +21,11 @@ namespace PeanutContent {
     export class imageBlockComponent {
         imageSrc = ko.observable('');
         imagePath : string;
-        imageName: string;
+        imageName: KnockoutObservable<string>;
+        // imageFileName : KnockoutObservable<string>;
+        useUploadFileName = true;
         editing = ko.observable(false);
         canedit : KnockoutObservable<boolean>;
-        noimage = ko.observable(false);
 
         editorModal : any;
         editorTitle = ko.observable('Upload or replace');
@@ -33,6 +34,8 @@ namespace PeanutContent {
         selected = ko.observable(false);
         invalidFile = ko.observable(false);
         newimage = ko.observable(false);
+        hideimage = ko.observable(false);
+        noimage = ko.observable(false);
 
         owner: IImageComponentOwner = null;
 
@@ -48,8 +51,13 @@ namespace PeanutContent {
                 return;
             }
 
-            if (!params.imagename) {
-                console.error('imageBlockComponent: Parameter "imagename" is required');
+            if (!(params.imagename || params.contentId)) {
+                console.error('imageBlockComponent: Parameter "imagename" or "contentId" is required');
+                return;
+            }
+
+            if (params.imagename && !ko.isObservable(params.imagename)) {
+                console.error('imageBlockComponent: Parameter "imagename" must be an observable');
                 return;
             }
 
@@ -58,16 +66,36 @@ namespace PeanutContent {
                 me.imageUploadId('upload-'+params.id);
             }
 
-            me.imageName = (ko.isObservable(params.imagename)) ?
-                params.imagename() : params.imagename;
+            let imageName = '';
+            if (params.contentId) {
+                imageName =
+                    ko.isObservable(params.contentId) ?
+                        params.contentId() : params.contentId
+                this.useUploadFileName = false;
+            }
+
+            if (params.imagename) {
+                if (ko.isObservable(params.imagename)) {
+                    this.imageName = params.imagename;
+                    imageName = params.imagename();
+                }
+                else {
+                    imageName = params.imagename;
+                }
+            }
+
+            let ext =  imageName.indexOf('.') === -1 ? null : imageName.split('.').pop();
+            if (!ext) {
+                imageName += '.jpg';
+            }
+            me.imageName = ko.observable(imageName);
 
             me.imagePath = (ko.isObservable(params.imagepath)) ?
                 params.imagepath() : params.imagepath;
 
-            // let src = me.imagePath + '/' + me.imageName;
-            if (me.imageName !== null) {
-                me.imageSrc(me.imagePath + '/' + me.imageName);
-            }
+            me.imageSrc(me.imagePath + '/' + imageName);
+            // let src = me.imageSrc();
+
 
             if (params.owner) {
                 me.owner = params.owner();
@@ -89,9 +117,11 @@ namespace PeanutContent {
         save = () => {
             let filelist = Peanut.Helper.getSelectedFiles(this.imageUploadId());
             if (filelist.length) {
-                // let file = filelist[0];
-                // let name = file.name;
-                this.owner.onFileSelected(filelist,this.imagePath,this.imageName);
+                if (this.useUploadFileName) {
+                    let file = filelist[0];
+                    this.imageName(file.name);
+                }
+                this.owner.onFileSelected(filelist,this.imagePath,this.imageName());
             }
             this.editorModal.hide();
             this.newimage(true);
@@ -118,7 +148,9 @@ namespace PeanutContent {
         validateSelectedFile = () => {
             let element = <HTMLInputElement> document.getElementById(this.imageUploadId());
             if (element && element.value) {
-                let ext = element.value.split('.').pop();
+                let imageName = element.value;
+                let ext =  imageName.indexOf('.') === -1 ? null : imageName.split('.').pop();
+
                 switch (ext.toLowerCase()) {
                     case 'jpg':
                         return 1;

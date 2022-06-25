@@ -3,7 +3,7 @@
         <span class="me-3"><em><strong>No image uploaded.</strong></em></span> <a href="#" data-bind="click:edit"><i class="far fa-edit content-edit-icon-button"></i></a>
     </div>
 </div>
-<div class="content-container" data-bind="visible:imageSrc">
+<div class="content-container" data-bind="visible:imageSrc" style="min-height: 96px">
     <div data-bind="hidden:newimage"
         style="overflow: hidden;
        position: relative;"
@@ -12,7 +12,7 @@
              class="img img-fluid img-thumbnail" style="min-width:100%">
         <div class="image.content-edit-icon" data-bind="visible:canedit"
              style="position: absolute;
-                top: 1rem;
+                top: 0.4rem;
                 right: 0.4rem;"
         >
             <a href="#" data-bind="click:edit"><i class="far fa-edit content-edit-icon-button"></i></a>

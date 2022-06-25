@@ -13,7 +13,8 @@ namespace PeanutContent {
         active: any;
     }
 
-    export class ContentManagerViewModel extends Peanut.ViewModelBase implements IContentOwner, IImageComponentOwner {
+    export class ContentManagerViewModel extends Peanut.ViewModelBase
+        implements IContentOwner, IImageComponentOwner {
         // observables
         content = ko.observable('');
         canedit = ko.observable(true);
@@ -65,7 +66,7 @@ namespace PeanutContent {
 
         }
         handleContentNotification(contentId: string, message: string) {
-            console.log(contentId = ': '+message);
+            // console.log(contentId = ': '+message);
         }
 
         afterDatabind = () => {
@@ -87,7 +88,7 @@ namespace PeanutContent {
                     else {
                     }
                 }).fail(() => {
-                    let trace = me.services.getErrorInformation();
+                   //  let trace = me.services.getErrorInformation();
                 }).always(() => {
                     me.application.hideWaiter();
                 });
