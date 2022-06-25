@@ -9,38 +9,43 @@
     </ol>
   </nav>
 
-  <div data-bind="event: { mouseover: toggleMoreSongs, mouseout: toggleMoreSongs }">
-  <button class="btn btn-secondary song-list-button" id="song-list-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
-          aria-controls="offcanvasRight" data-bind="visible:mousingOverButton">
-    <i class="fas fa-music"></i>
-  </button>
+  <div data-bind="event: { mouseover: toggleMoreSongs, mouseout: toggleMoreSongs }" style="z-index: 100">
+    <button class="btn btn-secondary song-list-button" id="song-list-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight"
+            aria-controls="offcanvasRight" data-bind="visible:mousingOverButton">
+      <i class="fas fa-music"></i>
+    </button>
 
-  <button class="btn btn-secondary-outline song-list-button" id="song-list-button-expanded" type="button" data-bs-toggle="offcanvas"
-          data-bs-target="#offcanvasRight"
-          aria-controls="offcanvasRight" data-bind="hidden:mousingOverButton">
-    More songs ...
+    <button class="btn btn-secondary-outline song-list-button" id="song-list-button-expanded" type="button"
+            style="z-index:100"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasRight"
+            aria-controls="offcanvasRight" data-bind="hidden:mousingOverButton">
+      More songs ...
 
-  </button>
+    </button>
   </div>
 
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-    <div class="offcanvas-header">
-      <h5 id="offcanvasRightLabel">Offcanvas right</h5>
+  <div class="offcanvas offcanvas-end song-panel" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header offcanvas-songs-header">
+      <h5 id="offcanvasRightLabel">More Songs</h5>
       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body">
-      <div>
-        Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
-      </div>
-      <div class="dropdown mt-3">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
-          Dropdown button
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          <li><a class="dropdown-item" href="#">Action</a></li>
-          <li><a class="dropdown-item" href="#">Another action</a></li>
-          <li><a class="dropdown-item" href="#">Something else here</a></li>
+    <div class="offcanvas-body  offcanvas-songs-body">
+      <div class="mb-3">
+        <h4>Latest Songs</h4>
+        <ul data-bind="foreach:latestSongs">
+          <li><a class="" data-bind="attr:{href:url,title:description},text:name"></a></li>
         </ul>
+      </div>
+      <div>
+          <h4>Kinds of Songs</h4>
+        <ul data-bind="foreach:songTypeLinks">
+          <li><a class="" data-bind="attr:{href:url,title:description},text:name"></a></li>
+        </ul>
+        <p>
+          <!--suppress HtmlUnknownTarget -->
+          <a href="\songs" style="font-weight: bold">All the songs...</a>
+        </p>
       </div>
     </div>
   </div>
@@ -89,8 +94,17 @@
             </div>
           </div>
           <div class="col-md-8">
-              <a href="#" data-bind="click:showYoutubeEdit,visible:songform.editMode"><img class="img img-fluid" src="/assets/img/tv-700.jpg"/></a>
-            <a href="#" data-bind="click:showVideo,hidden:songform.editMode"><img class="img img-fluid" src="/assets/img/tv-700.jpg"/></a>
+            <a href="#" data-bind="click:showYoutubeEdit,visible:songform.editMode">
+              <!--suppress HtmlUnknownTarget -->
+              <img class="img img-fluid" alt="Video"
+                   src="/assets/img/tv-700.jpg"/>
+            </a>
+
+            <a href="#" data-bind="click:showVideo,hidden:songform.editMode">
+              <!--suppress HtmlUnknownTarget -->
+              <img class="img img-fluid" alt="Video"
+                   src="/assets/img/tv-700.jpg"/>
+            </a>
           </div>
         </div>
       </div>

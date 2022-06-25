@@ -15,7 +15,7 @@ namespace Peanut {
 
     interface ISonglistInitResponse extends ISongListResponse{
         types: ILookupItem[];
-        instruments: ILookupItem[];
+        latest: ISongListItem;
         filtered? : ILookupItem;
     }
     export class SonglistViewModel extends Peanut.ViewModelBase {
@@ -23,7 +23,7 @@ namespace Peanut {
         songlist = ko.observableArray<Peanut.ISongListItem>();
         songlistRight = ko.observableArray<Peanut.ISongListItem>();
         songTypes : ILookupItem[] = [];
-        instruments: ILookupItem[] = [];
+        latestSongs = ko.observableArray<Peanut.ISongListItem>();
         currentPage = ko.observable(1);
         maxPages = ko.observable();
         searchTerms = ko.observable('');
@@ -101,7 +101,7 @@ namespace Peanut {
                                     );
 
                                 me.songTypes = response.types;
-                                me.instruments = response.instruments;
+                                // me.instruments = response.instruments;
                                 if (response.filtered) {
                                     me.currentSearchRequest.filter = response.filtered.id;
                                     me.filterController.setValue(response.filtered.id);

@@ -8,11 +8,24 @@ use Peanut\songs\db\model\repository\SongpagesRepository;
 use Peanut\songs\db\model\repository\SongsRepository;
 use Peanut\songs\db\model\repository\SongtagsRepository;
 use Peanut\songs\db\model\repository\TagsRepository;
+use Tops\cache\TAbstractCache;
+use Tops\cache\TSessionCache;
 use Tops\db\TQuery;
 use Tops\sys\TDates;
 
 class SongsManager
 {
+    /**
+     * @var TAbstractCache
+     */
+    private $sessionCache;
+    private function getSessionCache() {
+        if (!isset($this->sessionCache)) {
+            $this->sessionCache = new TSessionCache();
+        }
+        return $this->sessionCache;
+    }
+
     private $songsRepository;
     private function getSongsRepository() : SongsRepository {
         if (!isset($this->songsRepository)) {
@@ -52,6 +65,21 @@ class SongsManager
             $this->songIndexRepository = new SongindexRepository();
         }
         return $this->songIndexRepository;
+    }
+
+    public function getFeaturedSongsList($expires='1D')
+    {
+        $cache = $this->getSessionCache();
+        $list = $cache->Get('featured-songs');
+        if (!$list) {
+            $list = $this->getSongpagesRepository()->getRandomSongIds();
+            $cache->Set('featured-songs',$list,$expires);
+        }
+        return $this->getSongpagesRepository()->selectSongsFromList($list);
+    }
+
+    public function getLatestSongs($limit=6) {
+        return $this->getSongpagesRepository()->getLatestSongs($limit);
     }
 
     public function getSongPages($request=null) {
@@ -226,6 +254,10 @@ class SongsManager
         return $this->getSongIndexRepository()->updateIndex($songpage->songId,
             implode(' ',$textArray));
         
+    }
+
+    public function getLatestSongLinks($limit=6) {
+        return $this->getSongpagesRepository()->getLatestSongsLinkList('/song/',$limit);
     }
 
     public function getSongTypeLinks()

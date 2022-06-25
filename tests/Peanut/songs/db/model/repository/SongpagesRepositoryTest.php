@@ -7,6 +7,22 @@ use PHPUnit\Framework\TestCase;
 class SongpagesRepositoryTest extends TestCase
 {
 
+    public function testGetLatestSongs() {
+        $repo = new SongpagesRepository();
+        $songs = $repo->getLatestSongs();
+        $expected = 8;
+        $actual = count($songs);
+        $this->assertEquals($expected,$actual);
+
+    }
+    public function testGetRandomSongIds() {
+        $repo = new SongpagesRepository();
+        $a = $repo->getRandomSongIds();
+        $actual = count($a);
+        $expected = 12;
+        $this->assertEquals($expected,$actual);
+    }
+
     public function testGetPageBySongId()
     {
         $repo = new SongpagesRepository();

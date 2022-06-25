@@ -18,6 +18,7 @@ namespace Peanut {
     interface IGetSongPageInitResponse extends IGetSongPageResponse{
         types?: ILookupItem[],
         songTypeLinks: ILinkListItem[],
+        latest : ISongListItem[],
         canedit: any
     }
 
@@ -168,6 +169,7 @@ namespace Peanut {
         songsLink = ko.observable('/songs');
         returnTitle = ko.observable('');
         songTypeLinks = ko.observableArray<ILinkListItem>();
+        latestSongs = ko.observableArray<ISongListItem>();
         // typesSelectController : IMultiSelectObservable;
         songform : SongPageObservable;
         canedit = ko.observable(false);
@@ -205,49 +207,49 @@ namespace Peanut {
                 return;
             }
             me.contentid(songid);
-            me.application.registerComponents('@pnut/pager,@pnut/lookup-select,@pnut/multi-select', () => {
-                me.application.loadResources([
-                    '@pnut/multiSelectObservable',
-                    '@pkg/peanut-content/contentController.js',
-                    '@lib:tinymce',
-                    '@pnut/ViewModelHelpers.js',
-                    '@pkg/peanut-youtube/YTFrameController.js'
+            me.application.loadResources([
+                '@pnut/multiSelectObservable',
+                '@pkg/peanut-content/contentController.js',
+                '@lib:tinymce',
+                '@pnut/ViewModelHelpers.js',
+                '@pkg/peanut-youtube/YTFrameController.js'
+            ], () => {
+                me.application.registerComponents([
+                    '@pnut/pager',
+                    '@pnut/lookup-select',
+                    '@pnut/multi-select',
+                    '@pnut/modal-confirm',
+                    '@pnut/clean-html',
+                    '@pkg/peanut-content/content-block',
+                    '@pkg/peanut-content/image-block',
+                    '@pkg/peanut-youtube/youtube-frame',
+                    'songs/lyrics-block'
                 ], () => {
-                    me.application.registerComponents([
-                        '@pnut/modal-confirm',
-                        '@pnut/clean-html',
-                        '@pkg/peanut-content/content-block',
-                        '@pkg/peanut-content/image-block',
-                        '@pkg/peanut-youtube/youtube-frame',
-                        'songs/lyrics-block'
-                    ], () => {
-                        me.contentController = new PeanutContent.contentController(me);
+                    me.contentController = new PeanutContent.contentController(me);
+                    me.services.executeService('Peanut.songs::GetSongPage',songid,
+                        (serviceResponse: Peanut.IServiceResponse) => {
+                            if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                                let response = <IGetSongPageInitResponse>serviceResponse.Value;
+                                me.songTypeLinks(response.songTypeLinks);
+                                me.latestSongs(response.latest);
+                                me.songform = new SongPageObservable(response.canedit,
+                                    response.types,response.page);
+                                me.canedit(response.canedit);
 
-                        me.services.executeService('Peanut.songs::GetSongPage',songid,
-                            (serviceResponse: Peanut.IServiceResponse) => {
-                                if (serviceResponse.Result == Peanut.serviceResultSuccess) {
-                                    let response = <IGetSongPageInitResponse>serviceResponse.Value;
-                                    me.songTypeLinks(response.songTypeLinks);
-                                    me.songform = new SongPageObservable(response.canedit,
-                                        response.types,response.page);
-                                    me.canedit(response.canedit);
-
-                                    me.bindDefaultSection();
-                                    successFunction();
-                                }
+                                me.bindDefaultSection();
+                                successFunction();
                             }
-                        ).fail(() => {
-                            // let trace = me.services.getErrorInformation();
-                            me.application.hideWaiter();
-                        });
+                        }
+                    ).fail(() => {
+                        // let trace = me.services.getErrorInformation();
+                        me.application.hideWaiter();
                     });
                 });
             });
-
         }
 
         handleContentNotification(contentId: string, message: string) {
-            console.log(contentId = ': '+message);
+            // console.log(contentId = ': '+message);
         }
 
         mousingOverButton = ko.observable(true);
@@ -330,7 +332,7 @@ namespace Peanut {
             // this.status('ready');
         }
 
-        onPlayerStateChange = (event) => {
+        onPlayerStateChange = (_event) => {
             // this.status(PeanutYoutube.YTFrameController.getPlayerStatus(event.data));
         }
 

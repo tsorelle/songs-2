@@ -89,9 +89,20 @@ a.no-decoration {
   font-weight: bold;
 }
 
-.song-model-header {
+.song-model-header,
+.offcanvas-songs-header {
   background-color: $panel-background;
+  border: 1px solid saddlebrown;
   h1 {
     color: $secondary;
   }
 }
+.offcanvas-songs-body {
+  border-left: 1px solid saddlebrown;
+}
+
+.song-panel {
+  padding: 0;
+}
+
+

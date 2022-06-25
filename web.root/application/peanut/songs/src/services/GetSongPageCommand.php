@@ -73,6 +73,8 @@ class GetSongPageCommand extends \Tops\services\TServiceCommand
         $response->types = $manager->getSongTypesLookup();
         $response->canedit = $this->getUser()->isAdmin(); // maybe replace this with authorization
         $response->songTypeLinks = $manager->getSongTypeLinks();
+        $response->latest = $manager->getLatestSongLinks();
+
         $this->setReturnValue($response);
     }
 }

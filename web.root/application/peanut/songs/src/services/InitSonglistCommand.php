@@ -57,8 +57,7 @@ class InitSonglistCommand extends \Tops\services\TServiceCommand
         // }
         // $response->allSongsCount = $manager->getAllSongsCount();
         $response->pages = $manager->getSongPages($request);;
-        $response->instruments = $manager->getInstrumentsLookup();
-
+        // $response->instruments = $manager->getInstrumentsLookup();
 
         $this->setReturnValue($response);
 

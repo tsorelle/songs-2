@@ -22,7 +22,10 @@ class TCachedItem {
             $instance->expirationTime = false;
         }
         else {
-            $interval = new  \DateInterval('PT'.$duration.'S');
+            $intervalSpec = is_numeric(($duration)) ?
+                'PT'.$duration.'S' :
+                'P'.$duration;
+            $interval = new  \DateInterval($intervalSpec);
             $instance->expirationTime = new \DateTime();
             $instance->expirationTime->add($interval);
         }

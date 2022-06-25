@@ -22,6 +22,12 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
     const orderDate = 2;
     const orderDateDesc = 3;
 
+    const songSearchHeader =
+        'select s.id, s.title as `name`, s.description,s.contentid as `code`,p.youtubeId, p.introduction, '.
+        "if(p.hasicon = 1,concat('/assets/img/songs/icons/',s.contentId,'.jpg'),'/assets/img/songs/icons/default.jpg') as iconsrc, ".
+        "if(p.hasicon = 1,concat('/assets/img/songs/thumbnails/',s.contentId,'.jpg'),'/assets/img/songs/thumbnails/default.jpg') as thumbnailsrc, ".
+        "concat('/song/',s.contentid) as songUrl, p.active ";
+
     protected function getTableName() {
         return 'tls_songpages';
     }
@@ -79,15 +85,56 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
     }
 
     public function getSongPageList($request = null) {
-        $sql =
-            'select s.id, s.title as `name`, s.description,s.contentid as `code`,p.youtubeId, p.introduction, '.
-            "if(p.hasicon = 1,concat('/assets/img/songs/icons/',s.contentId,'.jpg'),'/assets/img/songs/icons/default.jpg') as iconsrc, ".
-            "if(p.hasicon = 1,concat('/assets/img/songs/thumbnails/',s.contentId,'.jpg'),'/assets/img/songs/thumbnails/default.jpg') as thumbnailsrc, ".
-            "concat('/song/',s.contentid) as songUrl, p.active ";
+        $stmt = $this->executeSearch(self::songSearchHeader,$request);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
 
-        $stmt = $this->executeSearch($sql,$request);
+    public function getRandomSongIds($type='favorite',$count=12)
+    {
+        $sql = 'SELECT p.id FROM tls_songpages p JOIN tls_songtags st on st.songId = p.songId'.
+            " JOIN tls_tags tt on tt.id = st.tagId WHERE tt.code = ? ORDER BY RAND() LIMIT ".$count;
+        $stmt = $this->executeStatement($sql,[$type]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    public function selectSongsFromList($idList) {
+        $sql = self::songSearchHeader.
+            ' FROM '.$this->getTableName().' p JOIN '.
+                $this->getSongTableName().' s ON s.id = p.songId '
+               .' WHERE p.id IN ('.implode(',',$idList).')';
+        $stmt = $this->executeStatement($sql);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function getLatestSongs($limit = 6) {
+        $sql = self::songSearchHeader.
+            ' FROM '.$this->getTableName().' p JOIN '.
+            $this->getSongTableName().' s ON s.id = p.songId '
+            .' ORDER BY p.postedDate DESC LIMIT '.$limit;
+        $stmt = $this->executeStatement($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
 
+    }
+
+    public function getLatestSongsList($limit = 6) {
+        $sql = self::songSearchHeader.
+            ' FROM '.$this->getTableName().' p JOIN '.
+            $this->getSongTableName().' s ON s.id = p.songId '
+            .' ORDER BY p.postedDate DESC LIMIT '.$limit;
+        $stmt = $this->executeStatement($sql);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function getLatestSongsLinkList(string $url,$limit=6)
+    {
+        $sql = 'select s.id, s.title as `name`,s.contentid as `code`,s.description, '.
+	    "concat('$url',s.contentid) as url, p.active ".
+            ' FROM '.$this->getTableName().' p JOIN '.
+            $this->getSongTableName().' s ON s.id = p.songId '
+            .' ORDER BY p.postedDate DESC LIMIT '.$limit;
+
+        $stmt = $this->executeStatement($sql,[$url]);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
     public function executeSearch($sql, $request = null) {
