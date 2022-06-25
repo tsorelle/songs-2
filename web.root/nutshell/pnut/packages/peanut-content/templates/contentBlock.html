@@ -12,11 +12,11 @@
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <p data-bind="text:htmlEditorId"></p>
+                <!-- p data-bind="text:htmlEditorId"></p -->
                 <h5 class="modal-title" data-bind="text:editorTitle"></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding:.5rem">
                 <div class="editor-block" data-bind="visible:isHtml">
                     <!-- textarea  id="mycontent-hml" class="form-control"></textarea -->
                     <textarea  data-bind="attr: {id: htmlEditorId}" class="form-control"></textarea>

@@ -152,6 +152,9 @@ namespace Peanut {
                     verse.lines.push(line);
                 }
             });
+            if (verse.lines.length > 0) {
+                this.verses.push(verse)
+            }
         }
         edit = () => {
             if (this.canedit()) {
