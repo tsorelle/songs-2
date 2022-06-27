@@ -9,7 +9,20 @@
                 </button>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <!-- view model bindings -->
+                <button data-bind="click:confirmTest">
+                    Confirm
+                </button>
+            </div>
+        </div>
     </div>
+
+    <modal-confirm params="id:'confirm-modal-test',headerText: 'Please confirm', bodyText: 'Ready to do this?',
+        confirmClick: onConfirmTestOk, translator:self"></modal-confirm>
+
+
     <div class="modal" id="test-modal">
         <div class="modal-dialog">
             <div class="modal-content">

@@ -12,12 +12,16 @@ namespace Peanut {
     export class ModalTestViewModel  extends Peanut.ViewModelBase {
         showing = ko.observable(false);
         testModal : any;
+        confirmModel: any;
+
         // call this funtions at end of page
         init(successFunction?: () => void) {
             console.log('Init ModalTest');
             let me = this;
-            me.bindDefaultSection();
-            successFunction();
+            me.application.registerComponents(['@pnut/modal-confirm'], () => {
+                me.bindDefaultSection();
+                successFunction();
+            });
         }
 
         onShowClick = () => {
@@ -31,6 +35,21 @@ namespace Peanut {
             this.testModal.hide();
             alert('Save changes');
         }
+
+        confirmTest = () => {
+            if (!this.confirmModel) {
+                this.confirmModel = new bootstrap.Modal(document.getElementById('confirm-modal-test'));
+            }
+            this.confirmModel.show();
+
+        }
+
+        onConfirmTestOk = () => {
+            this.confirmModel.hide();
+            alert('OK Clicked');
+        }
+
+
 
     }
 }
