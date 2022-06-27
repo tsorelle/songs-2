@@ -12,6 +12,7 @@ use Tops\cache\TAbstractCache;
 use Tops\cache\TSessionCache;
 use Tops\db\TQuery;
 use Tops\sys\TDates;
+use Tops\sys\TPath;
 
 class SongsManager
 {
@@ -161,68 +162,81 @@ class SongsManager
 
 
     public function updateSongPage($pageDto) {
-        $songDto = null;
-        if (isset($pageDto->song)) {
-            $songDto = $pageDto->song;
-            $pageDto->songId = $songDto->id;
-            unset($pageDto->song);
+        $response = new \stdClass();
+
+        $songDto = $pageDto->song ?? null;
+        if (!$songDto) {
+            $response->error = 'No song';
+            return $response;
         }
-        
+        unset($pageDto->song);
+        $songId = $songDto->id ?? 0;
+        $pageId = $pageDto->id ?? 0;
+
         $types = $pageDto->types ?? null;
         if ($types !== null) {
             unset($pageDto->types);
         }
+        $newSong = empty($songDto->id);
+        $newPage = empty($pageDto->id);
 
-        $instruments = $pageDto->instruments ?? null;
-        if ($instruments !== null) {
-            unset($pageDto->instruments);
-        }
-
-        $pageRepo = $this->getSongpagesRepository();
         $songRepo = $this->getSongsRepository();
 
-        $newPage = empty($pageDto->id);
-        if ($newPage) {
-            $page = new Songpage();
+        if ($newSong) {
             $song = new Song();
         }
         else {
-            $page = $pageRepo->get($pageDto->id);
-            if (!$page) {
-                return 'Page not found';
-            }
-            $song = $pageDto->get($pageDto->songId);
+            $song = $songRepo->get($songId);
             if (!$song) {
-                return 'Song not found';
+                $response->error = 'Song #'.$songId.' not found.';
+                return $response;
             }
         }
-        
-        $song->assignFromObject($songDto);
+
+        $pageRepo = $this->getSongpagesRepository();
+
         if ($newPage) {
+            $page = new Songpage();
+        }
+        else {
+            $page = $pageRepo->get($pageId);
+            if (!$page) {
+                $response->error = 'Page #'.$pageId.' not found.';
+                return $response;
+            }
+        }
+
+        $song->assignFromObject($songDto);
+        if ($newSong) {
             $songId = $songRepo->insert($song);
-            if ($songId === false) {
-                return 'Cannot insert song';
-            }
-            $pageDto->songId = $songId;
-            $pageId = $pageRepo->insert($pageDto);
-            if ($pageId === false) {
-                return 'Cannot insert page';
-            }
+            $song->id = $songId;
+            $page->SongId = $songId;
         }
         else {
             $songRepo->update($song);
+        }
+
+        $page->assignFromObject($pageDto);
+        if ($newPage) {
+            $pageId = $pageRepo->insert($page);
+            $page->id = $pageId;
+        }
+        else {
             $pageRepo->update($page);
         }
-        
+
         $this->updateSongIndex($page,$song);
         
-        if ($types && $instruments) {
-            $tags = array_merge($types,$instruments);
-            $this->updateSongTags($pageDto->songId,$tags);
-
+        if ($types !== null) {
+            $this->updateSongTags($pageDto->songId,$types);
         }
 
-        return true;
+        $response->pageId = $pageId;
+        $response->songId = $songId;
+        $response->hasicon = $this->hasSongImage('icons',$song->contentid);
+        $response->hasthumbnail = $this->hasSongImage('thumbnails',$song->contentid);
+
+        return $response;
     }
 
     public function updateSongIndex(Songpage $songpage, $song=null)
@@ -249,7 +263,6 @@ class SongsManager
         }
 
         $text = str_replace(["\t","\r\n","\n"],' ',implode(' ',$textArray));
-
             
         return $this->getSongIndexRepository()->updateIndex($songpage->songId,
             implode(' ',$textArray));
@@ -265,5 +278,16 @@ class SongsManager
         return $this->getTagsRepository()->getLinkList('/songs/','type');
     }
 
+    public function hasSongImage($imgType,$contentId) {
+        $songImgPath = "assets/img/songs/$imgType/$contentId.jpg";
+        $path = TPath::fromFileRoot($songImgPath);
+        $result = @file_exists($path);
+        return ($result === true);
+    }
+
+    public function updateSong($song)
+    {
+        return $song->id;
+    }
 
 }

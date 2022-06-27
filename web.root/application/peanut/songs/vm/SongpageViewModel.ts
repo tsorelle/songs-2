@@ -38,6 +38,8 @@ namespace Peanut {
         editMode = ko.observable(false);
 
         songid = ko.observable();
+        newSong = ko.observable(false);
+        newPage = ko.observable(false);
         pageid = ko.observable();
         contentId = ko.observable('');
         title = ko.observable('');
@@ -64,13 +66,16 @@ namespace Peanut {
         }
 
         assign = (page: ISongPage) => {
+
             this.original = page;
             this.errorMessage('');
             this.typesController.setValues(page.types);
             this.editMode(false);
 
-            this.pageid(page.id);
-            
+            let pageId = parseInt(page.id);
+            this.pageid(pageId);
+            this.newPage(pageId === 0);
+
             this.assignSong(page.song);
             
             this.introduction(page.introduction);
@@ -86,7 +91,9 @@ namespace Peanut {
         }
         
         assignSong = (song: ISong) => {
-            this.songid(song.id);
+            let songid = parseInt(song.id);
+            this.newSong(songid === 0);
+            this.songid(songid);
             this.contentId(song.contentid);
             this.description(song.description);
             this.title(song.title);
@@ -199,6 +206,9 @@ namespace Peanut {
         playerElementId = 'video-frame-1';
         editBuffer = ko.observable('');
 
+        confirmSaveModal: any;
+        confirmCancelModal: any;
+
         init(successFunction?: () => void) {
             let me = this;
             Peanut.logger.write('Songpage Init');
@@ -282,14 +292,31 @@ namespace Peanut {
         edit = () => {
             this.songform.editMode(true)
         }
-        cancelEdit = () => {
-            this.songform.cancel();
-            // this.songform.revert();
-            // this.songform.editMode(false)
-        }
+
         save = () => {
+            alert('saving')
+            this.confirmSaveModal.hide();
+            let request = this.songform.validate();
+            if (request === false) {
+                return;
+            }
             this.songform.editMode(false)
             // todo: implement update
+            let me = this;
+            me.application.hideServiceMessages();
+            me.application.showWaiter('Message here...');
+            me.services.executeService('Peanut.songs::UpdateSongPage',request,
+                (serviceResponse: Peanut.IServiceResponse) => {
+                    if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                        me.application.hideWaiter();
+
+                    }
+                }
+            ).fail(() => {
+                // let trace = me.services.getErrorInformation();
+                me.application.hideWaiter();
+            });
+
 
         }
 
@@ -366,16 +393,6 @@ namespace Peanut {
             this.youTubeEditModal.hide();
         }
 
-
-        editCaption = () => {
-            this.editBuffer(this.songform.imagecaption())
-            if (!this.captionModal) {
-                let modalElement = document.getElementById('caption-edit');
-                this.captionModal = new bootstrap.Modal(modalElement);
-            }
-            this.captionModal.show();
-        }
-
         saveCaption = () => {
             this.songform.imagecaption(this.editBuffer());
             this.captionModal.hide();
@@ -421,6 +438,25 @@ namespace Peanut {
             }).always(() => {
                 me.application.hideWaiter();
             });
+        }
+
+        confirmSave = () => {
+            if (!this.confirmSaveModal) {
+                this.confirmSaveModal = new bootstrap.Modal(document.getElementById('confirm-save-modal'));
+            }
+            this.confirmSaveModal.show();
+        }
+
+        cancelEdit = () => {
+            if (!this.confirmCancelModal) {
+                this.confirmCancelModal = new bootstrap.Modal(document.getElementById('cancel-edit-modal'));
+            }
+            this.confirmCancelModal.show();
+        }
+
+        onConfirmCancel = () => {
+            this.songform.cancel();
+            this.confirmCancelModal.hide();
         }
     }
 

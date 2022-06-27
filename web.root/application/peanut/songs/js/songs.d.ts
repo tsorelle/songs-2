@@ -18,7 +18,7 @@ declare namespace Peanut {
         publicdomain : any
     }
 
-    interface ISongPage {
+    interface ISongPageUpdateRequest {
         id : any,
         song: ISong;
         introduction : string,
@@ -28,10 +28,19 @@ declare namespace Peanut {
         pageimage : string,
         imagecaption : string,
         youtubeId : string,
+        types : number[]
+    }
+    interface ISongPage extends  ISongPageUpdateRequest {
         hasicon? : any,
         hasthumbnail? : any,
-        types? : number[]
     }
+    interface ISongPageUpdateResponse {
+        pageId : any,
+        songId: any;
+        hasicon : any,
+        hasthumbnail : any,
+    }
+
 
     interface ISongSearchRequest {
         /**

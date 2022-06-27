@@ -57,7 +57,6 @@
 
   <div class="col-md-12" data-bind="descendantsComplete: afterDatabind">
     <!-- view model bindings -->
-    <!-- for smoke test - define planet in the view model -->
     <div id="songpage-header" class="row">
       <div class="col-md-12">
         <div class="edit-bar" data-bind="visible:canedit">
@@ -65,7 +64,7 @@
             <a href="#" data-bind="click:edit" ><i class="far fa-edit"></i>&nbsp;Edit</a>
           </div>
           <div data-bind="visible:songform.editMode">
-            <a href="#"  class="me-3" data-bind="click:save"><i class="fas fa-check"></i>&nbsp;Save</a>
+            <a href="#"  class="me-3" data-bind="click:confirmSave"><i class="fas fa-check"></i>&nbsp;Save</a>
             <a href="#"  data-bind="click:cancelEdit"><i class="far fa-window-close"></i>&nbsp;Cancel</a>
           </div>
         </div>
@@ -79,7 +78,7 @@
     <div id="song-page-body" class="row pb-3">
       <div class="col-md-9">
         <content-block params="controller: contentController, id: 'commentary-content',
-        title: 'Edit Song Comentary',
+        title: 'Edit Song Commentary',
         source: songform.commentary, canedit:songform.editMode"></content-block>
         <h4 data-bind="visible:songform.lyrics">Lyrics</h4>
         <lyrics-block params="lyrics:songform.lyrics, canedit:songform.editMode"></lyrics-block>
@@ -134,29 +133,39 @@
           <h3>Additional Properties</h3>
         </div>
       </div>
-      <div class="row">
-
-        <div class="col-md-2">
-            <h4>Song Icon</h4>
+      <div class="row mb-3">
+        <div class="col-md-1">
+          <h4>Icon</h4>
           <div>
             <image-block params="id:'icon-image',owner:self,
             contentId: songform.contentId,
             imagepath:'/assets/img/songs/icons',
             canedit:songform.editMode"></image-block>
           </div>
-
         </div>
         <div class="col-md-8">
-          <h4>Song Thumbnail</h4>
-          <div>
-            <image-block params="id:'thumbnail-image',owner:self,
-              contentId: songform.contentId,
-              imagepath:'/assets/img/songs/thumbnails',
-              canedit:songform.editMode"></image-block>
+          <h4>Description</h4>
+          <div id="description-block">
+          <content-block params="controller: contentController,
+            title: 'Edit Song Description',
+            id: 'description-content', source: songform.description,
+            canedit:songform.editMode,contenttype:'text'"></content-block>
           </div>
-
         </div>
-        <div class="col-md-2">
+
+
+        <div class="col-md-3">
+          <div class="mb-2">
+            <h4>Identifiers</h4>
+            <label for="song-contentid"><strong>Content Id</strong></label>
+             <div data-bind="visible: songform.newSong">
+                <input type="text" id="song-contentid" class="form-control" data-bind="value:songform.contentid">
+             </div>
+            <div  data-bind="hidden:songform.newSong">
+              <span data-bind="text:songform.contentId"></span>
+              hello
+            </div>
+          </div>
           <div class="form-check">
             <input class="form-check-input" type="checkbox" value="" id="check-public"
                    data-bind="checked:songform.publicDomain"
@@ -168,7 +177,6 @@
           <div class="form-check">
             <input class="form-check-input" type="checkbox" value="" id="check-active"
                    data-bind="checked:songform.active"
-
             >
             <label class="form-check-label" for="check-active">
               Active
@@ -176,7 +184,47 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-md-3">
+          <h4>Thumbnail</h4>
+          <div>
+            <image-block params="id:'thumbnail-image',owner:self,
+              contentId: songform.contentId,
+              imagepath:'/assets/img/songs/thumbnails',
+              canedit:songform.editMode"></image-block>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <h4>Introduction</h4>
+          <div>
+            <content-block params="controller: contentController, id: 'introduction-content',
+                title: 'Edit Song Introduction',
+                source: songform.introduction, canedit:songform.editMode"></content-block>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div id="songtypes-div">
+            <h4>Types</h4>
+            <div>
+              <multi-select params="controller: songform.typesController,
+                  sort:'code',translator:self,
+                        caption:'Select types...'"></multi-select>
+            </div>
+            <div>
+              <selected-list params="source:songform.typesController, readonly:true,emptymessage:'No types assigned'"></selected-list>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <modal-confirm params="id:'confirm-save-modal',headerText: 'Please confirm', bodyText: 'Ready to save all changes?',
+        confirmClick:save , translator:self"></modal-confirm>
+
+    <modal-confirm params="id:'cancel-edit-modal',headerText: 'Please confirm', bodyText: 'Cancel and lose all changes?',
+        confirmClick: onConfirmCancel, translator:self"></modal-confirm>
 
     <div id="youtube-edit" class="modal" tabindex="-1">
       <div class="modal-dialog">
@@ -198,33 +246,6 @@
           </div>
           <div class="modal-footer">
             <button type="button" data-bind="click:saveYoutubeCode" class="btn btn-primary">Save changes</button>
-            <a href="#" data-bs-dismiss="modal">Cancel</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="caption-edit" class="modal" tabindex="-1">
-      <div class="modal-dialog   modal-lg">
-        <div class="modal-content">
-          <div class="modal-header song-model-header">
-            <h5 class="modal-title">Edit Image Title</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-                <div class="mb-3">
-                  <label for="caption-update" class="form-label">Image caption</label>
-                  <textarea rows="5"
-                         data-bind="value:editBuffer" class="form-control" id="caption-update"
-                         aria-describedby="caption-update-text"
-                  ></textarea>
-                  <div id="caption-update-text" class="form-text">Enter Image caption.</div>
-                </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" data-bind="click:saveCaption" class="btn btn-primary">Save changes</button>
             <a href="#" data-bs-dismiss="modal">Cancel</a>
           </div>
         </div>
@@ -257,7 +278,6 @@
         </div>
       </div>
     </div>
-
 
     <div id='songPlayer1' class="modal" tabindex="-1">
       <div class="modal-dialog  modal-lg">
