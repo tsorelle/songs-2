@@ -124,6 +124,10 @@
             </a>
           </div>
         </div>
+        <div class="mb-3 mt-3">
+          <h4>Song types:</h4>
+          <selected-list params="source:songform.typesController, readonly:true,emptymessage:'No types assigned'"></selected-list>
+        </div>
       </div>
     </div>
     <div id="song-page-properties" class="pb-3" data-bind="visible:songform.editMode">
@@ -211,9 +215,6 @@
               <multi-select params="controller: songform.typesController,
                   sort:'code',translator:self,
                         caption:'Select types...'"></multi-select>
-            </div>
-            <div>
-              <selected-list params="source:songform.typesController, readonly:true,emptymessage:'No types assigned'"></selected-list>
             </div>
           </div>
         </div>

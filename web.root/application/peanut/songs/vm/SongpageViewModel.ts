@@ -248,7 +248,8 @@ namespace Peanut {
                     '@pkg/peanut-content/content-block',
                     '@pkg/peanut-content/image-block',
                     '@pkg/peanut-youtube/youtube-frame',
-                    'songs/lyrics-block'
+                    'songs/lyrics-block',
+                    '@pnut/selected-list'
                 ], () => {
                     me.contentController = new PeanutContent.contentController(me);
                     me.services.executeService('Peanut.songs::GetSongPage',songid,
@@ -380,12 +381,10 @@ namespace Peanut {
             // this.status(PeanutYoutube.YTFrameController.getPlayerStatus(event.data));
         }
 
-
         saveYoutubeCode = () => {
             let code = this.editBuffer();
             code = code.trim();
             if (code.length) {
-
                 let parts = code.split('/');
                 code = parts.pop();
             }
