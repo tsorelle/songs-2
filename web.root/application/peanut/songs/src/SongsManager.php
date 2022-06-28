@@ -290,4 +290,59 @@ class SongsManager
         return $song->id;
     }
 
+    public function getFrontPageItems($type) {
+        if ($type = 'featured') {
+            return $this->getFeaturedSongsList(12);
+        }
+        else {
+            return $this->getSongpagesRepository()->getLatestSongs(12);
+        }
+    }
+
+    public static function renderFrontPageCarousel($type) {
+        $manager = new SongsManager();
+        $songs =  ($type == 'featured') ?
+            $manager->getFeaturedSongsList(12) :
+            $manager->getLatestSongs(12);
+
+        $template =
+            '   <div class="col-md-4">'."\n".
+            '       <h5><a href="%s">%s</a></h5>'."\n".
+            '       <p>%s</p>'."\n".
+            '       <a href="%s"><img class="img img-fluid img-thumbnail" src="/assets/img/songs/icons/%s.jpg" '."\n".
+            '            style="float:left;margin-right: 1rem"></a>'."\n".
+            '       %s'."\n".
+            '   </div>';
+
+        $i = 0;
+        $h = '<div class="carousel-item active">';
+        for ($r=0;$r<4;$r++) {
+            print("$h\n");
+            $h = '<div class="carousel-item">';
+            print '<div class="row">'."\n";
+            for($c=0;$c<3;$c++) {
+                $song = $songs[$i];
+                $i++;
+                $test = sprintf($template,
+                    $song->songUrl,
+                    $song->name,
+                    $song->description,
+                    $song->songUrl,
+                    $song->code,
+                    $song->introduction
+                );
+                printf($template,
+                    $song->songUrl,
+                    $song->name,
+                    $song->description,
+                    $song->songUrl,
+                    $song->code,
+                    $song->introduction
+                );
+            }
+            print "    </div>\n";
+            print "</div>\n";
+        }
+    }
+
 }
