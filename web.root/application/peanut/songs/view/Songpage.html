@@ -1,8 +1,4 @@
-<style>
-    .posted-date {
-      font-style: italic;
-    }
-</style>
+
 <div id="songpage-load-message"><span class="fa fa-spinner fa-pulse fa-2x" style="color:lightgrey"></span></div>
 <div id="songpage-view-container" class="row" style="display: none">
   <nav aria-label="breadcrumb">
@@ -43,7 +39,7 @@
         </ul>
       </div>
       <div>
-          <h4>Kinds of Songs</h4>
+        <h4>Kinds of Songs</h4>
         <ul data-bind="foreach:songTypeLinks">
           <li><a class="" data-bind="attr:{href:url,title:description},text:name"></a></li>
         </ul>
@@ -85,7 +81,7 @@
       </div>
       <div class="col-md-3">
         <div>
-        <image-block params="id:'page-image',owner:self,
+          <image-block params="id:'page-image',owner:self,
             imagepath:'/assets/img/songs',
             imagename:songform.pageimage,
             canedit:songform.editMode"></image-block>
@@ -150,65 +146,51 @@
         <div class="col-md-8">
           <h4>Description</h4>
           <div id="description-block">
-          <content-block params="controller: contentController,
+            <content-block params="controller: contentController,
             title: 'Edit Song Description',
             id: 'description-content', source: songform.description,
             canedit:songform.editMode,contenttype:'text'"></content-block>
           </div>
-        </div>
 
-
-        <div class="col-md-3">
-          <div class="mb-2">
-            <h4>Identifiers</h4>
-            <label for="song-contentid"><strong>Content Id</strong></label>
-             <div data-bind="visible: songform.newSong">
-                <input type="text" id="song-contentid" class="form-control" data-bind="value:songform.contentid">
-             </div>
-            <div  data-bind="hidden:songform.newSong">
-              <span data-bind="text:songform.contentId"></span>
-            </div>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="check-public"
-                   data-bind="checked:songform.publicDomain"
-            >
-            <label class="form-check-label" for="check-public">
-              Public domain
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="check-active"
-                   data-bind="checked:songform.active"
-            >
-            <label class="form-check-label" for="check-active">
-              Active
-            </label>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-3">
-          <h4>Thumbnail</h4>
-          <div>
-            <image-block params="id:'thumbnail-image',owner:self,
-              contentId: songform.contentId,
-              imagepath:'/assets/img/songs/thumbnails',
-              canedit:songform.editMode"></image-block>
-          </div>
-        </div>
-
-        <div class="col-md-6">
           <h4>Introduction</h4>
-          <div>
+          <div class="mb-2">
             <content-block params="controller: contentController, id: 'introduction-content',
                 title: 'Edit Song Introduction',
                 source: songform.introduction, canedit:songform.editMode"></content-block>
           </div>
-        </div>
 
+          <p data-bind="css: { 'text-danger': songform.introductionLength() > 325 }">Introduction length: <span data-bind="text:songform.introductionLength"></span> </p>
+
+        </div>
         <div class="col-md-3">
-          <div id="songtypes-div">
+          <div class="mb-2">
+            <div id="identifiers" class="mb-3">
+              <h4>Identifiers</h4>
+              <label for="song-contentid"><strong>Content Id</strong></label>
+              <div data-bind="visible: songform.newSong">
+                <input type="text" id="song-contentid" class="form-control" data-bind="value:songform.contentid">
+              </div>
+              <div  data-bind="hidden:songform.newSong">
+                <span data-bind="text:songform.contentId"></span>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="check-public"
+                       data-bind="checked:songform.publicDomain"
+                >
+                <label class="form-check-label" for="check-public">
+                  Public domain
+                </label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="check-active"
+                       data-bind="checked:songform.active"
+                >
+                <label class="form-check-label" for="check-active">
+                  Active
+                </label>
+              </div>
+            </div>
+            <div id="songtypes-div" class="mb-3">
             <h4>Types</h4>
             <div>
               <multi-select params="controller: songform.typesController,
@@ -217,50 +199,51 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
-
-    <modal-confirm params="id:'confirm-save-modal',headerText: 'Please confirm', bodyText: 'Ready to save all changes?',
-        confirmClick:save , translator:self"></modal-confirm>
-
-    <modal-confirm params="id:'cancel-edit-modal',headerText: 'Please confirm', bodyText: 'Cancel and lose all changes?',
-        confirmClick: onConfirmCancel, translator:self"></modal-confirm>
-
-    <div id="youtube-edit" class="modal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header song-model-header">
-            <h5 class="modal-title">Set Youtube Link</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="p-5">
-                <div class="mb-3">
-                  <label for="youtube-update-id" class="form-label">YouTube Link</label>
-                  <input type="text" data-bind="value:editBuffer" class="form-control" id="youtube-update-id" aria-describedby="youtube-update-text">
-                  <div id="youtube-update-text" class="form-text">Enter code or full url.</div>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" data-bind="click:saveYoutubeCode" class="btn btn-primary">Save changes</button>
-            <a href="#" data-bs-dismiss="modal">Cancel</a>
-          </div>
         </div>
       </div>
     </div>
 
-    <div id="date-edit" class="modal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header song-model-header">
-            <h5 class="modal-title">Edit Posted Date</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <modal-confirm params="id:'confirm-save-modal',headerText: 'Please confirm', bodyText: 'Ready to save all changes?',
+        confirmClick:save , translator:self"></modal-confirm>
+
+      <modal-confirm params="id:'cancel-edit-modal',headerText: 'Please confirm', bodyText: 'Cancel and lose all changes?',
+        confirmClick: onConfirmCancel, translator:self"></modal-confirm>
+
+      <div id="youtube-edit" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header song-model-header">
+              <h5 class="modal-title">Set Youtube Link</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="p-5">
+                  <div class="mb-3">
+                    <label for="youtube-update-id" class="form-label">YouTube Link</label>
+                    <input type="text" data-bind="value:editBuffer" class="form-control" id="youtube-update-id" aria-describedby="youtube-update-text">
+                    <div id="youtube-update-text" class="form-text">Enter code or full url.</div>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" data-bind="click:saveYoutubeCode" class="btn btn-primary">Save changes</button>
+              <a href="#" data-bs-dismiss="modal">Cancel</a>
+            </div>
           </div>
-          <div class="modal-body">
-            <form>
+        </div>
+      </div>
+
+      <div id="date-edit" class="modal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header song-model-header">
+              <h5 class="modal-title">Edit Posted Date</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form>
                 <div class="mb-3">
                   <label for="date-update" class="form-label">Posted Date</label>
                   <input type="text" id="date-update"
@@ -269,32 +252,31 @@
                   >
                   <div id="date-update-text" class="form-text">Enter posted date as YYYY-MM-DD.</div>
                 </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" data-bind="click:saveDate" class="btn btn-primary">Save changes</button>
-            <a href="#" data-bs-dismiss="modal">Cancel</a>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" data-bind="click:saveDate" class="btn btn-primary">Save changes</button>
+              <a href="#" data-bs-dismiss="modal">Cancel</a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div id='songPlayer1' class="modal" tabindex="-1">
-      <div class="modal-dialog  modal-lg">
-        <!-- styling in .video-modal -->
-        <div class="modal-content video-modal">
-          <div class="modal-header song-model-header">
-            <h5 class="modal-title" data-bind="text:songform.title"></h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div id='songPlayer1' class="modal" tabindex="-1">
+        <div class="modal-dialog  modal-lg">
+          <!-- styling in .video-modal -->
+          <div class="modal-content video-modal">
+            <div class="modal-header song-model-header">
+              <h5 class="modal-title" data-bind="text:songform.title"></h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <youtube-frame params="id:'video-frame-1',ytcode:songform.youtubeId"></youtube-frame>
+            </div>
+            <!-- no modal-footer for videos -->
           </div>
-          <div class="modal-body">
-            <youtube-frame params="id:'video-frame-1',ytcode:songform.youtubeId"></youtube-frame>
-          </div>
-          <!-- no modal-footer for videos -->
         </div>
       </div>
-    </div>
 
-  </div>
+    </div>
 </div>
-

@@ -101,7 +101,6 @@ namespace Peanut {
                                     );
 
                                 me.songTypes = response.types;
-                                // me.instruments = response.instruments;
                                 if (response.filtered) {
                                     me.currentSearchRequest.filter = response.filtered.id;
                                     me.filterController.setValue(response.filtered.id);

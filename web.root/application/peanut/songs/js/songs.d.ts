@@ -31,14 +31,12 @@ declare namespace Peanut {
         types : number[]
     }
     interface ISongPage extends  ISongPageUpdateRequest {
-        hasicon? : any,
-        hasthumbnail? : any,
+        hasicon? : any
     }
     interface ISongPageUpdateResponse {
         pageId : any,
         songId: any;
-        hasicon : any,
-        hasthumbnail : any,
+        hasicon : any
     }
 
 
@@ -69,7 +67,6 @@ declare namespace Peanut {
     interface ISongSearchResponse {
         pages: ISongListItem[],
         pageCount?: number,
-        types?: ILookupItem[],
-        instruments?: ILookupItem[]
+        types?: ILookupItem[]
     }
 }

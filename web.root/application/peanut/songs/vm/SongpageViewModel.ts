@@ -26,13 +26,19 @@ namespace Peanut {
 
     class SongPageObservable{
         constructor(canEdit: boolean, typesLookup: ILookupItem[],page?: ISongPage) {
-            this.typesController = new multiSelectObservable(typesLookup);
-            this.userCanEdit = canEdit;
+            let me = this;
+            me.typesController = new multiSelectObservable(typesLookup);
+            me.userCanEdit = canEdit;
             if (page) {
                 this.assign(page);
             }
+            me.introductionLength = ko.computed(() => {
+                return me.introduction().trim().length;
+            })
+
         }
 
+        introductionLength: KnockoutComputed<any>;
         userCanEdit : boolean = false;
         typesController : multiSelectObservable;
         editMode = ko.observable(false);
@@ -52,7 +58,6 @@ namespace Peanut {
         imagecaption = ko.observable('');
         youtubeId = ko.observable('');
         hasicon = ko.observable(true);
-        hasthumbnail = ko.observable(false);
         publicDomain = ko.observable(true);
         active = ko.observable(true);
         errorMessage = ko.observable('');
@@ -85,7 +90,6 @@ namespace Peanut {
             this.imagecaption(page.imagecaption);
             this.youtubeId(page.youtubeId);
             this.hasicon(page.hasicon == 1);
-            this.hasthumbnail(page.hasthumbnail == 1);
             this.defaultImageName(page.song.contentid + '.jpg');
             this.active(page.active == 1);
         }
@@ -115,7 +119,6 @@ namespace Peanut {
             this.imagecaption('');
             this.youtubeId('');
             this.hasicon(false);
-            this.hasthumbnail(false);
             this.active(true);
         }
 

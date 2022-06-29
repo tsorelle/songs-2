@@ -36,8 +36,6 @@ use Peanut\songs\SongsManager;
  *             imagecaption : string,
  *             youtubeId : string,
  *             hasicon : any,
- *             hasthumbnail : any,
- *             instruments? : number[],
  *             types? : number[]
  *         }
  *         export interface ILookupItem {

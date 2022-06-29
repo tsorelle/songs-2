@@ -34,7 +34,6 @@ use Peanut\songs\SongsManager;
  * 			pageId : any,
  * 			songId: any;
  * 			hasicon : any,
- * 			hasthumbnail : any,
  * 		}
  */
 class UpdateSongPageCommand extends \Tops\services\TServiceCommand

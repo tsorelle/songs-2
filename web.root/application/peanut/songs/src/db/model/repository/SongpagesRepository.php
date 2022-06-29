@@ -59,8 +59,7 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
         'pageimage'=>PDO::PARAM_STR,
         'imagecaption'=>PDO::PARAM_STR,
         'youtubeId'=>PDO::PARAM_STR,
-        'hasicon'=>PDO::PARAM_STR,
-        'hasthumbnail'=>PDO::PARAM_STR);
+        'hasicon'=>PDO::PARAM_STR);
     }
 
     public function getPageBySongId(int $songId, $indludeInactive = false)

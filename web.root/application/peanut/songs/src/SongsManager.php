@@ -234,7 +234,6 @@ class SongsManager
         $response->pageId = $pageId;
         $response->songId = $songId;
         $response->hasicon = $this->hasSongImage('icons',$song->contentid);
-        $response->hasthumbnail = $this->hasSongImage('thumbnails',$song->contentid);
 
         return $response;
     }
