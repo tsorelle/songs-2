@@ -100,7 +100,7 @@ namespace PeanutContent {
             if (this.isHtml()) {
                 let id = this.htmlEditorId();
                 let editor = tinymce.get(id);
-                let content = this.contentSource();
+                let content = this.contentSource() === null ? '' : this.contentSource();
                 editor.setContent(content);
             }
             else {
@@ -147,7 +147,7 @@ namespace PeanutContent {
 
         postContent = () => {
             let me = this;
-            if (this.isHtml) {
+            if (this.isHtml()) {
                 tinymce.triggerSave();
                 let content = me.getEditorContent();
                 me.contentSource(content);

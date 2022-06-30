@@ -66,6 +66,13 @@ namespace PeanutContent {
                 me.imageUploadId('upload-'+params.id);
             }
 
+            me.imagePath = (ko.isObservable(params.imagepath)) ?
+                params.imagepath() : params.imagepath;
+
+            me.imagePath = (me.imagePath === null) ? '/assets/img' : me.imagePath.trim();
+            if (me.imagePath.length == 0) {
+                me.imagePath = '/assets/img';
+            }
             let imageName = '';
             if (params.contentId) {
                 imageName =
@@ -84,18 +91,23 @@ namespace PeanutContent {
                 }
             }
 
-            let ext =  imageName.indexOf('.') === -1 ? null : imageName.split('.').pop();
-            if (!ext) {
-                imageName += '.jpg';
+            if (imageName !== null) {
+                imageName = imageName.trim();
+                if (imageName.length > 0) {
+                    let ext =  imageName.indexOf('.') === -1 ? null : imageName.split('.').pop();
+                    if (!ext) {
+                        imageName += '.jpg';
+                    }
+                }
+                me.imageSrc(me.imagePath + '/' + imageName);
             }
-            me.imageName = ko.observable(imageName);
 
-            me.imagePath = (ko.isObservable(params.imagepath)) ?
-                params.imagepath() : params.imagepath;
-
-            me.imageSrc(me.imagePath + '/' + imageName);
-            // let src = me.imageSrc();
-
+            if (me.imageName) {
+                me.imageName(imageName);
+            }
+            else {
+                me.imageName = ko.observable(imageName);
+            }
 
             if (params.owner) {
                 me.owner = params.owner();

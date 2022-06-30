@@ -87,15 +87,21 @@ namespace Peanut {
             this.commentary(page.commentary);
             this.postedDate(page.postedDate);
             this.pageimage(page.pageimage);
-            this.imagecaption(page.imagecaption);
+            this.imagecaption(page.imagecaption ?? '');
             this.youtubeId(page.youtubeId);
             this.hasicon(page.hasicon == 1);
-            this.defaultImageName(page.song.contentid + '.jpg');
+            if (page.song.contentid) {
+                this.defaultImageName(page.song.contentid+ '.jpg');
+            }
+            else {
+                this.defaultImageName('default.jpg');
+            }
             this.active(page.active == 1);
         }
         
         assignSong = (song: ISong) => {
             let songid = parseInt(song.id);
+            this.errorMessage('');
             this.newSong(songid === 0);
             this.songid(songid);
             this.contentId(song.contentid);
@@ -165,10 +171,10 @@ namespace Peanut {
 
         getSongObject = () => {
             return <ISong> {
-                lyrics: this.lyrics().trim(),
-                title: this.title().trim(),
-                description: this.description().trim(),
-                contentid: this.contentId().trim(),
+                lyrics: (this.lyrics() === null) ? '' :  this.lyrics().trim(),
+                title: (this.title() === null) ? '' : this.title().trim(),
+                description: (this.description() === null) ? '' : this.description().trim(),
+                contentid: (this.contentId() === null) ? '' : this.contentId().trim(),
                 id: this.songid(),
                 publicdomain: this.publicDomain() ? 1 : 0
             }
@@ -298,14 +304,13 @@ namespace Peanut {
         }
 
         save = () => {
-            alert('saving')
             this.confirmSaveModal.hide();
             let request = this.songform.validate();
             if (request === false) {
                 return;
             }
             this.songform.editMode(false)
-            // todo: implement update
+
             let me = this;
             me.application.hideServiceMessages();
             me.application.showWaiter('Message here...');
@@ -416,11 +421,6 @@ namespace Peanut {
         }
 
         onFileSelected(files: any, imagePath: string, imageName: string) {
-            // todo: replace with upload file routine
-            alert('upload new file');
-        }
-
-        uploadFiles(files: any, imagePath: string, imageName: string) {
             // alert('File selected: ' + imagePath + '/' + imageName);
             let me=this;
             let request : PeanutContent.IImageUploadRequest = {

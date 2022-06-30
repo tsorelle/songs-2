@@ -132,9 +132,12 @@ namespace Peanut {
         }
         
         parseVerses = () => {
-            let lyrics = this.lyrics();
-            let text = lyrics.split("\n");
             this.verses = [];
+            let lyrics = this.lyrics();
+            if (!lyrics) {
+                return;
+            }
+            let text = lyrics.split("\n");
             let verse : IVerse = {
                 lines: []
             }
