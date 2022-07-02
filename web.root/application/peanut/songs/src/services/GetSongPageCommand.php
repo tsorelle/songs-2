@@ -63,10 +63,12 @@ class GetSongPageCommand extends \Tops\services\TServiceCommand
         }
         $manager = new SongsManager();
         $response = new \stdClass();
-        $response->page = $manager->getSongPage($songId);
-        if (!$response->page) {
-            $this->addErrorMessage("No song found for id '$songId'.");
-            return;
+        if  ($songId !== 'new') {
+            $response->page = $manager->getSongPage($songId);
+            if (!$response->page) {
+                $this->addErrorMessage("No song found for id '$songId'.");
+                return;
+            }
         }
         $response->types = $manager->getSongTypesLookup();
         $response->canedit = $this->getUser()->isAdmin(); // maybe replace this with authorization

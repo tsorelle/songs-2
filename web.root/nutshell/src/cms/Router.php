@@ -29,7 +29,10 @@ class Router
 
     public static function routeService()
     {
-        include __DIR__.'\routing\ServiceRequestHandler.php';
+        include __DIR__.'/routing/ServiceRequestHandler.php';
+/*        if (!class_exists('Nutshell\cms\ServiceRequestHandler')) {
+            throw new \Exception('ServiceRequestHandler not loaded');
+        }*/
         $routeData = RouteFinder::$matched;
         $method = $routeData['method'] ?? null;
         if (empty($method)) {

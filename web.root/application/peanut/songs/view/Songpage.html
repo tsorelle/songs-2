@@ -67,7 +67,12 @@
             <p class="text-danger" data-bind="text:songform.errorMessage"></p>
           </div>
         </div>
-        <h1 data-bind="text:songform.title"></h1>
+        <h1 data-bind="text:songform.title, hidden:songform.newPage"></h1>
+        <h3 data-bind="visible:songform.newPage">New Song Page</h3>
+        <div data-bind="visible:songform.newSong">
+          <label for="song-title">Title</label>
+          <input type="text" id="song-title" class="form-control" data-bind="value:songform.title">
+        </div>
         <p class="posted-date"> Posted on <span data-bind="text:songform.postedDate"></span>
           <a href="#" data-bind="click:editDate,visible:songform.editMode">
             <i class="far fa-edit content-edit-icon-button"></i></a>
@@ -76,11 +81,16 @@
     </div>
     <div id="song-page-body" class="row pb-3">
       <div class="col-md-9">
-        <content-block params="controller: contentController, id: 'commentary-content',
-        title: 'Edit Song Commentary',
-        source: songform.commentary, canedit:songform.editMode"></content-block>
-        <h4 data-bind="visible:songform.lyrics">Lyrics</h4>
-        <lyrics-block params="lyrics:songform.lyrics, canedit:songform.editMode"></lyrics-block>
+        <div>
+          <h4 data-bind="visible:songform.newPage">Commentary</h4>
+          <content-block params="controller: contentController, id: 'commentary-content',
+          title: 'Edit Song Commentary',
+          source: songform.commentary, canedit:songform.editMode"></content-block>
+        </div>
+        <div style="clear: both">
+          <h4 data-bind="visible:songform.showLyricsHeading">Lyrics</h4>
+          <lyrics-block params="lyrics:songform.lyrics, canedit:songform.editMode"></lyrics-block>
+        </div>
       </div>
       <div class="col-md-3">
         <div>

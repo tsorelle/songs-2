@@ -1,6 +1,6 @@
 <style>
     .carousel-col {
-        min-height: 20rem;
+        min-height: 21.5rem;
     }
 </style>
 
@@ -36,7 +36,7 @@
                 <i class="fas fa-chevron-left"></i>
             </button>
         </div>
-        <div class="col-md-10">
+        <div class="col-md-10 carousel-col">
             <div id="carousel-featured" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     <?php
@@ -52,8 +52,10 @@
         </div>
     </div>
 
-    <h2>All the songs:</h2>
-    <h5>
-    <a href="\songs" >Search and Filter <i class="fas fa-arrow-right"></i></a>
-    </h5>
+    <div>
+        <h2>All the songs:</h2>
+        <h5>
+            <a href="/songs" >Search and Filter <i class="fas fa-arrow-right"></i></a>
+        </h5>
+    </div>
 </div>

@@ -77,7 +77,7 @@ namespace Peanut {
                     ], () => {
 
                         let request = this.currentSearchRequest;
-                    me.services.executeService('Peanut.songs::InitSongList',request,
+                    me.services.executeService('Peanut.songs::InitSonglist',request,
                         (serviceResponse: Peanut.IServiceResponse) => {
                             if (serviceResponse.Result == Peanut.serviceResultSuccess) {
                                 let response = <ISonglistInitResponse>serviceResponse.Value;
@@ -248,7 +248,7 @@ namespace Peanut {
             let request = this.currentSearchRequest;
             me.application.hideServiceMessages();
             // me.application.showWaiter('Finding songs...');
-            me.services.executeService('Peanut.songs::GetSongList',request,
+            me.services.executeService('Peanut.songs::GetSonglist',request,
                 (serviceResponse: Peanut.IServiceResponse) => {
                     if (serviceResponse.Result == Peanut.serviceResultSuccess) {
                         me.application.hideWaiter();

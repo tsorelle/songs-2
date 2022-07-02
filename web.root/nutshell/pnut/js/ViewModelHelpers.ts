@@ -271,6 +271,10 @@ namespace Peanut {
             return d.toISOString().substring(0, 10)
         }
 
+        public static todayToISODate() {
+            return this.toISODate(new Date());
+        }
+
         public static parseISODate(ds) {
             let d = Helper.toDateObject(ds);
             if (!d) {

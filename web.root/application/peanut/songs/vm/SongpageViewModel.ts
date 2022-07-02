@@ -2,6 +2,7 @@
 /// <reference path='../../../../nutshell/typings/knockout/knockout.d.ts' />
 /// <reference path='../js/songs.d.ts' />
 /// <reference path='../../../../nutshell/pnut/core/peanut.d.ts' />
+/// <reference path='../../../../nutshell/pnut/js/ViewModelHelpers.ts' />
 /// <reference path='../../../../nutshell/pnut/js/multiSelectObservable.ts' />
 /// <reference path='../../../../nutshell/pnut/packages/peanut-content/js/contentController.ts' />
 /// <reference path='../../../../nutshell/pnut/packages/peanut-youtube/js/YTFrameController.ts' />
@@ -32,8 +33,21 @@ namespace Peanut {
             if (page) {
                 this.assign(page);
             }
+            else {
+                if (me.userCanEdit) {
+                    me.assignNewPage();
+                }
+                else {
+                    alert("User does not have permission to create a new song page.");
+                    window.location.replace("/");
+                }
+            }
             me.introductionLength = ko.computed(() => {
                 return me.introduction().trim().length;
+            })
+
+            me.showLyricsHeading = ko.computed(() => {
+                return me.newPage() || me.lyrics().length > 0;
             })
 
         }
@@ -42,7 +56,7 @@ namespace Peanut {
         userCanEdit : boolean = false;
         typesController : multiSelectObservable;
         editMode = ko.observable(false);
-
+        showLyricsHeading : KnockoutComputed<boolean>
         songid = ko.observable();
         newSong = ko.observable(false);
         newPage = ko.observable(false);
@@ -111,16 +125,17 @@ namespace Peanut {
             this.publicDomain(song.publicdomain == 1);
         }
 
-        clear = () => {
-            this.editMode(false);
+        assignNewPage = () => {
+            this.newSong(true);
+            this.newPage(true);
+            this.editMode(true);
             this.errorMessage('');
             this.pageid(0);
             this.clearSong();
-
             this.typesController.setValues([]);
             this.introduction('');
             this.commentary('');
-            this.postedDate('');
+            this.postedDate(Peanut.Helper.todayToISODate());
             this.pageimage('');
             this.imagecaption('');
             this.youtubeId('');
@@ -186,14 +201,19 @@ namespace Peanut {
         }
 
         cancel = () => {
-            this.revert();
-            this.editMode(false);
+            if (this.newPage()) {
+                window.location.replace("/");
+            }
+            else {
+                this.revert();
+                this.editMode(false);
+            }
         }
     }
 
     export class SongpageViewModel extends Peanut.ViewModelBase
         implements IContentOwner, IImageComponentOwner {
-        contentid = ko.observable('Mars');
+        contentid = ko.observable('');
         returnLink = ko.observable('');
         songsLink = ko.observable('/songs');
         returnTitle = ko.observable('');
@@ -246,7 +266,8 @@ namespace Peanut {
                 '@pkg/peanut-content/contentController.js',
                 '@lib:tinymce',
                 '@pnut/ViewModelHelpers.js',
-                '@pkg/peanut-youtube/YTFrameController.js'
+                '@pkg/peanut-youtube/YTFrameController.js',
+                '@pnut/ViewModelHelpers.js'
             ], () => {
                 me.application.registerComponents([
                     '@pnut/pager',
@@ -268,7 +289,7 @@ namespace Peanut {
                                 me.songTypeLinks(response.songTypeLinks);
                                 me.latestSongs(response.latest);
                                 me.songform = new SongPageObservable(response.canedit,
-                                    response.types,response.page);
+                                    response.types,response.page ?? null);
                                 me.canedit(response.canedit);
 
                                 me.bindDefaultSection();

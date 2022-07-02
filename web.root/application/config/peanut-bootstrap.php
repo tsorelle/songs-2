@@ -58,6 +58,11 @@ class Bootstrap
             $fileRoot .= '/';
         }
         $settings = self::getSettings();
+
+        $autoloadFile = $fileRoot.$settings->composerPath.'/autoload.php';
+        if (!file_exists($autoloadFile)) {
+            exit ("No autoload file: $autoloadFile");
+        }
         @include_once $fileRoot.$settings->composerPath.'/autoload.php';
 
         $topsRoot = $settings->topsLocation;
