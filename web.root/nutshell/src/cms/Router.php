@@ -70,6 +70,7 @@ class Router
         $routeData['themePath'] = '/application/themes/' . $theme;
         $routeData['themeIncludePath'] = DIR_BASE."/application/themes/$theme/inc";
         $user = TUser::getCurrent();
+        $routeData['editorsignedin'] = $user->isAuthorized('editsongs');
         $routeData['signin'] = $user->isAuthenticated() ?
             $user->getFullName().' | '.'<a class="ms-2" href="/signout">Sign Out</a>' :
             '<a id="footer-signin-link" href="/signin">Sign in</a>';

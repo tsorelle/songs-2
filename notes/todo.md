@@ -1,14 +1,11 @@
-## Phase 1 song site basic
-- Test data updates from song page
+# Phase 1 song site basic
 - Create new song and page
-- Create new page for song
-- Large icon format
-- Front page
-  - Carousel
-  - Other content
+- Other content
 - Donations page
 - About page
 - Deploy song site
 
 # Phase 2 lyrics pages
-- Port old code and recent data
+- Import songs
+- Create new page for song
+- Port old code
