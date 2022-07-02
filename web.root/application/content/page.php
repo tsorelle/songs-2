@@ -22,6 +22,7 @@
     /** @var int $siteheader */
     /** @var int $sitefooter */
     /** @var int $pageheader */
+    /** @var int $frontpage */
 
 ?>
 <head>
@@ -66,10 +67,16 @@
     if ($siteheader === 1) {
         include $themeIncludePath."/site-header.php";
     }
+
+    if ($frontpage === 1) {
+        include $themeIncludePath . "/front-header.php";
+    }
+
     if ($pageheader === 1) {
         include $themeIncludePath."/page-header.php";
     }
     ?>
+
 
     <!-- main content -->
     <div  id="nutshell-main-section">
@@ -112,7 +119,7 @@
     }
 
     ?>
-<!-- late loading scripts -->
+    <!-- late loading scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 <?php
     \Peanut\sys\ViewModelManager::RenderStartScript();

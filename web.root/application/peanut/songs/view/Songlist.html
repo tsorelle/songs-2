@@ -22,7 +22,7 @@
           </h2>
           <div id="searchpanel" class="accordion-collapse collapse" aria-labelledby="searchheading" data-bs-parent="#searchsection">
             <div class="accordion-body">
-               <form>
+               <div>
                  <div class="row mb-3">
                     <div class="col-md-12">
                       <lookup-select params="controller: filterController, label:'Filter',caption: 'Select...'"></lookup-select>
@@ -34,7 +34,7 @@
                     </div>
                    <div class="col-md-9" data-bind="visible:showSearchTerms">
                       <label for="search-terms">Search terms</label>
-                     <input data-bind="value:searchTerms" class="form-control" id="search-terms" type="text" />
+                        <input data-bind="value:searchTerms" class="form-control" id="search-terms" type="text" />
                      <div class="form-text" data-bind="visible:showTextInfo">
                         Enclose literal phrases in quotes.
                      </div>
@@ -52,7 +52,7 @@
                      </div>
                    </div>
                  </div>
-               </form>
+               </div>
             </div>
           </div>
         </div>

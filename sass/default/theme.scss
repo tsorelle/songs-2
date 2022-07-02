@@ -2,12 +2,29 @@
   background-color: #fdf8de0d;
 }
 
-nav#top-navbar {
+h1, h2 {
+  color: $tls-texas-turq;
+}
+
+nav#top-navbar,
+div#songs-intro
+{
   border: solid;
   background-color: $panel-background; // #FDF6DE;
   border-radius: 10px;
   border-color: $panel-border;
   border-width: thin;
+}
+
+#songs-intro {
+  padding: 1rem;
+}
+
+#front-header {
+  padding-top: 0!important;
+  padding-left: 0.25rem!important;
+  padding-right: 0.25rem!important;
+  padding-bottom: 0.25rem!important;
 }
 
 #site-footer {
@@ -19,11 +36,18 @@ nav#top-navbar {
 
 }
 
+#songs-intro-inner {
+  font-family: adobe-handwriting-tiffany, "Comic Sans MS","Lucida Handwriting","Borealis","Bradley Hand","Jackies Hand",cursive,sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 1.3rem;
+  color: saddlebrown;
+
+}
 
 .img-thumbnail {
   border-color: $tls-texas-turq-light;
 }
-
 
 
 .landing-page-image {

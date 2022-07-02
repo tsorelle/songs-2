@@ -85,6 +85,7 @@ class Router
             self::setSwitchValue($routeData,'siteheader',1);
             self::setSwitchValue($routeData,'sitefooter',1);
             self::setSwitchValue($routeData,'pageheader',1);
+            self::setSwitchValue($routeData,'frontpage',0);
             if ($uri === 'home') {
                 self::setSwitchValue($routeData, 'breadcrumbs', 0);
             }
@@ -150,6 +151,17 @@ class Router
                             }
                             $routeData['pageVars'] = $pageVars;
                             unset($routeData['args']);
+                        }
+                    }
+
+                    $postArgName = $routeData['postarg'] ?? null;
+                    if ($postArgName) {
+                        $postArgValue = $_POST[$postArgName] ?? null;
+                        if ($postArgValue) {
+                            $pageVars = $routeData['pageVars'] ?? [];
+                            $pageVars[$postArgName.'-value'] = $postArgValue;
+                            $routeData['pageVars'] = $pageVars;
+                            unset($_POST[$postArgName]);
                         }
                     }
 

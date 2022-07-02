@@ -1,6 +1,19 @@
 // stylelint-disable scss/dollar-variable-default
-
+@import url("https://use.typekit.net/erk2cbf.css");
+// font-family: lato, sans-serif;
+// font-family: lato,'Microsoft Sans Serif' , Arial, Helvetica, Verdana, sans-serif;
+// font-family: adobe-handwriting-tiffany, sans-serif;
+// font-family: adobe-handwriting-tiffany, "Comic Sans MS","Lucida Handwriting","Borealis","Bradley Hand","Jackies Hand",cursive,sans-serif;
+/*
+// Quicksand for titles
+font-family: quicksand, sans-serif;
+font-weight: 700;
+font-style: normal;
+ */
 // Local docs variables
+$font-family-base: lato,'Microsoft Sans Serif' , Arial, Helvetica, Verdana, sans-serif;
+$headings-font-family: quicksand, sans-serif;
+
 $bd-purple:        #563d7c;
 $bd-purple-bright: lighten(saturate($bd-purple, 5%), 15%); // stylelint-disable-line function-disallowed-list
 $bd-purple-light:  lighten(saturate($bd-purple, 5%), 45%); // stylelint-disable-line function-disallowed-list

@@ -36,6 +36,7 @@ namespace Peanut {
         sortOrderController : selectListObservable;
         filterTitle = ko.observable('');
         songsFound = ko.observable(false);
+        searchPosted = false;
 
         currentSearchRequest : ISongSearchRequest = {
             pageSize: 12,
@@ -45,6 +46,13 @@ namespace Peanut {
         init(successFunction?: () => void) {
             let me = this;
             Peanut.logger.write('Songlist Init');
+            let searchstring = me.getPageVarialble('searchstring-value');
+            if (searchstring) {
+                me.searchPosted = true;
+                me.currentSearchRequest.searchType = 2;
+                me.currentSearchRequest.searchTerms = searchstring;
+            }
+
             let initFilter = me.getPageVarialble('song-type');
             if (initFilter) {
                 let intval = parseInt(initFilter,10);
@@ -62,6 +70,7 @@ namespace Peanut {
                     me.currentSearchRequest.page = intval;
                 }
             }
+
             me.application.registerComponents('@pnut/pager,@pnut/lookup-select', () => {
                     me.application.loadResources([
                         '@pnut/selectListObservable'
@@ -107,13 +116,29 @@ namespace Peanut {
                                     me.filterTitle(response.filtered.description);
                                     me.searchClear(false);
                                 }
+                                else if (me.searchPosted) {
+                                    me.filterTitle(response.songCount+' Songs found')
+                                    me.searchTypeController.setValue(2);
+                                    me.searchTerms(searchstring);
+                                    me.showSearchTerms(true);
+                                    me.showTextInfo(true);
+                                    me.searchClear(false);
+                                }
                                 else {
                                     me.filterTitle('All '+response.songCount+' Songs');
                                 }
+
                                 me.setReturnLink();
                                 me.setList(response);
+
                                 me.searchTypeController.subscribe();
                                 me.filterController.subscribe();
+
+                                // has to happen after subscribes.
+                                if (this.searchPosted) {
+                                    me.showSearchTerms();
+                                }
+
                                 this.songsFound(response.songCount > 0);
                                 this.maxPages(response.pageCount);
                                 me.bindDefaultSection();
@@ -181,9 +206,15 @@ namespace Peanut {
         }
 
         clearSearch() {
+            if (this.searchPosted) {
+                window.location.href = window.location.protocol +'//'+ window.location.host + window.location.pathname;
+                return;
+            }
             this.searchTypeController.unsubscribe();
             this.filterController.unsubscribe();
             this.searchTerms('');
+            this.showTextInfo(false);
+            this.showSearchTerms(false);
             this.currentSearchRequest.page = 1;
             this.currentSearchRequest.filter = null;
             this.filterController.setValue(null);

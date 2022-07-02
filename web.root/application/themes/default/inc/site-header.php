@@ -21,8 +21,13 @@
                 ?>
 
                 </ul>
-                <form>
-                    <i class="fas fa-search"></i><a style="text-decoration: none; color:saddlebrown;font-weight: bold" href="/songs"> &nbsp;Search songs</a>
+
+                <form id="song-search" method="post" action="/songs" >
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" autocomplete="off"
+                               id="searchstring" name="searchstring"></input>
+                        <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search"></i></button>
+                    </div>
                 </form>
             </div>
         </div>

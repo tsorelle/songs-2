@@ -10,7 +10,6 @@ use Peanut\songs\SongsManager;
  *        interface ISonglistInitResponse{
  *            pages: ISongListItem[];
  *            types: ILookupItem[];
- *            instruments: ILookupItem[];
  *        }
  *
  *        export interface ILookupItem {
