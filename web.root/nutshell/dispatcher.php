@@ -14,32 +14,24 @@ if (isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI'])) {
         include_once DIR_CONFIG_SITE . "/peanut-bootstrap.php";
         \Peanut\Bootstrap::initialize();
 
-/*        $requiredClasses = ['Peanut\users\AccountManager',
-            'Tops\sys\TUser',
-            'Peanut\sys\ViewModelManager',
+        // check to see if autoload succeeded
+        // todo: delete after stabilization
+       $requiredClasses = [
+           '\Nutshell\cms\Router',
             'Peanut\users\AccountManager',
-            'Tops\sys\TSession',
             'Tops\sys\TUser',
-            'Tops\sys\TWebSite',
             'Peanut\users\db\model\entity\Role',
-            'Peanut\users\db\model\entity\User',
-            'Peanut\users\db\model\entity\Usersession',
-            'Peanut\users\db\model\repository\AuthenticationsRepository',
-            'Peanut\users\db\model\repository\RolesRepository',
-            'Peanut\users\db\model\repository\UserRolesAssociation',
-            'Peanut\users\db\model\repository\UsersessionsRepository',
-            'Peanut\users\db\model\repository\UsersRepository',
-            'Tops\db\IProfilesRepository',
-            'Tops\sys\IUserAccountManager',
-            'Tops\sys\TAddUserAccountResponse',
             'Tops\sys\TConfiguration',
-            'Tops\sys\TObjectContainer'];
+            'Tops\sys\TObjectContainer',
+            'Peanut\songs\services\GetSongCommand',
+            'Peanut\songs\db\model\repository\SongpagesRepository'
+       ];
         foreach ($requiredClasses as $className) {
-            if (!class_exists('\Nutshell\cms\Router')) {
+            if (!class_exists($className)) {
                 throw new \Exception('Class not found:'.$className);
             };
-        }*/
-        // check to see if autoload succeeded
+        }
+
         if (!class_exists('\Nutshell\cms\Router')) {
             throw new \Exception('Initialization failed');
         };
