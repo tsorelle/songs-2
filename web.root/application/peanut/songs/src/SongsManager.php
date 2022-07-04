@@ -115,25 +115,23 @@ class SongsManager
         $this->getSongsRepository()->remove($songId);
     }
 
-    public function getSongPage($songId) {
-        if (is_numeric($songId)) {
-            $song = $this->getSongsRepository()->get($songId);
+    public function getSongPage($songPageId) {
+        $repo = $this->getSongpagesRepository();
+
+        if (is_numeric($songPageId)) {
+            $page = $repo->get($songPageId);
         }
         else {
-            $song = $this->getSongsRepository()->getSingleEntity('contentid=?',[$songId]);
+            $page = $repo->getSingleEntity('contentId=?',[$songPageId]);
         }
-        if (!$song) {
+        if (!$page) {
             return false;
         }
-        $repo = $this->getSongpagesRepository();
-        $page = $repo->getPageBySongId($song->id);
-        if ($page) {
-            $page->song = $song;
-            $songTagsRepo = $this->getSongTagsRepository();
-            $page->types = $songTagsRepo->getTagValues($song->id, 'type');
-            // $page->instruments = $songTagsRepo->getTagValues($songId, 'instrument');
-        }
-
+        $songId = $page->songId;
+        $song = $this->getSongsRepository()->get($songId);
+        $page->song = $song;
+        $songTagsRepo = $this->getSongTagsRepository();
+        $page->types = $songTagsRepo->getTagValues($songId, 'type');
         return $page;
     }
 
@@ -233,7 +231,7 @@ class SongsManager
 
         $response->pageId = $pageId;
         $response->songId = $songId;
-        $response->hasicon = $this->hasSongImage('icons',$song->contentid);
+        $response->hasicon = $this->hasSongImage('icons',$pageDto->contentId);
 
         return $response;
     }
@@ -246,7 +244,8 @@ class SongsManager
                 return false;
             }
         }
-        $textArray = [$song->title, $song->description];
+
+        $textArray = [$song->title, $songpage->description];
         if (!empty($song->lyrics)) {
             $textArray[] = strip_tags($song->lyrics);
         }
@@ -342,6 +341,31 @@ class SongsManager
             print "    </div>\n";
             print "</div>\n";
         }
+    }
+
+    public function validateNewSong($request)
+    {
+        $contentId = trim($request->contentId ?? '');
+        if (!$contentId) {
+            return 'Content Id is required';
+        }
+        $title = trim($request->title ?? '');
+        if (!$title) {
+            return 'Title is required';
+        }
+
+        $repo = $this->getSongpagesRepository();
+        $existing = $repo->getPageBycontentId($contentId);
+        if ($existing) {
+            return "Content Id '$contentId' is already used.";
+        }
+        $repo = $this->getSongsRepository();
+        $existing = $repo->getSongByTitle($title);
+        if ($existing) {
+            return "Title '$title' is already used.";
+        }
+
+        return 'ok';
     }
 
 }

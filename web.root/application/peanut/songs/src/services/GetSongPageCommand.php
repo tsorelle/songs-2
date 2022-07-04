@@ -19,7 +19,7 @@ use Peanut\songs\SongsManager;
  *         }
  *         interface ISong {
  *             id : any,
- *             contentid : string,
+ *             contentId : string,
  *             title : string,
  *             description : string,
  *             lyrics : string,
@@ -56,17 +56,17 @@ class GetSongPageCommand extends \Tops\services\TServiceCommand
 
     protected function run()
     {
-        $songId = $this->getRequest();
-        if (empty($songId)) {
+        $contentId = $this->getRequest();
+        if (empty($contentId)) {
             $this->addErrorMessage('No song id received.');
             return;
         }
         $manager = new SongsManager();
         $response = new \stdClass();
-        if  ($songId !== 'new') {
-            $response->page = $manager->getSongPage($songId);
+        if  ($contentId !== 'new') {
+            $response->page = $manager->getSongPage($contentId);
             if (!$response->page) {
-                $this->addErrorMessage("No song found for id '$songId'.");
+                $this->addErrorMessage("No song page found for id '$contentId'.");
                 return;
             }
         }

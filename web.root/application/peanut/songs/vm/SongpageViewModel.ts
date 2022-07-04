@@ -94,6 +94,8 @@ namespace Peanut {
             let pageId = parseInt(page.id);
             this.pageid(pageId);
             this.newPage(pageId === 0);
+            this.contentId(page.contentId);
+            this.description(page.description);
 
             this.assignSong(page.song);
             
@@ -104,8 +106,8 @@ namespace Peanut {
             this.imagecaption(page.imagecaption ?? '');
             this.youtubeId(page.youtubeId);
             this.hasicon(page.hasicon == 1);
-            if (page.song.contentid) {
-                this.defaultImageName(page.song.contentid+ '.jpg');
+            if (page.contentId) {
+                this.defaultImageName(page.contentId+ '.jpg');
             }
             else {
                 this.defaultImageName('default.jpg');
@@ -118,8 +120,6 @@ namespace Peanut {
             this.errorMessage('');
             this.newSong(songid === 0);
             this.songid(songid);
-            this.contentId(song.contentid);
-            this.description(song.description);
             this.title(song.title);
             this.lyrics(song.lyrics);
             this.publicDomain(song.publicdomain == 1);
@@ -131,6 +131,8 @@ namespace Peanut {
             this.editMode(true);
             this.errorMessage('');
             this.pageid(0);
+            this.contentId('');
+            this.description('');
             this.clearSong();
             this.typesController.setValues([]);
             this.introduction('');
@@ -145,18 +147,18 @@ namespace Peanut {
 
         clearSong = () => {
             this.songid(0);
-            this.contentId('');
-            this.description('');
             this.title('');
             this.lyrics('');
         }
 
         validate = () => {
             this.errorMessage('');
-            let request: ISongPage = {
+            let request: ISongPageUpdateRequest = {
                 id : this.pageid(),
                 active: this.active(),
                 youtubeId: this.youtubeId(),
+                description: (this.description() === null) ? '' : this.description().trim(),
+                contentId: (this.contentId() === null) ? '' : this.contentId().trim(),
                 song: this.getSongObject(),
                 imagecaption: this.imagecaption().trim(),
                 pageimage: this.pageimage(),
@@ -175,7 +177,13 @@ namespace Peanut {
                 this.errorMessage('Song title is required');
                 return false;
             }
-            if (!request.song.description) {
+
+            if (!request.contentId) {
+                this.errorMessage('Song contentId is required');
+                return false;
+            }
+
+            if (!request.description) {
                 this.errorMessage('Song description is required');
                 return false;
             }
@@ -186,11 +194,9 @@ namespace Peanut {
 
         getSongObject = () => {
             return <ISong> {
+                id: this.songid(),
                 lyrics: (this.lyrics() === null) ? '' :  this.lyrics().trim(),
                 title: (this.title() === null) ? '' : this.title().trim(),
-                description: (this.description() === null) ? '' : this.description().trim(),
-                contentid: (this.contentId() === null) ? '' : this.contentId().trim(),
-                id: this.songid(),
                 publicdomain: this.publicDomain() ? 1 : 0
             }
         }
@@ -213,7 +219,7 @@ namespace Peanut {
 
     export class SongpageViewModel extends Peanut.ViewModelBase
         implements IContentOwner, IImageComponentOwner {
-        contentid = ko.observable('');
+        contentId = ko.observable('');
         returnLink = ko.observable('');
         songsLink = ko.observable('/songs');
         returnTitle = ko.observable('');
@@ -255,12 +261,12 @@ namespace Peanut {
                 }
             }
 
-            let songid = me.getPageVarialble('songid');
-            if (!songid) {
-                alert('Song id not found');
+            let contentId = me.getPageVarialble('contentId');
+            if (!contentId) {
+                alert('Content id not found');
                 return;
             }
-            me.contentid(songid);
+            me.contentId(contentId);
             me.application.loadResources([
                 '@pnut/multiSelectObservable',
                 '@pkg/peanut-content/contentController.js',
@@ -282,7 +288,7 @@ namespace Peanut {
                     '@pnut/selected-list'
                 ], () => {
                     me.contentController = new PeanutContent.contentController(me);
-                    me.services.executeService('Peanut.songs::GetSongPage',songid,
+                    me.services.executeService('Peanut.songs::GetSongPage',contentId,
                         (serviceResponse: Peanut.IServiceResponse) => {
                             if (serviceResponse.Result == Peanut.serviceResultSuccess) {
                                 let response = <IGetSongPageInitResponse>serviceResponse.Value;
@@ -325,29 +331,51 @@ namespace Peanut {
         }
 
         save = () => {
+            let me = this;
             this.confirmSaveModal.hide();
             let request = this.songform.validate();
             if (request === false) {
                 return;
             }
-            this.songform.editMode(false)
+            if (this.songform.newSong()) {
+                me.services.executeService('Peanut.songs::ValidateNewSong',request.song,
+                    (serviceResponse: Peanut.IServiceResponse) => {
+                        if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                            me.application.hideWaiter();
+                            if (serviceResponse.Value === 'ok') {
+                                this.uploadChanges(<ISongPageUpdateRequest>request);
+                            }
+                            else {
+                                me.songform.errorMessage(serviceResponse.Value)
+                            }
+                        }
+                    }
+                ).fail(() => {
+                    // let trace = me.services.getErrorInformation();
+                    me.application.hideWaiter();
+                });
+            }
+            else {
+                this.uploadChanges(request);
+            }
+        }
 
+        uploadChanges = (request: ISongPageUpdateRequest) => {
+            this.songform.editMode(false)
             let me = this;
             me.application.hideServiceMessages();
             me.application.showWaiter('Message here...');
             me.services.executeService('Peanut.songs::UpdateSongPage',request,
                 (serviceResponse: Peanut.IServiceResponse) => {
                     if (serviceResponse.Result == Peanut.serviceResultSuccess) {
-                        me.application.hideWaiter();
-
+                        // refresh page
+                        window.location.replace("/song/"+request.contentId);
                     }
                 }
             ).fail(() => {
                 // let trace = me.services.getErrorInformation();
                 me.application.hideWaiter();
             });
-
-
         }
 
         // youtube routines

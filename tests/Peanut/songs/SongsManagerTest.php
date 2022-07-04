@@ -2,6 +2,7 @@
 
 namespace Peanut\songs;
 
+use Peanut\songs\db\model\repository\SongsRepository;
 use PHPUnit\Framework\TestCase;
 
 class SongsManagerTest extends TestCase
@@ -21,5 +22,13 @@ class SongsManagerTest extends TestCase
         $this->assertEquals($actual,$expected);
 
 
+    }
+    public function testValidateNewSong() {
+        $repo = new SongsRepository();
+        $song = $repo->get(6);
+
+        $manager = new SongsManager();
+        $actual = $manager->validateNewSong($song);
+        $this->assertNotEquals($actual,'ok');
     }
 }

@@ -10,6 +10,8 @@ class Songpage  extends \Tops\db\TAbstractEntity
 { 
     public $id;
     public $songId;
+    public $contentId;
+    public $description;
     public $introduction;
     public $commentary;
     public $active;

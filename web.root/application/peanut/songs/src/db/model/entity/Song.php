@@ -9,10 +9,7 @@ namespace Peanut\songs\db\model\entity;
 class Song  extends \Tops\db\TAbstractEntity 
 { 
     public $id;
-    public $contentid;
     public $title;
-    public $description;
     public $lyrics;
     public $publicdomain;
-
 }

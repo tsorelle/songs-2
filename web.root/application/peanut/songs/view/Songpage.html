@@ -6,7 +6,7 @@
       <li class="breadcrumb-item"><a href="/">Home</a></li>
       <li class="breadcrumb-item"><a data-bind="attr:{href:songsLink}">Songs</a></li>
       <li class="breadcrumb-item" data-bind="visible:returnLink"><a data-bind="attr:{href:returnLink},text:returnTitle"></a></li>
-      <li class="breadcrumb-item active" aria-current="page"><span data-bind="text:contentid"></span></li>
+      <li class="breadcrumb-item active" aria-current="page"><span data-bind="text:contentId"></span></li>
     </ol>
   </nav>
 
@@ -179,9 +179,9 @@
           <div class="mb-2">
             <div id="identifiers" class="mb-3">
               <h4>Identifiers</h4>
-              <label for="song-contentid"><strong>Content Id</strong></label>
+              <label for="song-contentId"><strong>Content Id</strong></label>
               <div data-bind="visible: songform.newSong">
-                <input type="text" id="song-contentid" class="form-control" data-bind="value:songform.contentid">
+                <input type="text" id="song-contentId" class="form-control" data-bind="value:songform.contentId">
               </div>
               <div  data-bind="hidden:songform.newSong">
                 <span data-bind="text:songform.contentId"></span>

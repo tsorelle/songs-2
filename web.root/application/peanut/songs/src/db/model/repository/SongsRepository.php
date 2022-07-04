@@ -13,6 +13,11 @@ use \Tops\db\TEntityRepository;
 
 class SongsRepository extends \Tops\db\TEntityRepository
 {
+    public function getSongByTitle($title)
+    {
+        return $this->getSingleEntity('title=?',[$title]);
+    }
+
     protected function getTableName() {
         return 'tls_songs';
     }
@@ -29,9 +34,7 @@ class SongsRepository extends \Tops\db\TEntityRepository
     {
         return array(
         'id'=>PDO::PARAM_INT,
-        'contentid'=>PDO::PARAM_STR,
         'title'=>PDO::PARAM_STR,
-        'description'=>PDO::PARAM_STR,
         'lyrics'=>PDO::PARAM_STR,
         'publicdomain'=>PDO::PARAM_STR);
     }

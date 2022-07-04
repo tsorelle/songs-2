@@ -10,7 +10,7 @@ use Peanut\songs\SongsManager;
  *
  *     interface ISong {
  *         id : any,
- *         contentid : string,
+ *         contentId : string,
  *         title : string,
  *         description : string,
  *         lyrics : string,
@@ -66,7 +66,7 @@ class UpdateSongPageCommand extends \Tops\services\TServiceCommand
             return;
         }
 
-        if (!isset($request->song->contentid)) {
+        if (!isset($request->song->contentId)) {
             $this->addErrorMessage('No contentId');
             return;
         }

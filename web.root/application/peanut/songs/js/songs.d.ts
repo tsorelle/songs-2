@@ -11,15 +11,15 @@ declare namespace Peanut {
 
     interface ISong {
         id : any,
-        contentid : string,
         title : string,
-        description : string,
         lyrics : string,
         publicdomain : any
     }
 
     interface ISongPageUpdateRequest {
         id : any,
+        contentId : string,
+        description : string,
         song: ISong;
         introduction : string,
         commentary : string,
