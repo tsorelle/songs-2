@@ -21,6 +21,7 @@ namespace PeanutContent {
     export class imageBlockComponent {
         imageSrc = ko.observable('');
         imagePath : string;
+        contentId: KnockoutObservable<string>;
         imageName: KnockoutObservable<string>;
         // imageFileName : KnockoutObservable<string>;
         useUploadFileName = true;
@@ -73,40 +74,28 @@ namespace PeanutContent {
             if (me.imagePath.length == 0) {
                 me.imagePath = '/assets/img';
             }
-            let imageName = '';
+
             if (params.contentId) {
-                imageName =
+                me.imageName =
                     ko.isObservable(params.contentId) ?
-                        params.contentId() : params.contentId
+                        params.contentId : ko.observable(params.contentId)
                 this.useUploadFileName = false;
             }
-
-            if (params.imagename) {
-                if (ko.isObservable(params.imagename)) {
-                    this.imageName = params.imagename;
-                    imageName = params.imagename();
-                }
-                else {
-                    imageName = params.imagename;
-                }
+            else if (params.imagename) {
+                me.imageName =
+                    ko.isObservable(params.imagename) ?
+                        params.imagename : ko.observable(params.imagename)
             }
 
-            if (imageName !== null) {
-                imageName = imageName.trim();
-                if (imageName.length > 0) {
-                    let ext =  imageName.indexOf('.') === -1 ? null : imageName.split('.').pop();
-                    if (!ext) {
-                        imageName += '.jpg';
-                    }
-                }
-                me.imageSrc(me.imagePath + '/' + imageName);
+            if (!me.imageName) {
+                throw 'Image name not assigned.';
             }
 
-            if (me.imageName) {
-                me.imageName(imageName);
-            }
-            else {
-                me.imageName = ko.observable(imageName);
+            let imageName = me.imageName().trim();
+            me.imageName(imageName);
+            if (imageName.length > 0) {
+                let imgFile = me.getImageFilename();
+                me.imageSrc(me.imagePath + '/' + imgFile);
             }
 
             if (params.owner) {
@@ -126,6 +115,18 @@ namespace PeanutContent {
             }
         }
 
+        getImageFilename = () => {
+            let imageName = this.imageName();
+            if (!imageName) {
+                return '';
+            }
+            let ext =  imageName.indexOf('.') === -1 ? null : imageName.split('.').pop();
+            if (!ext) {
+                imageName += '.jpg';
+            }
+            return imageName;
+        }
+
         save = () => {
             let filelist = Peanut.Helper.getSelectedFiles(this.imageUploadId());
             if (filelist.length) {
@@ -133,7 +134,14 @@ namespace PeanutContent {
                     let file = filelist[0];
                     this.imageName(file.name);
                 }
-                this.owner.onFileSelected(filelist,this.imagePath,this.imageName());
+                let imageFile = this.getImageFilename();
+                if (imageFile.length == 0) {
+                    alert (
+                        this.useUploadFileName ? "No image name assigned." : "No content id assigned"
+                    );
+                }
+                this.owner.onFileSelected(filelist,this.imagePath,this.getImageFilename());
+                this.imageSrc(this.imagePath + '/' + imageFile);
             }
             this.editorModal.hide();
             this.newimage(true);

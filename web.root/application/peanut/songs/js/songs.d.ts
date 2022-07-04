@@ -39,6 +39,10 @@ declare namespace Peanut {
         hasicon : any
     }
 
+    interface INewSongValidationRequest {
+        title: string;
+        contentId: string;
+    }
 
     interface ISongSearchRequest {
         /**

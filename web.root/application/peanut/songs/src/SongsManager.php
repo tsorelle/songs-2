@@ -208,13 +208,18 @@ class SongsManager
         if ($newSong) {
             $songId = $songRepo->insert($song);
             $song->id = $songId;
-            $page->SongId = $songId;
+            $pageDto->songId = $songId;
         }
         else {
             $songRepo->update($song);
         }
 
+        $hasicon = $this->hasSongImage('icons',$pageDto->contentId);
+
         $page->assignFromObject($pageDto);
+        $page->hasicon = $hasicon ? 1 : 0;
+
+
         if ($newPage) {
             $pageId = $pageRepo->insert($page);
             $page->id = $pageId;
@@ -231,7 +236,7 @@ class SongsManager
 
         $response->pageId = $pageId;
         $response->songId = $songId;
-        $response->hasicon = $this->hasSongImage('icons',$pageDto->contentId);
+        $response->hasicon = $hasicon;
 
         return $response;
     }

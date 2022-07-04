@@ -256,7 +256,7 @@ namespace Peanut {
                     this.returnTitle(retTitle);
                     this.returnLink(returnlink);
                 }
-                else {
+                else if (returnlink) {
                     this.songsLink(returnlink);
                 }
             }
@@ -338,7 +338,11 @@ namespace Peanut {
                 return;
             }
             if (this.songform.newSong()) {
-                me.services.executeService('Peanut.songs::ValidateNewSong',request.song,
+                me.services.executeService('Peanut.songs::ValidateNewSong',
+                    <INewSongValidationRequest> {
+                        title: request.song.title,
+                        contentId: request.contentId
+                    },
                     (serviceResponse: Peanut.IServiceResponse) => {
                         if (serviceResponse.Result == Peanut.serviceResultSuccess) {
                             me.application.hideWaiter();
