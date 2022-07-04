@@ -66,7 +66,7 @@ class UpdateSongPageCommand extends \Tops\services\TServiceCommand
             return;
         }
 
-        if (!isset($request->song->contentId)) {
+        if (!isset($request->contentId)) {
             $this->addErrorMessage('No contentId');
             return;
         }
