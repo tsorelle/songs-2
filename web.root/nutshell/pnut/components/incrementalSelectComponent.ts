@@ -31,7 +31,9 @@ namespace Peanut {
         caption = ko.observable('Please enter search value and select...');
         searchValue = ko.observable();
         listVisible = ko.observable();
-        
+
+        onSelectEvent : (item: ILookupItem) => void;
+
         // filterAvailable() when selected list changes
         selectedUpdateSubscription : KnockoutSubscription = null;
         // onSearchChange on user keypress
@@ -80,18 +82,22 @@ namespace Peanut {
                         console.error('incrementalSelectComponent: Parameter "items" must be array or observable array.');   
                     }
                 }
+
                 if (ko.isObservable(params.selected)) {
                     me.selectedItems = params.selected;
                 }
                 else {
-                    if (Array.isArray(params.selected)) {
-                        me.selectedItems = ko.observableArray<Peanut.ILookupItem>(params.selected);
+                    if (typeof params.selected === 'function') {
+                        me.onSelectEvent = params.selected;
                     }
                     else {
-                        console.error('incrementalSelectComponent: Parameter "selected" must be array or observable array.');
+                        if (Array.isArray(params.selected)) {
+                            me.selectedItems = ko.observableArray<Peanut.ILookupItem>(params.selected);
+                        } else {
+                            console.error('incrementalSelectComponent: Parameter "selected" must be array or observable array.');
+                        }
                     }
                 }
-                
             }
            me.availableItems(me.allItems());
 
@@ -136,7 +142,7 @@ namespace Peanut {
             });
         }
 
-        onSearchEvent = (data: any) => {
+        onSearchEvent = (_data: any) => {
             // fires
             this.clearSearch();
         }
@@ -157,11 +163,17 @@ namespace Peanut {
                 me.availableItems(me.allItems());
             }
         };
-        
+
+
         onSelected = (item: ILookupItem) => {
             let me = this;
             if (item) {
-                this.moveSelectedItem(item, this.availableItems, this.selectedItems);
+                if (me.onSelectEvent) {
+                    me.onSelectEvent(item);
+                }
+                else {
+                    me.moveSelectedItem(item, this.availableItems, this.selectedItems);
+                }
             }
             me.clearSearch();
         };
@@ -186,7 +198,9 @@ namespace Peanut {
         };
 
         activateSubscriptions = () => {
-            this.selectedUpdateSubscription = this.selectedItems.subscribe(this.filterAvailable)
+            if (this.selectedItems) {
+                this.selectedUpdateSubscription = this.selectedItems.subscribe(this.filterAvailable)
+            }
             this.keypressSubscription = this.searchValue.subscribe(this.onSearchChange);
 
         };
@@ -204,18 +218,20 @@ namespace Peanut {
 
         filterAvailable = () => {
             let me = this;
-            let selected = me.selectedItems();
-            let items = me.allItems();
+            if (me.selectedItems) {
+                let selected = me.selectedItems();
+                let items = me.allItems();
                 // me.availableItems();
-            let result = items.filter((item: Peanut.ILookupItem) => {
-                let existing = selected.find( (selectItem: Peanut.ILookupItem) => {
-                    return selectItem.id == item.id;
+                let result = items.filter((item: Peanut.ILookupItem) => {
+                    let existing = selected.find((selectItem: Peanut.ILookupItem) => {
+                        return selectItem.id == item.id;
+                    });
+                    return (!existing);
                 });
-                return (!existing);
-            });
-            me.availableItems(
-                me.sortItems(result)
-            );
+                me.availableItems(
+                    me.sortItems(result)
+                );
+            }
         };
 
         moveSelectedItem = (item: Peanut.ILookupItem,

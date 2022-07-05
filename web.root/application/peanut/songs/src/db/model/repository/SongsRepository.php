@@ -13,9 +13,18 @@ use \Tops\db\TEntityRepository;
 
 class SongsRepository extends \Tops\db\TEntityRepository
 {
+    const songPageTableName = 'tls_songpages';
     public function getSongByTitle($title)
     {
         return $this->getSingleEntity('title=?',[$title]);
+    }
+
+    public function getUnassignedSongsList()
+    {
+        $sql = 'SELECT s.id, s.title as name FROM '.$this->getTableName().' s '.
+                'WHERE s.id not in (select songId from '.self::songPageTableName.')';
+        $stmt = $this->executeStatement($sql);
+        return $stmt->fetchAll();
     }
 
     protected function getTableName() {

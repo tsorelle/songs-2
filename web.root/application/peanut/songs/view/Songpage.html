@@ -66,11 +66,23 @@
             <p class="text-danger" data-bind="text:songform.errorMessage"></p>
           </div>
         </div>
-        <h1 data-bind="text:songform.title, hidden:songform.newPage"></h1>
-        <h3 data-bind="visible:songform.newPage">New Song Page</h3>
-        <div data-bind="visible:songform.newSong">
-          <label for="song-title">Title</label>
-          <input type="text" id="song-title" class="form-control" data-bind="value:songform.title">
+        <div data-bind="visible:songform.newPage">
+          <h3>New Song Page</h3>
+          <div data-bind="hidden:songform.songAssigned">
+              <div>
+                  <a data-bind="hidden:showSongSelection,click:selectSong" href="#">Assign existing song</a>
+              </div>
+              <div data-bind="visible:showSongSelection">
+                <incremental-select params="items:unassignedSongs,
+                    selected:onSongSelected,
+                    caption:'Search for a song',label:'Songs'"></incremental-select>
+              </div>
+          </div>
+          <div data-bind="hidden:showSongSelection">
+            <label for="song-title">Song Title:</label>
+            <input type="text" id="song-title" class="form-control" data-bind="value:songform.title,hidden:songform.songAssigned">
+            <div><strong><span data-bind="visible:songform.songAssigned,text:songform.title"></span> </strong></div>
+          </div>
         </div>
         <p class="posted-date"> Posted on <span data-bind="text:songform.postedDate"></span>
           <a href="#" data-bind="click:editDate,visible:songform.editMode">
@@ -78,6 +90,7 @@
         </p>
       </div>
     </div>
+
     <div id="song-page-body" class="row pb-3">
       <div class="col-md-9">
         <div>
@@ -179,7 +192,7 @@
             <div id="identifiers" class="mb-3">
               <h4>Identifiers</h4>
               <label for="song-contentId"><strong>Content Id</strong></label>
-              <div data-bind="visible: songform.newSong">
+              <div data-bind="visible: songform.newPage">
                 <input type="text" id="song-contentId" class="form-control" data-bind="value:songform.contentId">
               </div>
               <div  data-bind="hidden:songform.newSong">

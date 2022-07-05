@@ -208,7 +208,6 @@ class SongsManager
         if ($newSong) {
             $songId = $songRepo->insert($song);
             $song->id = $songId;
-            $pageDto->songId = $songId;
         }
         else {
             $songRepo->update($song);
@@ -221,6 +220,7 @@ class SongsManager
 
 
         if ($newPage) {
+            $page->songId = $song->id;
             $pageId = $pageRepo->insert($page);
             $page->id = $pageId;
         }
@@ -302,6 +302,7 @@ class SongsManager
         }
     }
 
+    /** @noinspection HtmlUnknownTarget */
     public static function renderFrontPageCarousel($type) {
         $manager = new SongsManager();
         $songs =  ($type == 'featured') ?
@@ -313,7 +314,7 @@ class SongsManager
             '       <h5><a href="%s">%s</a></h5>'."\n".
             '       <p>%s</p>'."\n".
             '       <a href="%s"><img class="img img-fluid img-thumbnail" src="/assets/img/songs/icons/%s.jpg" '."\n".
-            '            style="float:left;margin-right: 1rem"></a>'."\n".
+            '            style="float:left;margin-right: 1rem" alt="song icon"></a>'."\n".
             '       %s'."\n".
             '   </div>';
 
@@ -372,5 +373,16 @@ class SongsManager
 
         return 'ok';
     }
+
+    public function getSong($songId)
+    {
+        return $this->getSongsRepository()->get($songId);
+    }
+
+    public function getUnassignedSongsList()
+    {
+        return $this->getSongsRepository()->getUnassignedSongsList();
+    }
+
 
 }

@@ -51,16 +51,15 @@ namespace Peanut {
             })
 
         }
-
         introductionLength: KnockoutComputed<any>;
         userCanEdit : boolean = false;
         typesController : multiSelectObservable;
         editMode = ko.observable(false);
         showLyricsHeading : KnockoutComputed<boolean>
-        songid = ko.observable();
+        songid = ko.observable(0);
         newSong = ko.observable(false);
         newPage = ko.observable(false);
-        pageid = ko.observable();
+        pageid = ko.observable(0);
         contentId = ko.observable('');
         title = ko.observable('');
         description = ko.observable('');
@@ -77,6 +76,7 @@ namespace Peanut {
         errorMessage = ko.observable('');
         defaultImageName = ko.observable('');
         thumbnailImageName = ko.observable('');
+        songAssigned = ko.observable(false);
 
         original : ISongPage;
 
@@ -117,6 +117,7 @@ namespace Peanut {
         
         assignSong = (song: ISong) => {
             let songid = parseInt(song.id);
+            this.songAssigned(songid !== 0);
             this.errorMessage('');
             this.newSong(songid === 0);
             this.songid(songid);
@@ -142,11 +143,13 @@ namespace Peanut {
             this.imagecaption('');
             this.youtubeId('');
             this.hasicon(false);
+            this.songAssigned(false);
             this.active(true);
         }
 
         clearSong = () => {
             this.songid(0);
+            this.songAssigned(false);
             this.title('');
             this.lyrics('');
         }
@@ -243,6 +246,8 @@ namespace Peanut {
 
         confirmSaveModal: any;
         confirmCancelModal: any;
+        unassignedSongs = ko.observableArray<ILookupItem>();
+        showSongSelection = ko.observable(false);
 
         init(successFunction?: () => void) {
             let me = this;
@@ -285,7 +290,8 @@ namespace Peanut {
                     '@pkg/peanut-content/image-block',
                     '@pkg/peanut-youtube/youtube-frame',
                     'songs/lyrics-block',
-                    '@pnut/selected-list'
+                    '@pnut/selected-list',
+                    '@pnut/incremental-select'
                 ], () => {
                     me.contentController = new PeanutContent.contentController(me);
                     me.services.executeService('Peanut.songs::GetSongPage',contentId,
@@ -512,6 +518,43 @@ namespace Peanut {
         onConfirmCancel = () => {
             this.songform.cancel();
             this.confirmCancelModal.hide();
+        }
+
+        selectSong = () => {
+            let me = this;
+            me.showWaitMessage('Getting unassigned song list');
+            me.services.executeService('Peanut.songs::GetUnassignedSongs',null,
+                (serviceResponse: Peanut.IServiceResponse) => {
+                    if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                        let songlist = <ILookupItem[]>serviceResponse.Value;
+                        me.unassignedSongs(songlist)
+                        me.showSongSelection(true);
+                    }
+                }
+            ).fail(() => {
+                // let trace = me.services.getErrorInformation();
+            }).always(() => {
+                me.application.hideWaiter();
+            });
+        }
+
+        onSongSelected = (item: ILookupItem) => {
+            let me = this;
+            me.showSongSelection(false);
+            me.showWaitMessage('Getting song...');
+            me.services.executeService('Peanut.songs::GetSong',item.id,
+                (serviceResponse: Peanut.IServiceResponse) => {
+                    if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                        let song = <ISong>serviceResponse.Value;
+                        this.songform.assignSong(song);
+                        this.songform.songid(song.id);
+                    }
+                }
+            ).fail(() => {
+                // let trace = me.services.getErrorInformation();
+            }).always(() => {
+                me.application.hideWaiter();
+            });
         }
     }
 
