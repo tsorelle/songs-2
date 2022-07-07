@@ -79,6 +79,7 @@ class Router
             '<a id="footer-signin-link" href="/signin">Sign in</a>';
 
         if ($theme === 'plain') {
+            $routeData['bscdn'] = 1;
             $routeData['maincolsize'] = 12;
             self::setSwitchValue($routeData,'siteheader',0);
             self::setSwitchValue($routeData,'sitefooter',0);
@@ -86,6 +87,7 @@ class Router
             self::setSwitchValue($routeData,'pageheader',0);
         }
         else {
+            $routeData['bscdn'] = 0;
             self::setSwitchValue($routeData,'siteheader',1);
             self::setSwitchValue($routeData,'sitefooter',1);
             self::setSwitchValue($routeData,'pageheader',1);

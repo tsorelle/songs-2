@@ -23,12 +23,21 @@
     /** @var int $sitefooter */
     /** @var int $pageheader */
     /** @var int $frontpage */
+    /** @var int $bscdn */
 
 ?>
 <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/x-icon" href="/application/assets/img/favicon.ico">
     <?php
+        if ($bscdn === 1) {
+            printf(
+                '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" '.
+                '  rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" '.
+                '  crossorigin="anonymous">'."\n"
+            );
+        }
+
     /** @noinspection HtmlUnknownTarget */
         printf('<link rel="stylesheet" type="text/css" href="%s/styles.css"/>',$themePath ?? 'Error missing theme path');
         if (isset($extraSTyles)) {
@@ -81,7 +90,7 @@
     <!-- main content -->
     <div  id="nutshell-main-section">
         <div class="container" id="page-content">
-            <div class="row">
+            <div class="row pagecontent-row">
                 <?php
                 if ($menu=='left') {
                     include $themeIncludePath."/menu-column.php";
