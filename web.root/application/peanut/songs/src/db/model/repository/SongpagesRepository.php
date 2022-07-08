@@ -80,7 +80,10 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
         return $stmt->fetchColumn();
     }
 
-    public function getSongCount($request = null) {
+    public function getSongCount() {
+
+    }
+    public function getSongPageCount($request = null) {
         $countReq = is_object($request) ? clone $request : $request;
         if ($countReq !== null) {
             unset($countReq->pageSize);

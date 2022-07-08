@@ -51,7 +51,7 @@ class InitSonglistCommand extends \Tops\services\TServiceCommand
         $pageNo = $request->page ?? 1;
         $pageSize = $request->pageSize ?? null;
         // if ($pageSize && $pageNo == 1) {
-            $response->songCount = $manager->getSongCount($request);
+            $response->songCount = $manager->getSongPageCount($request);
             $response->pageCount = (int)ceil($response->songCount / $pageSize);
         // }
         // $response->allSongsCount = $manager->getAllSongsCount();

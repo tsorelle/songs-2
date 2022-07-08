@@ -98,7 +98,7 @@ class SongpagesRepositoryTest extends TestCase
         $request = null;
         $actual = $repo->getSongPageList($request);
         $expected = count($actual);
-        $actual = $repo->getSongCount($request);
+        $actual = $repo->getSongPageCount($request);
         $this->assertEquals($expected,$actual);
 
 
@@ -106,14 +106,14 @@ class SongpagesRepositoryTest extends TestCase
         $request->filter = 'cowboy';
         $actual = $repo->getSongPageList($request);
         $expected = count($actual);
-        $actual = $repo->getSongCount($request);
+        $actual = $repo->getSongPageCount($request);
         $this->assertEquals($expected,$actual);
 
         $request = new \stdClass();
         $request->filter = 'empty';
         $actual = $repo->getSongPageList($request);
         $expected = count($actual);
-        $actual = $repo->getSongCount($request);
+        $actual = $repo->getSongPageCount($request);
         $this->assertEquals($expected,$actual);
 
 

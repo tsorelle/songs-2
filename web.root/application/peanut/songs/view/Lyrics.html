@@ -35,8 +35,8 @@
         <div style="margin-top: 2rem" class="mb-2 d-lg-none d-d-md-none d-print-none">
         </div>
         <div class="row" style="padding-left: 1.5rem">
-            <div class="col-md-12" style="border: 1px solid green; min-height: 5rem">
-                <lyrics-block params="lyrics:songform.lyrics, canedit:songform.canedit
+            <div class="col-md-12" style="min-height: 5rem">
+                <lyrics-block params="lyrics:songForm.lyrics, canedit:canedit
                     save:onSaveLyrics, columns:columnDisplay, textsize: textSize"></lyrics-block>
             </div>
         </div>
@@ -85,11 +85,10 @@
                         <ul class="linklist" data-bind="foreach:songs[0]()">
                             <li  data-bind="css:{linkhighlight: $root.selectedSong().id == id}">
                                 <a href="#" data-bind="click:$parent.selectSong"><span data-bind="text:title"></span></a>
-                                <span data-bind="visible:$root.username() != user">
-                               <!-- (<span data-bind="text:user"></span>) -->
-                            </span>
-                                <span data-bind="visible:$root.isAdmin() || $root.username() == user">
-                                <a href="#" data-bind="click:$root.editSong"><i class="fa fa-pencil" aria-hidden="true"></i></a> </span>
+
+                                <span data-bind="visible:$root.canedit">
+                                <a href="#" data-bind="click:$root.editSong"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                                </span>
                             </li>
                         </ul>
                     </div>
@@ -97,10 +96,9 @@
                         <ul class="linklist" data-bind="foreach:songs[1]()">
                             <li  data-bind="css:{linkhighlight: $root.selectedSong().id == id}">
                                 <a href="#" data-bind="click:$parent.selectSong"><span data-bind="text:title"></span></a>
-                                <span data-bind="visible:$root.username() != user">
-                                <!-- (<span data-bind="text:user"></span>) -->
+                                <span data-bind="visible:$root.canedit">
                             </span>
-                                <span data-bind="visible:$root.isAdmin() || $root.username() == user">
+                                <span data-bind="visible:$root.canedit">
                                 <a href="#" data-bind="click:$root.editSong"><i class="fa fa-pencil" aria-hidden="true"></i></a> </span>
                             </li>
                         </ul>
@@ -109,10 +107,7 @@
                         <ul class="linklist" data-bind="foreach:songs[2]()">
                             <li  data-bind="css:{linkhighlight: $root.selectedSong().id == id}">
                                 <a href="#" data-bind="click:$parent.selectSong"><span data-bind="text:title"></span></a>
-                                <span data-bind="visible:$root.username() != user">
-                                <!-- (<span data-bind="text:user"></span>) -->
-                            </span>
-                                <span data-bind="visible:$root.isAdmin() || $root.username() == user">
+                                <span data-bind="visible:$root.canedit">
                                 <a href="#" data-bind="click:$root.editSong"><i class="fa fa-pencil" aria-hidden="true"></i></a> </span>
                             </li>
                         </ul>
@@ -122,10 +117,7 @@
                         <ul class="linklist" data-bind="foreach:songs[3]()">
                             <li  data-bind="css:{linkhighlight: $root.selectedSong().id == id}">
                                 <a href="#" data-bind="click:$parent.selectSong"><span data-bind="text:title"></span></a>
-                                <span data-bind="visible:$root.username() != user">
-                                <!-- (<span data-bind="text:user"></span>) -->
-                            </span>
-                                <span data-bind="visible:$root.isAdmin() || $root.username() == user">
+                                <span data-bind="visible:$root.canedit">
                                 <a href="#" data-bind="click:$root.editSong"><i class="fa fa-pencil" aria-hidden="true"></i></a> </span>
                             </li>
                         </ul>
@@ -145,12 +137,12 @@
                 <img alt='Menu diagram' src="/application/assets/images/menu-help.jpg" class="img-responsive" >
             </p>
 
-            <p>
+            <!-- p>
                 You can create and edit your own songs and sets too.  If you'd like this please register on my songs site.
                 Indicate in the "Interests and Instruments" section that you'd like to put your own songs on the "Lyric Sheets" application.
 
                 <a href ="https://terrys-songs.net/user/register" target="_blank">Register on "Terry's Songs"</a>
-            </p>
+            </p -->
 
         </div>
     </div>
@@ -215,17 +207,16 @@
                     <div class="form-group" style="margin-bottom: 0">
                         <input type="text" class="form-control" placeholder="Search" id="search" data-bind="textInput: setForm.searchValue" />
                     </div>
-                    <div>
+                    <!-- div>
                         <a href="#" data-bind="click:toggleUser">
                             <span data-bind="visible:filterByUser">Show all songs</span>
                             <span data-bind="visible:!filterByUser()">Show my songs only</span>
                         </a>
-                    </div>
+                    </div -->
                     <div>
                         <ul class="linklist" data-bind="foreach:setForm.avaliableSongs" style="padding-bottom: 2rem">
                             <li>
                                 <a href="#" data-bind="click:$root.addToSetList"><i class="fa fa-angle-double-left" aria-hidden="true"></i> <span data-bind="text:title"></span></a>
-                                <span data-bind="visible:$root.username() != user">(<span data-bind="text:user"></span>)</span>
                             </li>
                         </ul>
                     </div>
@@ -233,9 +224,6 @@
             </div>
         </form>
     </div> <!-- end page -->
-
-
-
 
 </div>
 

@@ -3,8 +3,10 @@ namespace Peanut\songs;
 
 use Peanut\songs\db\model\entity\Song;
 use Peanut\songs\db\model\entity\Songpage;
+use Peanut\songs\db\model\entity\Songset;
 use Peanut\songs\db\model\repository\SongindexRepository;
 use Peanut\songs\db\model\repository\SongpagesRepository;
+use Peanut\songs\db\model\repository\SongsetsRepository;
 use Peanut\songs\db\model\repository\SongsRepository;
 use Peanut\songs\db\model\repository\SongtagsRepository;
 use Peanut\songs\db\model\repository\TagsRepository;
@@ -13,6 +15,7 @@ use Tops\cache\TSessionCache;
 use Tops\db\TQuery;
 use Tops\sys\TDates;
 use Tops\sys\TPath;
+
 
 class SongsManager
 {
@@ -35,6 +38,13 @@ class SongsManager
         return $this->songsRepository;
     }
 
+    private $songsetsRepository;
+    private function getSongsetsRepository() : SongsetsRepository {
+        if (!isset($this->songsRepository)) {
+            $this->songsetsRepository = new SongsetsRepository();
+        }
+        return $this->songsetsRepository;
+    }
 
     private $songpagesRepository;
     private function getSongpagesRepository() : SongpagesRepository {
@@ -68,6 +78,33 @@ class SongsManager
         return $this->songIndexRepository;
     }
 
+    public function getAllSongsSet()
+    {
+        $set = new Songset();
+        $set->setname = 'All';
+        $set->id = 0;
+        return $set;
+    }
+    public function getDefaultSongSet() {
+        $set = new Songset();
+        $set->setname = 'Default';
+        $set->id = 1;
+        return $set;
+    }
+
+    public function getSongSetList() {
+        $result = [
+            $this->getAllSongsSet(),
+            $this->getDefaultSongSet(),
+        ];
+
+        $additional = $this->getSongsetsRepository()->getEntityCollection('id <> ?',[1],false,'ORDER BY setname ASC');
+        if (empty($additional)) {
+            return $result;
+        }
+        return array_merge($result,$additional);
+    }
+
     public function getFeaturedSongsList($expires='1D')
     {
         $cache = $this->getSessionCache();
@@ -87,13 +124,13 @@ class SongsManager
         return $this->getSongpagesRepository()->getSongPageList($request);
     }
 
-    public function getAllSongsCount() {
-        return $this->getSongPagesRepository()->getAllSongsCount();
-    }
-    public function getSongCount($request=null) {
-        return $this->getSongpagesRepository()->getSongCount($request);
+    public function getSongCount() {
+        return $this->getSongsRepository()->getCount();
     }
 
+    public function getSongPageCount($request=null) {
+        return $this->getSongpagesRepository()->getSongPageCount($request);
+    }
     public function getSongTypesLookup() {
         return $this->getTagsRepository()->getLookupList('type');
     }
@@ -374,6 +411,10 @@ class SongsManager
         return 'ok';
     }
 
+    /**
+     * @param $songId
+     * @return bool| Song
+     */
     public function getSong($songId)
     {
         return $this->getSongsRepository()->get($songId);
@@ -382,6 +423,18 @@ class SongsManager
     public function getUnassignedSongsList()
     {
         return $this->getSongsRepository()->getUnassignedSongsList();
+    }
+
+    public function getSongLyrics($id)
+    {
+        $song = $this->getSong($id);
+        return $song->lyrics;
+    }
+
+    public function getSongInfoInSet($setid)
+    {
+
+        return $this->getSongsetsRepository()->getSongInfoList($setid);
     }
 
 

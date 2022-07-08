@@ -26,6 +26,7 @@ namespace Peanut {
             // todo: test this
             let found = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search)
             found ? decodeURIComponent(name[1]) : null;
+            return found;
         }
 
         public static ValidateEmail(email: string) {
