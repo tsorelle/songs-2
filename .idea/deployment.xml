@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="Songs2 local">
+  <component name="PublishConfigData" serverName="production.songs2">
     <serverData>
       <paths name="Nutshell-1">
         <serverdata>
@@ -100,6 +100,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="production.songs2">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/" local="$PROJECT_DIR$/web.root" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="production.twoquake.home">
         <serverdata>
           <mappings>
@@ -125,13 +132,6 @@
         <serverdata>
           <mappings>
             <mapping local="$PROJECT_DIR$" web="/" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="staging.songs2">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$/web.root" web="/" />
           </mappings>
         </serverdata>
       </paths>

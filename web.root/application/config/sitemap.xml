@@ -1,13 +1,13 @@
 <site-map>
 	<about title='About' description='About Nutshell' roles=''>
 		<us title='About Us' description='' roles='' />
-		<terry title='About The Author' description='' roles='' />
-		<nutshell title='About Nutshell' description='' roles='' >
-			<libs title="Components" description="" roles=""/>
+		<!-- terry title='About The Author' description='' roles='' / -->
+		<!-- nutshell title='About Nutshell' description='' roles='' / -->
+			<!-- libs title="Components" description="" roles=""/>
 			<design title="Design" description="" roles=""/>
-		</nutshell>
+		</nutshell -->
 	</about>
-	<help title="Help Pages" icon="fas fa-question-circle" description="help"/>
+	<!-- help title="Help Pages" icon="fas fa-question-circle" description="help"/ -->
 	<tools title="Tools" description="Utilities for administration" roles="administrator" icon="fas fa-cog">
 		<tests title="Test Pages" description="Pages for testing.">
 			<simpletest title="Simple Test" description="Basic smoke test" roles="" />

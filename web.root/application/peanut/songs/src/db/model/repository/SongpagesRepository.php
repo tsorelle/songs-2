@@ -99,7 +99,7 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
     public function getRandomSongIds($type='favorite',$count=12)
     {
         $sql = 'SELECT p.id FROM tls_songpages p JOIN tls_songtags st on st.songId = p.songId'.
-            " JOIN tls_tags tt on tt.id = st.tagId WHERE tt.code = ? ORDER BY RAND() LIMIT ".$count;
+            " JOIN tls_tags tt on tt.id = st.tagId WHERE tt.code = ? AND hasicon=1 ORDER BY RAND() LIMIT ".$count;
         $stmt = $this->executeStatement($sql,[$type]);
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
@@ -108,7 +108,7 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
         $sql = self::songSearchHeader.
             ' FROM '.$this->getTableName().' p JOIN '.
                 $this->getSongTableName().' s ON s.id = p.songId '
-               .' WHERE p.id IN ('.implode(',',$idList).')';
+               .' WHERE p.id IN ('.implode(',',$idList).' and active = 1)';
         $stmt = $this->executeStatement($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
@@ -116,7 +116,8 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
     public function getLatestSongs($limit = 6) {
         $sql = self::songSearchHeader.
             ' FROM '.$this->getTableName().' p JOIN '.
-            $this->getSongTableName().' s ON s.id = p.songId '
+            $this->getSongTableName().' s ON s.id = p.songId '.
+                ' WHERE active=1 '
             .' ORDER BY p.postedDate DESC LIMIT '.$limit;
         $stmt = $this->executeStatement($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -126,7 +127,8 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
     public function getLatestSongsList($limit = 6) {
         $sql = self::songSearchHeader.
             ' FROM '.$this->getTableName().' p JOIN '.
-            $this->getSongTableName().' s ON s.id = p.songId '
+            $this->getSongTableName().' s ON s.id = p.songId '.
+            ' WHERE active=1 '
             .' ORDER BY p.postedDate DESC LIMIT '.$limit;
         $stmt = $this->executeStatement($sql);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
@@ -137,7 +139,8 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
         $sql = 'select s.id, s.title as `name`, p.contentId as `code`,p.description, '.
 	    "concat('$url',p.contentId) as url, p.active ".
             ' FROM '.$this->getTableName().' p JOIN '.
-            $this->getSongTableName().' s ON s.id = p.songId '
+            $this->getSongTableName().' s ON s.id = p.songId '.
+            ' WHERE active=1 '
             .' ORDER BY p.postedDate DESC LIMIT '.$limit;
 
         $stmt = $this->executeStatement($sql,[$url]);
@@ -200,7 +203,7 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
         }
 
         if (!empty($conditions)) {
-            $sql .= ' WHERE '. implode(' AND ',$conditions);
+            $sql .= ' WHERE '. implode(' AND ',$conditions).' AND active=1 ';
         }
 
 
