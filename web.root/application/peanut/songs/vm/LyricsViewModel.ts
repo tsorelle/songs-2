@@ -2,6 +2,9 @@
 /// <reference path='../../../../nutshell/typings/knockout/knockout.d.ts' />
 /// <reference path='../../../../nutshell/pnut/core/Peanut.d.ts' />
 /// <reference path='../../../../nutshell/pnut/js/ViewModelHelpers.ts' />
+/// <reference path='../../../../nutshell/pnut/js/multicolumnListPageLoader.ts' />
+/// <reference path='../../../../nutshell/typings/bootstrap-5/index.d.ts' />
+/// <reference path='../../../../nutshell/typings/bootstrap-5/js/dist/modal.d.ts' />
 
 namespace Peanut {
     interface ISongInfo {
@@ -43,6 +46,7 @@ namespace Peanut {
         loading = ko.observable('');
         isAdmin = ko.observable(false);
         signedIn = ko.observable(false);
+        pageController : multicolumnListPageLoader;
         setForm = {
             id: ko.observable(0),
             setName: ko.observable(''),
@@ -97,10 +101,13 @@ namespace Peanut {
             }
             me.application.loadResources([
                 // Load libraries and core components
-                '@pnut/ViewModelHelpers.js'
+                '@pnut/ViewModelHelpers.js',
+                '@pnut/multicolumnListPageLoader'
             ], () => {
+                me.pageController = new multicolumnListPageLoader();
                 me.application.registerComponents(
                     ['@pnut/modal-confirm',
+                        '@pnut/pager',
                         'songs/lyrics-block'
                     ],
                     () => {
@@ -116,8 +123,8 @@ namespace Peanut {
                                 me.canedit(!!response.canedit);
                                 me.sets(response.sets);
                                 me.selectedSet(response.set);
-                                this.loadSongList(response.songs);
-                                this.songForm.lyrics(response.lyrics);
+                                me.loadSongList(response.songs);
+                                me.songForm.lyrics(response.lyrics);
                             }
                     })
                         .fail(() => {
@@ -134,21 +141,7 @@ namespace Peanut {
         loadSongList = (songs: ISongInfo[],songIndex=0) => {
             this.songList = songs;
             this.songCount = songs.length;
-            for (let i = 0; i < 4; i++) {
-                this.songs[i]([]);
-            }
-
-            let column = [];
-            let columnIndex = 0;
-            for(let i = 0; i < songs.length; i++) {
-                column.push(songs[i]);
-                if (column.length >= this.maxSongColumnItems && columnIndex < 3) {
-                    this.songs[columnIndex](column);
-                    columnIndex++;
-                    column = [];
-                }
-            }
-            this.songs[columnIndex](column);
+            this.pageController.setItems(<[]>songs);
             this.setSongIndex(songIndex);
         };
 
@@ -159,16 +152,65 @@ namespace Peanut {
             this.title(current.title);
         };
 
-
-
-        prevSong = () => {
-
-        }
+        selectSong = (item : ISongInfo) => {
+            let current = this.selectedSong();
+            if (item.id == current.id) {
+                this.page('lyrics');
+            }
+            else {
+                let idx = this.songList.findIndex((song: ISongInfo) => {
+                    return (song.id === item.id);
+                })
+                this.setSongIndex(idx);
+                this.getLyrics();
+            }
+        };
 
         nextSong = () => {
+            let songIndex = this.songIndex == this.songCount - 1 ? 0 : ++this.songIndex;
+            this.setSongIndex(songIndex);
+            this.pageController.gotoIndex(songIndex)
+/*
+            if (songIndex > this.pageController.pageEnd) {
+                this.pageController.changePage(1)
+            }
+*/
+            this.getLyrics();
+        };
 
-        }
+        prevSong = () => {
+            let songIndex = this.songIndex == 0 ? this.songCount-1 : --this.songIndex;
+            this.setSongIndex(songIndex);
+            this.pageController.gotoIndex(songIndex);
+/*
+            if (songIndex < this.pageController.pageStart && this.pageController.pageStart > 1) {
+                this.pageController.changePage(-1)
+            }
+*/
+            this.getLyrics();
+        };
+
+        getLyrics = () => {
+            let me = this;
+            let song = me.selectedSong();
+            me.loading(song.title);
+            let request = null;
+            me.services.executeService('Peanut.songs::GetSongLyrics', song.id, (serviceResponse: IServiceResponse) => {
+                if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                    me.songForm.lyrics(serviceResponse.Value);
+                    me.page('lyrics');
+                }
+            })
+                .fail(() => {
+                    let trace = me.services.getErrorInformation();
+                })
+                .always(() => {
+                    me.loading('');
+                });
+        };
+
         showSongList = () => {
+            this.page('songs')
 
         }
 
@@ -188,7 +230,36 @@ namespace Peanut {
 
         }
 
+        confirmSaveModal : any;
         onSaveLyrics = () => {
+            if (!this.confirmSaveModal) {
+                this.confirmSaveModal = new bootstrap.Modal(document.getElementById('confirm-save-modal'));
+            }
+            this.confirmSaveModal.show();
+        }
+
+        onConfirmSaveOk = () => {
+            let me = this;
+            me.confirmSaveModal.hide( );
+            let song = me.selectedSong();
+            alert('save: '+song.title)
+            let request = {
+                id: song.id,
+                lyrics:  me.songForm.lyrics()
+            }
+
+            me.services.executeService('Peanut.songs::UpdateSongLyrics', song.id, (serviceResponse: IServiceResponse) => {
+                if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                    me.songForm.lyrics(serviceResponse.Value);
+                    me.page('lyrics');
+                }
+            })
+                .fail(() => {
+                    let trace = me.services.getErrorInformation();
+                })
+                .always(() => {
+                    me.loading('');
+                });
 
         }
 

@@ -12,8 +12,7 @@
             <button title='Split/Join Columns'  data-bind="click:splitColumns" class="btn default"><i class="fa fa-columns" aria-hidden="true"></i></button>
 
             <span data-bind="visible:loading" style="color:lightgrey">
-            <i class="fa fa-spinner fa-pulse"></i> Loading '<span data-bind="text:loading"></span>'
-        ...</span>
+            <i class="fa fa-spinner fa-pulse"></i> Loading '<span data-bind="text:loading"></span>...</span>
 
             <div style="float:right">
                 <button title='Smaller Text' class="btn btn-default"  style="min-width:3em" data-bind="click:reduceFont, visible:textSize() > 1">
@@ -36,7 +35,7 @@
         </div>
         <div class="row" style="padding-left: 1.5rem">
             <div class="col-md-12" style="min-height: 5rem">
-                <lyrics-block params="lyrics:songForm.lyrics, canedit:canedit
+                <lyrics-block params="lyrics:songForm.lyrics, canedit:canedit,
                     save:onSaveLyrics, columns:columnDisplay, textsize: textSize"></lyrics-block>
             </div>
         </div>
@@ -78,50 +77,37 @@
                     <h3>Songs</h3>
                 </div>
 
+                <div>
+                    <pager params='click:pageController.changePage,
+                        page:pageController.currentPageNumber,
+                        max:pageController.maxPages,owner:self'></pager>
+                </div>
+
                 <div class="row">
                     <div class="lyrics-menu" data-bind="visible:loading" >
                     </div>
-                    <div class="col-md-3">
-                        <ul class="linklist" data-bind="foreach:songs[0]()">
+                    <div class="col-md-4">
+                        <ul class="linklist" data-bind="foreach:pageController.column[0]()">
                             <li  data-bind="css:{linkhighlight: $root.selectedSong().id == id}">
                                 <a href="#" data-bind="click:$parent.selectSong"><span data-bind="text:title"></span></a>
-
-                                <span data-bind="visible:$root.canedit">
-                                <a href="#" data-bind="click:$root.editSong"><i class="fa fa-pencil" aria-hidden="true"></i></a>
-                                </span>
                             </li>
                         </ul>
                     </div>
-                    <div class="col-md-3">
-                        <ul class="linklist" data-bind="foreach:songs[1]()">
+                    <div class="col-md-4">
+                        <ul class="linklist" data-bind="foreach:pageController.column[1]()">
                             <li  data-bind="css:{linkhighlight: $root.selectedSong().id == id}">
                                 <a href="#" data-bind="click:$parent.selectSong"><span data-bind="text:title"></span></a>
-                                <span data-bind="visible:$root.canedit">
-                            </span>
-                                <span data-bind="visible:$root.canedit">
-                                <a href="#" data-bind="click:$root.editSong"><i class="fa fa-pencil" aria-hidden="true"></i></a> </span>
                             </li>
                         </ul>
                     </div>
-                    <div class="col-md-3">
-                        <ul class="linklist" data-bind="foreach:songs[2]()">
+                    <div class="col-md-4">
+                        <ul class="linklist" data-bind="foreach:pageController.column[2]()">
                             <li  data-bind="css:{linkhighlight: $root.selectedSong().id == id}">
                                 <a href="#" data-bind="click:$parent.selectSong"><span data-bind="text:title"></span></a>
-                                <span data-bind="visible:$root.canedit">
-                                <a href="#" data-bind="click:$root.editSong"><i class="fa fa-pencil" aria-hidden="true"></i></a> </span>
                             </li>
                         </ul>
                     </div>
 
-                    <div class="col-md-3">
-                        <ul class="linklist" data-bind="foreach:songs[3]()">
-                            <li  data-bind="css:{linkhighlight: $root.selectedSong().id == id}">
-                                <a href="#" data-bind="click:$parent.selectSong"><span data-bind="text:title"></span></a>
-                                <span data-bind="visible:$root.canedit">
-                                <a href="#" data-bind="click:$root.editSong"><i class="fa fa-pencil" aria-hidden="true"></i></a> </span>
-                            </li>
-                        </ul>
-                    </div>
                 </div>
             </div>
         </div>
@@ -225,5 +211,7 @@
         </form>
     </div> <!-- end page -->
 
+    <modal-confirm params="id:'confirm-lyric-save-modal',headerText: 'Saving', bodyText: 'Ready to save lyrics?',
+        confirmClick: onConfirmSaveOk, translator:self"></modal-confirm>
 </div>
 
