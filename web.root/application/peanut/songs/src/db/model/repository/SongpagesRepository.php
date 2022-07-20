@@ -23,7 +23,7 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
     const orderDateDesc = 3;
 
     const songSearchHeader =
-        'select s.id, s.title as `name`, p.description, p.contentId as `code`,p.youtubeId, p.introduction, '.
+        'select s.id, s.title as `name`, p.description, p.contentId as `code`,p.youtubeId, p.introduction, p.lyricsformatted, s.notes, '.
         "if(p.hasicon = 1,concat('/assets/img/songs/icons/',p.contentId,'.jpg'),'/assets/img/songs/icons/default.jpg') as iconsrc, ".
         "if(p.hasicon = 1,concat('/assets/img/songs/thumbnails/',p.contentId,'.jpg'),'/assets/img/songs/thumbnails/default.jpg') as thumbnailsrc, ".
         "concat('/song/',p.contentId) as songUrl, p.active ";
@@ -67,7 +67,9 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
         'pageimage'=>PDO::PARAM_STR,
         'imagecaption'=>PDO::PARAM_STR,
         'youtubeId'=>PDO::PARAM_STR,
-        'hasicon'=>PDO::PARAM_STR);
+        'hasicon'=>PDO::PARAM_STR,
+        'lyricsformatted'=>PDO::PARAM_STR
+        );
     }
 
     public function getPageBySongId(int $songId, $indludeInactive = false)

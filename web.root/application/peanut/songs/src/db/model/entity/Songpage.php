@@ -20,6 +20,7 @@ class Songpage  extends \Tops\db\TAbstractEntity
     public $imagecaption;
     public $youtubeId;
     public $hasicon;
+    public $lyricsformatted;
 
     public function getDtoDataTypes()
     {

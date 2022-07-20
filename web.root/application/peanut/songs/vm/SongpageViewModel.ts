@@ -50,12 +50,21 @@ namespace Peanut {
                 return me.newPage() || me.lyrics().length > 0;
             })
 
+            me.showFormattedLyrics = ko.computed(() => {
+                return me.editMode() || (me.lyricsformatted().trim().length > 0)
+            })
+
+            me.showLyrics = ko.computed(() => {
+                return me.editMode() || (me.lyricsformatted().trim().length == 0)
+            })
         }
         introductionLength: KnockoutComputed<any>;
         userCanEdit : boolean = false;
         typesController : multiSelectObservable;
         editMode = ko.observable(false);
         showLyricsHeading : KnockoutComputed<boolean>
+        showLyrics : KnockoutComputed<boolean>
+        showFormattedLyrics : KnockoutComputed<boolean>
         songid = ko.observable(0);
         newSong = ko.observable(false);
         newPage = ko.observable(false);
@@ -70,6 +79,8 @@ namespace Peanut {
         pageimage = ko.observable('');
         imagecaption = ko.observable('');
         youtubeId = ko.observable('');
+        lyricsformatted = ko.observable('');
+        notes = ko.observable('');
         hasicon = ko.observable(true);
         publicDomain = ko.observable(true);
         active = ko.observable(true);
@@ -105,6 +116,7 @@ namespace Peanut {
             this.pageimage(page.pageimage);
             this.imagecaption(page.imagecaption ?? '');
             this.youtubeId(page.youtubeId);
+            this.lyricsformatted(page.lyricsformatted ?? '');
             this.hasicon(page.hasicon == 1);
             if (page.contentId) {
                 this.defaultImageName(page.contentId+ '.jpg');
@@ -123,6 +135,7 @@ namespace Peanut {
             this.songid(songid);
             this.title(song.title);
             this.lyrics(song.lyrics);
+            this.notes(song.notes ?? '');
             this.publicDomain(song.publicdomain == 1);
         }
 
@@ -168,7 +181,8 @@ namespace Peanut {
                 postedDate: this.postedDate(),
                 commentary: this.commentary().trim(),
                 types: this.typesController.getValues(),
-                introduction: this.introduction().trim()
+                introduction: this.introduction().trim(),
+                lyricsformatted: this.lyricsformatted().trim()
             };
 
             if (!request.introduction) {
@@ -196,10 +210,12 @@ namespace Peanut {
         }
 
         getSongObject = () => {
+            let notes = this.notes();
             return <ISong> {
                 id: this.songid(),
                 lyrics: (this.lyrics() === null) ? '' :  this.lyrics().trim(),
                 title: (this.title() === null) ? '' : this.title().trim(),
+                notes: (this.notes() === null) ? '' : this.notes().trim(),
                 publicdomain: this.publicDomain() ? 1 : 0
             }
         }

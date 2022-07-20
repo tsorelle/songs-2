@@ -13,7 +13,8 @@ declare namespace Peanut {
         id : any,
         title : string,
         lyrics : string,
-        publicdomain : any
+        publicdomain : any,
+        notes: string
     }
 
     interface ISongPageUpdateRequest {
@@ -28,6 +29,7 @@ declare namespace Peanut {
         pageimage : string,
         imagecaption : string,
         youtubeId : string,
+        lyricsformatted : string,
         types : number[]
     }
     interface ISongPage extends  ISongPageUpdateRequest {

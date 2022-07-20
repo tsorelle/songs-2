@@ -12,4 +12,5 @@ class Song  extends \Tops\db\TAbstractEntity
     public $title;
     public $lyrics;
     public $publicdomain;
+    public $notes;
 }

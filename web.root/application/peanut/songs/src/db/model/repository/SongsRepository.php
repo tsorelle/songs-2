@@ -45,6 +45,8 @@ class SongsRepository extends \Tops\db\TEntityRepository
         'id'=>PDO::PARAM_INT,
         'title'=>PDO::PARAM_STR,
         'lyrics'=>PDO::PARAM_STR,
-        'publicdomain'=>PDO::PARAM_STR);
+        'publicdomain'=>PDO::PARAM_STR,
+        'notes'=>PDO::PARAM_STR
+        );
     }
 }

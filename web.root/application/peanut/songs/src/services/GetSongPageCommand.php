@@ -24,6 +24,7 @@ use Peanut\songs\SongsManager;
  *             description : string,
  *             lyrics : string,
  *             publicdomain : string,
+ *              notes: string
  *         }
  *         interface ISongPage {
  *             id : any,
@@ -35,6 +36,7 @@ use Peanut\songs\SongsManager;
  *             pageimage : string,
  *             imagecaption : string,
  *             youtubeId : string,
+ *             lyricsformatted : string,
  *             hasicon : any,
  *             types? : number[]
  *         }
