@@ -22,6 +22,7 @@ use Tops\sys\TUser;
  *       interface ISongInfo {
  *           id: any;
  *           title: string;
+ *           notes: string;
  *       }
  *       interface ISongSet {
  *           id: any;
@@ -56,7 +57,9 @@ class GetSongsCommand extends \Tops\services\TServiceCommand
 
         $user = TUser::getCurrent();
         $response->canedit = $user->isAuthorized('edit-songs');
-        $response->lyrics = $manager->getSongLyrics($song->id);
+        $songDetail = $manager->getSong($song->id);
+        $response->lyrics = $songDetail->lyrics;
+        $response->notes = $songDetail->notes;
         $response->catalogSize = $manager->getSongCount();
         $this->setReturnValue($response);
     }

@@ -70,3 +70,12 @@
 .dragover{
     border-style: dashed;
 }
+
+.info-button {
+    z-index: 100;
+    position: fixed;
+    top: 20%;
+    left: 95.5%;
+    right:0;
+    font-size: 2rem;
+}

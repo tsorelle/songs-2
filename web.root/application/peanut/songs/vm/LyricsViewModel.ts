@@ -5,8 +5,11 @@
 /// <reference path='../../../../nutshell/pnut/js/multicolumnListPageLoader.ts' />
 /// <reference path='../../../../nutshell/typings/bootstrap-5/index.d.ts' />
 /// <reference path='../../../../nutshell/typings/bootstrap-5/js/dist/modal.d.ts' />
+/// <reference path='../../../../nutshell/pnut/packages/peanut-content/js/contentController.ts' />
 
 namespace Peanut {
+    import IContentOwner = PeanutContent.IContentOwner;
+
     interface ISongInfo {
         id: any;
         title: string;
@@ -21,6 +24,7 @@ namespace Peanut {
     interface IGetVersesResponse {
         // title: string;
         lyrics: string;
+        notes: string;
     }
 
     interface IGetSongsResponse extends IGetVersesResponse {
@@ -31,7 +35,9 @@ namespace Peanut {
         canedit: any;
     }
 
-    export class LyricsViewModel extends Peanut.ViewModelBase {
+    export class LyricsViewModel
+        extends Peanut.ViewModelBase
+        implements IContentOwner{
         // observables
         page = ko.observable('lyrics');
         title = ko.observable('Song of the Silly');
@@ -47,6 +53,7 @@ namespace Peanut {
         isAdmin = ko.observable(false);
         signedIn = ko.observable(false);
         pageController : multicolumnListPageLoader;
+        contentController: PeanutContent.contentController;
         setForm = {
             id: ko.observable(0),
             setName: ko.observable(''),
@@ -62,6 +69,7 @@ namespace Peanut {
             id: ko.observable(0),
             title: ko.observable(''),
             lyrics: ko.observable(''),
+            notes: ko.observable(''),
             public: ko.observable(false),
             errorMessage: ko.observable(''),
             currentSetName: ko.observable(''),
@@ -83,6 +91,8 @@ namespace Peanut {
         dragTargetIndex = ko.observable<any>();
         dragging : KnockoutComputed<boolean>;
 
+        showInfoButton = ko.observable(true);
+
         init(successFunction?: () => void) {
             let me = this;
             Peanut.logger.write('Lyrics Init');
@@ -102,16 +112,21 @@ namespace Peanut {
             me.application.loadResources([
                 // Load libraries and core components
                 '@pnut/ViewModelHelpers.js',
+                '@lib:tinymce',
+                '@pkg/peanut-content/contentController.js',
                 '@pnut/multicolumnListPageLoader'
             ], () => {
                 me.pageController = new multicolumnListPageLoader();
                 me.application.registerComponents(
                     ['@pnut/modal-confirm',
                         '@pnut/pager',
+                        '@pkg/peanut-content/content-block',
                         'songs/lyrics-block'
                     ],
                     () => {
-                    // let request =  null; // Peanut.HttpRequestVars.Get('set');
+                        me.contentController = new PeanutContent.contentController(me);
+
+                        // let request =  null; // Peanut.HttpRequestVars.Get('set');
                     // todo:replace with router feature
                     let request = Peanut.Helper.getRequestParam('set');
                     me.services.executeService('Peanut.songs::GetSongs', request,
@@ -125,6 +140,11 @@ namespace Peanut {
                                 me.selectedSet(response.set);
                                 me.loadSongList(response.songs);
                                 me.songForm.lyrics(response.lyrics);
+                                let notes = (response.notes ??  '').trim();
+                                me.songForm.notes(notes);
+                                me.showInfoButton(
+                                    (response.canedit || notes.length > 0)
+                                );
                             }
                     })
                         .fail(() => {
@@ -190,6 +210,9 @@ namespace Peanut {
             this.getLyrics();
         };
 
+        updateSongForm = () => {
+
+        }
         getLyrics = () => {
             let me = this;
             let song = me.selectedSong();
@@ -197,7 +220,9 @@ namespace Peanut {
             let request = null;
             me.services.executeService('Peanut.songs::GetSongLyrics', song.id, (serviceResponse: IServiceResponse) => {
                 if (serviceResponse.Result == Peanut.serviceResultSuccess) {
-                    me.songForm.lyrics(serviceResponse.Value);
+                    let response = <IGetVersesResponse>serviceResponse.Value;
+                    me.songForm.lyrics(response.lyrics);
+                    me.songForm.notes(response.notes);
                     me.page('lyrics');
                 }
             })
@@ -299,6 +324,13 @@ namespace Peanut {
         filterByUser  = () => {
 
         }
+        handleContentNotification(contentId: string, message: string) {
+
+        }
+        afterDatabind = () => {
+            this.contentController.initialize();
+        }
+
 
     }
 }
