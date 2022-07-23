@@ -78,6 +78,7 @@ namespace Peanut {
         };
 
         canedit = ko.observable(false);
+        editMode = ko.observable(false);
         username = ko.observable('');
         onLogin: any;
 
@@ -90,6 +91,7 @@ namespace Peanut {
         dragStartIndex = ko.observable<any>();
         dragTargetIndex = ko.observable<any>();
         dragging : KnockoutComputed<boolean>;
+        showEditButton : KnockoutComputed<boolean>;
 
         showInfoButton = ko.observable(true);
 
@@ -105,6 +107,12 @@ namespace Peanut {
             me.dragging = ko.computed(() => {
                 return (me.dragStartIndex() >= 0);
             });
+
+            me.showEditButton = ko.computed(() => {
+                return (
+                    this.canedit() && !this.editMode()
+                );
+            })
 
             for (let i = 0; i< 4; i++ ) {
                 this.songs[i] = ko.observableArray<ISongInfo>();
@@ -171,6 +179,14 @@ namespace Peanut {
             this.selectedSong(current);
             this.title(current.title);
         };
+
+        goPage = (pageName: string) => {
+            if (this.editMode()) {
+                // todo: confirm lose changes?
+                this.editMode(pageName == 'lyrics')
+            }
+            this.page(pageName);
+        }
 
         selectSong = (item : ISongInfo) => {
             let current = this.selectedSong();
@@ -303,7 +319,7 @@ namespace Peanut {
         }
 
         home = () => {
-            this.page('lyrics');
+            this.goPage('lyrics');
         };
 
         saveSetList = () => {
@@ -331,6 +347,31 @@ namespace Peanut {
             this.contentController.initialize();
         }
 
+        editSong = () => {
+            this.editMode(true);
+        }
+
+        saveSong = () => {
+            // todo: confirm save?
+            this.doSaveSong();
+        }
+
+        doSaveSong = () => {
+            // todo: save field edits in progress
+            this.editMode(false)
+        }
+
+        cancelSongEdit = () => {
+            if (this.editMode()) {
+                // todo: confirm cancel?
+                this.doCancelEdit();
+            }
+        }
+
+        doCancelEdit = () => {
+            // todo: cancel any field edits in progress.
+            this.editMode(false);
+        }
 
     }
 }

@@ -10,6 +10,12 @@
             <button title='Next in set' data-bind="click:nextSong" class="btn default"><i class="fa fa-forward"></i></button>
             <button title='Song list' style="padding-left:2em;padding-right: 2em" data-bind="click:showSongList" class="btn default"><i class="fa fa-music"></i></button>
             <button title='Split/Join Columns'  data-bind="click:splitColumns" class="btn default"><i class="fa fa-columns" aria-hidden="true"></i></button>
+            <button title='Edit'  data-bind="click:editSong,visible:showEditButton" class="btn default">
+                <i class="fa-solid fa-pen-to-square"></i></button>
+            <button title='Cancel'  data-bind="click:cancelSongEdit,visible:editMode" class="btn default">
+                <i class="fa-solid fa-rectangle-xmark"></i></button>
+            <button title='Save'  data-bind="click:saveSong,visible:editMode" class="btn default">
+                <i class="fa-solid fa-floppy-disk"></i></button>
 
             <span data-bind="visible:loading" style="color:lightgrey">
             <i class="fa fa-spinner fa-pulse"></i> Loading '<span data-bind="text:loading"></span>...</span>
@@ -54,7 +60,7 @@
                         <content-block params="controller: contentController,
                                 title: 'Song Notes',
                                 id: 'notes-content', source: songForm.notes,
-                                    canedit:canedit"></content-block>
+                                    canedit:editMode"></content-block>
                     </div>
                 </div>
             </div>
@@ -62,7 +68,7 @@
 
         <div class="row" style="padding-left: 1.5rem">
             <div class="col-md-12" style="min-height: 5rem">
-                <lyrics-block params="lyrics:songForm.lyrics, canedit:canedit,
+                <lyrics-block params="lyrics:songForm.lyrics, canedit:editMode,
                     save:onSaveLyrics, columns:columnDisplay, textsize: textSize"></lyrics-block>
             </div>
         </div>
