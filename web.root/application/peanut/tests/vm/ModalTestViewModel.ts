@@ -5,6 +5,7 @@
 // required for all view models:
 /// <reference path='../../../../nutshell/pnut/core/ViewModelBase.ts' />
 /// <reference path='../../../../nutshell/typings/knockout/knockout.d.ts' />
+/// <reference path='../../../../nutshell/typings/bootstrap-5/index.d.ts' />
 /// <reference path='../../../../nutshell/typings/bootstrap-5/js/dist/modal.d.ts' />
 
 namespace Peanut {
