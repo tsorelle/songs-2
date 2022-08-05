@@ -21,17 +21,24 @@ namespace Peanut {
         // user: string;
     }
 
-    interface IGetVersesResponse {
+    interface IGetSongsRequest {
+        setId : any;
+        initializing? : any;
+    }
+    interface IGetLyricsResponse {
         // title: string;
         lyrics: string;
         notes: string;
     }
 
-    interface IGetSongsResponse extends IGetVersesResponse {
-        set: ISongSet;
-        sets: ISongSet[];
+    interface IGetSongSetResponse extends IGetLyricsResponse {
         songs: ISongInfo[];
         catalogSize: number;
+    }
+    
+    interface IGetSongsResponse extends IGetSongSetResponse {
+        set: ISongSet;
+        sets: ISongSet[];
         canedit: any;
         username: string;
     }
@@ -137,7 +144,12 @@ namespace Peanut {
 
                         // let request =  null; // Peanut.HttpRequestVars.Get('set');
                     // todo:replace with router feature
-                    let request = Peanut.Helper.getRequestParam('set');
+                        let setId = Peanut.Helper.getRequestParam('set');
+
+                    let request = <IGetSongsRequest> {
+                        setId: setId === null ? 0 : setId,
+                        initializing: 1
+                    }
                     me.services.executeService('Peanut.songs::GetSongs', request,
                         (serviceResponse: IServiceResponse) => {
                             if (serviceResponse.Result == Peanut.serviceResultSuccess) {
@@ -149,12 +161,7 @@ namespace Peanut {
                                 me.sets(response.sets);
                                 me.selectedSet(response.set);
                                 me.loadSongList(response.songs);
-                                me.songForm.lyrics(response.lyrics);
-                                let notes = (response.notes ??  '').trim();
-                                me.songForm.notes(notes);
-                                me.showInfoButton(
-                                    (response.canedit || notes.length > 0)
-                                );
+                                me.loadSongLyrics(response);
                             }
                     })
                         .fail(() => {
@@ -168,6 +175,19 @@ namespace Peanut {
             });
         }
 
+        loadSongSet = () => {
+            
+        }
+        
+        loadSongLyrics = (response: IGetLyricsResponse) => {
+            this.songForm.lyrics(response.lyrics);
+            let notes = (response.notes ??  '').trim();
+            this.songForm.notes(notes);
+            this.showInfoButton(
+                (this.canedit() || notes.length > 0)
+            );
+        }
+        
         loadSongList = (songs: ISongInfo[],songIndex=0) => {
             this.songList = songs;
             this.songCount = songs.length;
@@ -238,7 +258,7 @@ namespace Peanut {
             let request = null;
             me.services.executeService('Peanut.songs::GetSongLyrics', song.id, (serviceResponse: IServiceResponse) => {
                 if (serviceResponse.Result == Peanut.serviceResultSuccess) {
-                    let response = <IGetVersesResponse>serviceResponse.Value;
+                    let response = <IGetLyricsResponse>serviceResponse.Value;
                     me.songForm.lyrics(response.lyrics);
                     me.songForm.notes(response.notes);
                     me.page('lyrics');
@@ -286,6 +306,40 @@ namespace Peanut {
                 this.confirmSaveModal = new bootstrap.Modal(document.getElementById('confirm-save-modal'));
             }
             this.confirmSaveModal.show();
+        }
+
+        selectSet = (set: ISongSet) => {
+            let me = this;
+            me.selectedSet(set);
+            me.loadSelectedSet();
+        };
+
+        loadSelectedSet = () => {
+            let me = this;
+            let set = me.selectedSet();
+            let request = <IGetSongsRequest>{
+                setId: set.id ? set.id : 0
+            }
+
+            me.loading(set.setname);
+            me.services.executeService('Peanut.songs::GetSongs',
+                request, (serviceResponse: IServiceResponse) => {
+                if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                    let response = <IGetSongSetResponse>serviceResponse.Value;
+                    this.loadSongList(response.songs);
+                    this.loadSongLyrics(response);
+                }
+            })
+                .fail(() => {
+                    let trace = me.services.getErrorInformation();
+                })
+                .always(() => {
+                    // me.page('lyrics');
+                    // me.page('songs');
+                    me.loading('');
+                });
+
+
         }
 
         onConfirmSaveOk = () => {

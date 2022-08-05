@@ -124,8 +124,12 @@ class SongsManager
         return $this->getSongpagesRepository()->getSongPageList($request);
     }
 
-    public function getSongCount() {
-        return $this->getSongsRepository()->getCount();
+    public function getSongCount($setId=0) {
+        if ($setId === 'all' || !$setId) {
+            return $this->getSongsRepository()->getCount();
+        }
+
+        return $this->getSongsetsRepository()->getSongCount($setId);
     }
 
     public function getSongPageCount($request=null) {
@@ -435,6 +439,11 @@ class SongsManager
     {
 
         return $this->getSongsetsRepository()->getSongInfoList($setid);
+    }
+
+    public function getSetById(int $setId)
+    {
+        return $this->getSongsetsRepository()->get($setId);
     }
 
 

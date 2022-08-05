@@ -2,6 +2,5 @@
 - Implement help pages or remove menu item
 
 # Phase 2 lyrics pages
-- sign in
 - edit set
 - new set

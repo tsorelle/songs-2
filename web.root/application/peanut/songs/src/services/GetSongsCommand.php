@@ -34,18 +34,30 @@ class GetSongsCommand extends \Tops\services\TServiceCommand
 
     protected function run()
     {
-        $setId = $this->getRequest() ?? 0;
+        $setId = 0;
+        $initializing = false;
+        $request = $this->getRequest();
+        if ($request) {
+            $setId = $request->setId ?? 0;
+            $initializing = isset($request->initializing);
+        }
         $manager = new SongsManager();
         $response = new \stdClass();
-        $response->sets = $manager->getSongSetList();
-
-        $selectedSet = $this->getSelectedSet($setId,$response->sets);
-        if (!$selectedSet) {
-            $this->addErrorMessage("Set %setId not found.");
-            return;
+        if ($initializing) {
+            $user = TUser::getCurrent();
+            $response->username = $user->getUserName();
+            $response->canedit = $user->isAuthorized('edit-songs');
+            $response->sets = $manager->getSongSetList();
+            $selectedSet = $this->getSelectedSet($setId, $response->sets);
+            if (!$selectedSet) {
+                $this->addErrorMessage("Set %setId not found.");
+                return;
+            }
+            $response->set = $selectedSet;
         }
-
-        $response->set = $selectedSet;
+        else {
+            $selectedSet = $manager->getSetById($setId);
+        }
 
         $response->songs = $manager->getSongInfoInSet($selectedSet->id);
         if (empty($response->songs)) {
@@ -55,13 +67,10 @@ class GetSongsCommand extends \Tops\services\TServiceCommand
 
         $song = $response->songs[0];
 
-        $user = TUser::getCurrent();
-        $response->username = $user->getUserName();
-        $response->canedit = $user->isAuthorized('edit-songs');
         $songDetail = $manager->getSong($song->id);
         $response->lyrics = $songDetail->lyrics;
         $response->notes = $songDetail->notes;
-        $response->catalogSize = $manager->getSongCount();
+        $response->catalogSize = $manager->getSongCount($setId);
         $this->setReturnValue($response);
     }
 

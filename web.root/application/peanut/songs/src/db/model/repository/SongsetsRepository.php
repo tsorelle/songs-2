@@ -41,14 +41,25 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
     public function getSongInfoList($setid)
     {
         $params = [];
-        $sql = 'SELECT s.id,s.title FROM tls_songs s';
+        $sql = 'SELECT s.id,s.title FROM '.
+            $this->getSongsTableName().' s ';
         if ($setid > 0) {
-            $sql .= ' JOIN tls_songsetmembers m on m.songid = s.id WHERE m.setid = ?';
+            $sql .= ' JOIN '.$this->getAssociationTableName().
+            ' m on m.songid = s.id WHERE m.setid = ?';
             $params = [$setid];
         }
         $sql .= ' ORDER BY s.title';
         $stmt = $this->executeStatement($sql,$params);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function getSongCount($setId)
+    {
+        $sql = 'select count(*) from '.$this->getAssociationTableName()
+            .' where setId = ?';
+        $stmt = $this->executeStatement($sql,[$setId]);
+        $result = $stmt->fetch();
+        return (empty($result) ?  0 : $result[0]);
     }
 
     protected function getTableName() {
@@ -57,6 +68,10 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
 
     private function getAssociationTableName() {
         return 'tls_songsetmembers';
+    }
+
+    private function getSongsTableName() {
+        return 'tls_songs';
     }
 
     protected function getDatabaseId() {
