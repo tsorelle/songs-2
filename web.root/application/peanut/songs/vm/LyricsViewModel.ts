@@ -33,6 +33,7 @@ namespace Peanut {
         songs: ISongInfo[];
         catalogSize: number;
         canedit: any;
+        username: string;
     }
 
     export class LyricsViewModel
@@ -142,7 +143,8 @@ namespace Peanut {
                             if (serviceResponse.Result == Peanut.serviceResultSuccess) {
                                 let response = <IGetSongsResponse>serviceResponse.Value;
                                 me.maxSongColumnItems = Math.floor(response.catalogSize / 4);
-                                me.username('guest');
+                                me.username(response.username);
+                                me.signedIn(response.username !== 'guest');
                                 me.canedit(!!response.canedit);
                                 me.sets(response.sets);
                                 me.selectedSet(response.set);
@@ -256,15 +258,22 @@ namespace Peanut {
         }
 
         splitColumns = () => {
-
+            let current = this.columnDisplay();
+            this.columnDisplay(!current)
         }
 
         reduceFont = () => {
-
+            let size = this.textSize();
+            if (size > 1) {
+                this.textSize(--size)
+            }
         }
 
         enlargeFont = () => {
-
+            let size = this.textSize();
+            if (size < 6) {
+                this.textSize(++size)
+            }
         }
 
         help = () => {

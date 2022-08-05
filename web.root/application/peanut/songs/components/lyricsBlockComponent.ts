@@ -1,5 +1,6 @@
 /// <reference path='../../../../nutshell/typings/knockout/knockout.d.ts' />
 /// <reference path='../../../../nutshell/typings/bootstrap-5/index.d.ts' />
+/// <reference path='../../../../nutshell/typings/bootstrap-5/js/dist/modal.d.ts' />
 
 namespace Peanut {
     export interface IVerse {

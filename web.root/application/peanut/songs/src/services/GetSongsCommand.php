@@ -56,6 +56,7 @@ class GetSongsCommand extends \Tops\services\TServiceCommand
         $song = $response->songs[0];
 
         $user = TUser::getCurrent();
+        $response->username = $user->getUserName();
         $response->canedit = $user->isAuthorized('edit-songs');
         $songDetail = $manager->getSong($song->id);
         $response->lyrics = $songDetail->lyrics;
