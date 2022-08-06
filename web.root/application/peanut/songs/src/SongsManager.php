@@ -12,8 +12,7 @@ use Peanut\songs\db\model\repository\SongtagsRepository;
 use Peanut\songs\db\model\repository\TagsRepository;
 use Tops\cache\TAbstractCache;
 use Tops\cache\TSessionCache;
-use Tops\db\TQuery;
-use Tops\sys\TDates;
+use Tops\sys\TNameValuePair;
 use Tops\sys\TPath;
 
 
@@ -435,16 +434,22 @@ class SongsManager
         return $song->lyrics;
     }
 
-    public function getSongInfoInSet($setid)
+    public function getSongInfoInSet($setid=0)
     {
-
         return $this->getSongsetsRepository()->getSongInfoList($setid);
+    }
+
+    public function getSongInfoNotInSet($setid)
+    {
+        return $this->getSongsetsRepository()->getSongInfoListNotInSet($setid);
     }
 
     public function getSetById(int $setId)
     {
         return $this->getSongsetsRepository()->get($setId);
     }
+
+
 
 
 }

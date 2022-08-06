@@ -38,7 +38,7 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
         return $set;
     }
 
-    public function getSongInfoList($setid)
+    public function getSongInfoList($setid=0)
     {
         $params = [];
         $sql = 'SELECT s.id,s.title FROM '.
@@ -60,6 +60,18 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
         $stmt = $this->executeStatement($sql,[$setId]);
         $result = $stmt->fetch();
         return (empty($result) ?  0 : $result[0]);
+    }
+
+
+    public function getSongInfoListNotInSet($setid)
+    {
+        $sql =
+            'SELECT s.id,s.title FROM '.$this->getSongsTableName().
+            ' s where s.id not in  (select songId from '.
+            $this->getAssociationTableName().
+            ' WHERE setid = ?) ORDER BY s.title';
+        $stmt = $this->executeStatement($sql,[$setid]);
+        return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
     protected function getTableName() {

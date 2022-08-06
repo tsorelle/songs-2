@@ -21,6 +21,11 @@ namespace Peanut {
         // user: string;
     }
 
+    interface IGetSongListsReponse {
+        setSongs: ISongInfo[];
+        availableSongs: ISongInfo[];
+    }
+
     interface IGetSongsRequest {
         setId : any;
         initializing? : any;
@@ -72,6 +77,8 @@ namespace Peanut {
             searchValue: ko.observable(),
             user: ''
         };
+        availableSongs: ISongInfo[];
+        searchSubscription : any = null;
 
         songForm = {
             id: ko.observable(0),
@@ -174,6 +181,19 @@ namespace Peanut {
                 });
             });
         }
+        getAvailableSongsList = () => {
+/*
+            let me = this;
+            if (me.filterByUser()) {
+                let user = me.username();
+                return _.filter(this.availableSongs,(item: ISongInfo) => {
+                    return (item.user == user);
+                });
+            }
+*/
+            return this.availableSongs;
+        };
+
 
         loadSongSet = () => {
             
@@ -297,7 +317,7 @@ namespace Peanut {
         }
 
         help = () => {
-
+            alert('to be implemented')
         }
 
         confirmSaveModal : any;
@@ -371,9 +391,75 @@ namespace Peanut {
 
         }
 
-        editSet  = () => {
+        editSet   = (set: ISongSet) => {
+            let me = this;
+            me.setForm.id(set.id);
+            me.setForm.setName(set.setname);
+            me.setForm.nameError('');
+            // me.setForm.user = set.user;
+            me.initSetLists(set.id);
 
         }
+        clearSearch = () => {
+            if (this.searchSubscription !== null) {
+                this.searchSubscription.dispose();
+                this.searchSubscription = null;
+            }
+            this.setForm.searchValue('');
+            let available = this.getAvailableSongsList();
+            this.setForm.avaliableSongs(available);
+            this.searchSubscription = this.setForm.searchValue.subscribe(this.filterAvailable)
+        };
+
+        filterAvailable = (value: string) => {
+            value = value.trim();
+            if (value) {
+                let songs = this.setForm.avaliableSongs();
+                let list = songs.filter((item: ISongInfo) => {
+                    return item.title.toLowerCase().indexOf(value.toLowerCase()) == 0;
+                });
+                this.setForm.avaliableSongs(list);
+            }
+            else {
+                let available = this.getAvailableSongsList();
+                this.setForm.avaliableSongs(available);
+            }
+        };
+
+        initSetLists(setId) {
+            let me = this;
+            me.setForm.selectedSongs([]);
+            me.setForm.avaliableSongs([]);
+
+            me.services.executeService( 'GetSongLists', setId, (serviceResponse: IServiceResponse) => {
+                if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                    let response = <IGetSongListsReponse>serviceResponse.Value;
+                    let selected = [];
+                    if (setId) {
+                        me.availableSongs = response.availableSongs;
+/*
+                            Peanut.Helper.ExcludeValues(response.availableSongs,
+                                response.setSongs,'id');
+*/
+                        me.setForm.selectedSongs(response.setSongs);
+                    }
+                    else {
+                        me.availableSongs = response.availableSongs;
+                        me.setForm.selectedSongs([]);
+                    }
+                    me.setForm.avaliableSongs(me.availableSongs);
+                    me.clearSearch();
+                    me.page('editset');
+                }
+                else {
+                }
+            })
+                .fail(() => {
+                    let trace = me.services.getErrorInformation();
+                });
+
+        };
+
 
         newSet = () => {
 
