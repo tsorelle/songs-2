@@ -391,6 +391,8 @@ namespace Peanut {
 
         }
 
+        // set editing
+
         editSet   = (set: ISongSet) => {
             let me = this;
             me.setForm.id(set.id);
@@ -400,6 +402,83 @@ namespace Peanut {
             me.initSetLists(set.id);
 
         }
+        moveSongUp = (song: ISongInfo) => {
+            this.moveSong(song,-1);
+        };
+
+        moveSongDown = (song: ISongInfo) => {
+            this.moveSong(song,1);
+        };
+
+        insertSong = (song: ISongInfo) => {
+            let list = [song].concat(this.setForm.selectedSongs());
+            this.setForm.selectedSongs(list);
+        }
+
+        moveSong = (song: ISongInfo, offset: number) => {
+            let list = this.setForm.selectedSongs();
+            //let oldI = _.findIndex(list, {id: song.id});
+            // let oldI =  Peanut.Helper.FindIndex(list, (s: ISongInfo) =>
+            let oldI =  list.findIndex((s: ISongInfo) =>
+                            {
+                                return s.id === song.id
+                            });
+
+            let newI = oldI + offset;
+            if (newI < 0) {
+                newI = list.length - 1;
+            }
+            else if (newI == list.length) {
+                newI = 0;
+            }
+            let swapped = list[newI];
+            list[newI] = song;
+            list[oldI] = swapped;
+            this.setForm.selectedSongs(list);
+        };
+
+        reorderSong = (song : ISongInfo,swapped: ISongInfo) => {
+            let list = this.setForm.selectedSongs();
+            // let start = _.findIndex(list, {id: song.id});
+            let start = Peanut.Helper.FindIndex(list, (s: ISongInfo) =>
+                {
+                    return s.id === song.id
+                });
+
+            for (let i= start; i< list.length; i++) {
+                song = list[i];
+                list[i] = swapped;
+                swapped = song;
+            }
+            this.setForm.selectedSongs(list);
+        }
+        addToSetList = (song: ISongInfo) => {
+            let me=this;
+            // me.setForm.selectedSongs.push(song);
+            me.insertSong(song);
+            me.availableSongs = me.availableSongs.filter((s: ISongInfo) => {
+                return s.id !== song.id
+            })
+            me.setForm.avaliableSongs(me.availableSongs);
+            me.setForm.searchValue('');
+        };
+
+        removeFromSetList = (song: ISongInfo) => {
+            let me = this;
+            me.availableSongs.push(song);
+            // me.availableSongs = _.sortBy(me.availableSongs,['title']);
+            me.availableSongs = Peanut.Helper.SortByAlpha(me.availableSongs,'title')
+
+            let selected = this.setForm.selectedSongs();
+            selected = selected.filter((item: ISongInfo) => {
+                    return item.id !== song.id
+                }
+            );
+            me.setForm.selectedSongs(selected);
+            me.setForm.avaliableSongs(me.availableSongs);
+            me.setForm.searchValue('');
+        };
+
         clearSearch = () => {
             if (this.searchSubscription !== null) {
                 this.searchSubscription.dispose();
@@ -410,6 +489,8 @@ namespace Peanut {
             this.setForm.avaliableSongs(available);
             this.searchSubscription = this.setForm.searchValue.subscribe(this.filterAvailable)
         };
+
+
 
         filterAvailable = (value: string) => {
             value = value.trim();
@@ -476,9 +557,8 @@ namespace Peanut {
         }
 
         cancelSetEdit = () => {
-
-        }
-
+            this.page('songs');
+        };
         deleteSet  = () => {
 
         }
@@ -522,5 +602,71 @@ namespace Peanut {
             this.editMode(false);
         }
 
+        onDragstart = (data: ISongInfo, event) => {
+            this.draggedSong(data);
+            event.target.classList.add('dragSource');
+            // console.log('drag started');
+            return true;
+        };
+
+        onDragend = (data, event) => {
+            // console.log('drag ended');
+            event.target.classList.remove('dragSource');
+            this.draggedSong(null);
+            return true;
+
+        };
+
+        onDragover =(data, event) =>{
+            // console.log('drag over');
+            event.preventDefault();
+        };
+
+        onDragenter =(data, event) => {
+            // console.log('drag enter');
+            event.preventDefault();
+        };
+
+        onDragleave = (data, event, index) => {
+            // console.log('drag leave');
+            event.preventDefault();
+        };
+
+        onDrop = (target:ISongInfo, event) => {
+            // console.log('dropped')
+            let source =  this.draggedSong();
+            this.draggedSong(null);
+            if (target != null && target.id != source.id) {
+                let list = this.setForm.selectedSongs();
+                let targetIdx = list.findIndex((s: ISongInfo) => {
+                    return s.id === target.id;
+                });
+                let sourceIdx =  list.findIndex((s: ISongInfo) => {
+                    return s.id === source.id;
+                });
+                if (targetIdx > sourceIdx) {
+                    for (let i= targetIdx; i >= sourceIdx; i--) {
+                        let song = list[i];
+                        list[i] = source;
+                        source = song;
+                    }
+                }
+                else {
+                    for (let i= targetIdx; i <= sourceIdx; i++) {
+                        let song = list[i];
+                        list[i] = source;
+                        source = song;
+                    }
+                }
+
+                this.setForm.selectedSongs(list);
+            }
+
+            event.target.classList.remove('dragover');
+
+            // console.log('drag dropped');
+
+            return true;
+        };
     }
 }
