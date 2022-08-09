@@ -10,5 +10,6 @@ class Songset  extends \Tops\db\TAbstractEntity
 { 
     public $id;
     public $setname;
+    public $user;
 
 }

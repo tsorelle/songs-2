@@ -86,6 +86,21 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
         return 'tls_songs';
     }
 
+    public function updateSetSongs($setId, $songIds)
+    {
+        $sql = 'DELETE FROM '.$this->getAssociationTableName().
+            ' WHERE setId = ?';
+        $this->executeStatement($sql,[$setId]);
+        $count = count($songIds);
+        $sql = 'INSERT INTO '.$this->getAssociationTableName().
+            '(setId,songId,displayOrder) VALUES (?,?,?)';
+        for ($i = 0; $i < $count; $i++) {
+            $order = $i + 1;
+            $songId = $songIds[$i]->songId;
+            $this->executeStatement($sql,[$setId,$songId,$order]);
+        }
+    }
+
     protected function getDatabaseId() {
         return null;
     }
@@ -98,7 +113,8 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
     {
         return array(
         'id'=>PDO::PARAM_INT,
-        'setname'=>PDO::PARAM_INT);
+        'setname'=>PDO::PARAM_INT,
+        'user' => PDO::PARAM_STR);
     }
     private function addMember($setId, $songId) {
 
@@ -115,5 +131,42 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
     private function getMembers($setId) {
 
     }
+
+    public function countUniqueSetNames($setName,  $setId, $user=null)
+    {
+        $params = [$setName,$setId];
+        $sql = 'SELECT COUNT(*) FROM '.$this->getTableName()
+            .' WHERE setname = ? AND id <> ? ';
+        if ($user) {
+            $sql .= ' AND user = ? ';
+            $params[] = $user;
+        }
+        else {
+            $sql .= " AND (user is null OR trim(user) = '')";
+        }
+
+        $stmt = $this->executeStatement($sql,$params);
+        return $stmt->fetchColumn();
+    }
+
+    public function newSongSet($setName, string $username)
+    {
+        $set = new Songset();
+        $set->user = $username;
+        $set->setname = $setName;
+        $set->id = $this->insert($set);
+        return $set;
+    }
+
+    public function changeSetName($setId,$setname) {
+        /** @var Songset $set */
+        $set = $this->get($setId);
+        if (!$set) {
+            return false;
+        }
+        $set->setname = $setname;
+        return $this->update($set);
+    }
+
 
 }

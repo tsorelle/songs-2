@@ -449,6 +449,27 @@ class SongsManager
         return $this->getSongsetsRepository()->get($setId);
     }
 
+    public function checkUniqueSetName($setName, int $setId, $username)
+    {
+        if (!$setId) {
+            $setId = 0;
+        }
+        $count = $this->getSongsetsRepository()->countUniqueSetNames($setName,  $setId, $username);
+        return empty($count);
+    }
+
+    public function createSet($setName, string $username)
+    {
+        return $this->getSongsetsRepository()->newSongSet($setName,$username);
+    }
+
+    public function updateSetSongs($setId,$songIds) {
+        $this->getSongsetsRepository()->updateSetSongs($setId,$songIds);
+    }
+
+    public function changeSetName($setId,$setName) {
+        $this->getSongsetsRepository()->changeSetName($setId,$setName);
+    }
 
 
 

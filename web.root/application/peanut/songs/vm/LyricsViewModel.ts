@@ -48,6 +48,32 @@ namespace Peanut {
         username: string;
     }
 
+    interface ISaveSetRequest {
+        setId: any;
+        songs: ISongSetItem[];
+        setName: string;
+        user?: string;
+    }
+
+    interface ISongSetItem {
+        songId: any,
+        sequence: number
+    }
+
+    interface ISaveSetRequest {
+        setId: any;
+        songs: ISongSetItem[];
+        setName: string;
+        user?: string;
+    }
+
+    interface ISaveSetResponse {
+        setId: any,
+        songs: ISongInfo[];
+    }
+
+
+
     export class LyricsViewModel
         extends Peanut.ViewModelBase
         implements IContentOwner{
@@ -553,8 +579,71 @@ namespace Peanut {
         };
 
         saveSetList = () => {
+            let me = this;
 
-        }
+            let request = <ISaveSetRequest> {
+                setId: this.setForm.id(),
+                songs: [],
+                setName: this.setForm.setName().trim(),
+                user: this.setForm.user
+            };
+
+            if (!request.setId) {
+                request.setId = 0;
+            }
+
+            if (!request.setName) {
+                this.setForm.nameError('A name for the set is required.');
+                return;
+            }
+
+            let selected  = this.setForm.selectedSongs();
+            for (let i = 0; i < selected.length; i++) {
+                request.songs.push(
+                    <ISongSetItem>{songId: selected[i].id, sequence: i}
+                )
+            }
+
+            this.setForm.nameError('');
+
+            // me.loading(set.setname);
+            me.services.executeService('UpdateSongSet', request, (serviceResponse: IServiceResponse) => {
+                if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                    let response = <ISaveSetResponse>serviceResponse.Value;
+                    let setList = me.sets();
+                    me.sets([]);
+                    let set : ISongSet = null;
+                    if (request.setId > 0) {
+                        let setIndex =
+                            setList.findIndex(
+                                (s: ISongSet) => {
+                                    return s.id === request.setId
+                                });
+                        set = setList[setIndex];
+                        set.setname = request.setName;
+                        setList[setIndex] = set;
+                    }
+                    else {
+                        set = <ISongSet>{
+                            id: response.setId,
+                            setname: request.setName,
+                            user: request.user
+                        };
+                        setList.push(set);
+                    }
+                    me.sets(setList);
+                    me.selectedSet(set);
+                    me.loadSongList(response.songs);
+                }
+            })
+                .fail(() => {
+                    let trace = me.services.getErrorInformation();
+                    if (1){} // set breakpoint here
+                })
+                .always(() => {
+                    me.page('songs');
+                });
+        };
 
         cancelSetEdit = () => {
             this.page('songs');
