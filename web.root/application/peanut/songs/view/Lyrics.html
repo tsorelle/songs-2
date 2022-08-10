@@ -70,6 +70,45 @@
             </div>
         </div>
 
+        <div class="row mb-3" data-bind="visible:editMode">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <div>
+                        <label class="control-label" for="songtitle" style="font-weight: bold">
+                            Song Title</label>
+                        <span class="error" data-bind="visible: songForm.errorMessage">
+                                    :</span> <span  class="error"
+                                                    data-bind="text:songForm.errorMessage" ></span>
+                        <input type="text" class="form-control" id="songtitle"
+                               data-bind="value: songForm.title" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3" data-bind="visible:editMode">
+            <div class="col-md-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value=""
+                           id="publicdomain" data-bind="checked:songForm.public">
+                    <label class="form-check-label" for="publicdomain">
+                        <strong>Public domain</strong>
+                    </label>
+                </div>
+                <div class="form-check" data-bind="visible:songForm.currentSetName">
+                    <input class="form-check-input" type="checkbox" value="" id="addtoset"
+                           data-bind="checked:songForm.includeInSet">
+                    <label class="form-check-label" for="addtoset">
+                        <strong>
+                        Include in set: <span data-bind="text:songForm.currentSetName"></span>?
+                        </strong>
+                    </label>
+
+                    </label>
+                </div>
+
+            </div>
+        </div>
+
         <div class="row" style="padding-left: 1.5rem">
             <div class="col-md-12" style="min-height: 5rem">
                 <lyrics-block params="lyrics:songForm.lyrics, canedit:editMode,

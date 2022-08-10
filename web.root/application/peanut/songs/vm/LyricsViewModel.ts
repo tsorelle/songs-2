@@ -72,14 +72,22 @@ namespace Peanut {
         songs: ISongInfo[];
     }
 
+    interface ISongUpdateResponse {
+        id: any;
+        songs: ISongInfo[];
+    }
 
+    interface ISongUpdateRequest extends ISong {
+        setId: any;
+        user?: string;
+    }
 
     export class LyricsViewModel
         extends Peanut.ViewModelBase
         implements IContentOwner{
         // observables
         page = ko.observable('lyrics');
-        title = ko.observable('Song of the Silly');
+        title = ko.observable('Song not loaded');
         selectedSet = ko.observable<ISongSet>();
         sets = ko.observableArray<ISongSet>();
         songList : ISongInfo[] = [];
@@ -135,7 +143,7 @@ namespace Peanut {
         showEditButton : KnockoutComputed<boolean>;
 
         showInfoButton = ko.observable(true);
-
+        savedSong : any = null;
         init(successFunction?: () => void) {
             let me = this;
             Peanut.logger.write('Lyrics Init');
@@ -226,6 +234,7 @@ namespace Peanut {
         }
         
         loadSongLyrics = (response: IGetLyricsResponse) => {
+            this.songForm.title(this.title());
             this.songForm.lyrics(response.lyrics);
             let notes = (response.notes ??  '').trim();
             this.songForm.notes(notes);
@@ -575,8 +584,30 @@ namespace Peanut {
             this.initSetLists([]);
         };
 
-        newSong = () => {
+        saveSongData = () => {
+            this.savedSong = {
+                id: this.songForm.id(),
+                title: this.title(),
+                lyrics: this.songForm.lyrics(),
+                public: this.songForm.public(),
+                user: this.songForm.user()
+            }
         }
+         newSong = () => {
+            this.saveSongData();
+            this.title('New Song')
+            this.songForm.id(0);
+            this.songForm.title('');
+            this.songForm.lyrics('');
+            this.songForm.public(false);
+            this.songForm.errorMessage('');
+            this.songForm.user(this.username());
+            let currentSetName = this.selectedSet().id > 0 ? this.selectedSet().setname : '';
+            this.songForm.currentSetName(currentSetName);
+            this.songForm.includeInSet(currentSetName != '');
+             this.editMode(true);
+             this.page('lyrics');
+        };
 
         home = () => {
             this.goPage('lyrics');
@@ -584,7 +615,6 @@ namespace Peanut {
 
         saveSetList = () => {
             let me = this;
-
             let request = <ISaveSetRequest> {
                 setId: this.setForm.id(),
                 songs: [],
@@ -703,6 +733,7 @@ namespace Peanut {
         }
 
         editSong = () => {
+            this.saveSongData();
             this.editMode(true);
         }
 
@@ -712,9 +743,51 @@ namespace Peanut {
         }
 
         doSaveSong = () => {
-            // todo: save field edits in progress
-            this.editMode(false)
-        }
+            let test = this.songForm.lyrics();
+            let me = this;
+
+            let request = <ISongUpdateRequest> {
+                id: me.songForm.id(),
+                title: me.songForm.title().trim(),
+                publicdomain: me.songForm.public() ? 1 : 0,
+                user: me.songForm.user(),
+                notes: me.songForm.notes(),
+                lyrics: me.songForm.lyrics().trim(),
+                setId: me.songForm.includeInSet() ? me.selectedSet().id : 0,
+            }
+
+            if (!request.title) {
+                me.songForm.errorMessage('Title is required');
+                return;
+            }
+            if (!request.lyrics) {
+                me.songForm.errorMessage('Add some lyrics please.');
+                return;
+            }
+            me.services.executeService('UpdateSong', request, (serviceResponse: IServiceResponse) => {
+                if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                    let response = <ISongUpdateResponse>serviceResponse.Value;
+                    // let songIndex = _.findIndex(response.songs, {id: response.id});
+                    let songIndex = response.songs.findIndex((song: ISongInfo) => {
+                        return (song.id === response.id);
+                    })
+                    if (songIndex < 0) {
+                        songIndex = 0;
+                    }
+                    me.loadSongList(response.songs,songIndex);
+                    // me.songIndex = -1;
+                }
+            })
+                .fail(() => {
+                    let trace = me.services.getErrorInformation();
+                    if (1){} // set breakpoint here
+                })
+                .always(() => {
+                    this.editMode(false);
+                    me.page('songs');
+                });
+        };
+
 
         cancelSongEdit = () => {
             if (this.editMode()) {
@@ -726,6 +799,20 @@ namespace Peanut {
         doCancelEdit = () => {
             // todo: cancel any field edits in progress.
             this.editMode(false);
+            this.restoreSavedSong();
+        }
+
+        restoreSavedSong = () => {
+            if (this.savedSong) {
+                this.songForm.id(this.savedSong.id),
+                this.songForm.title(this.savedSong.title),
+                this.songForm.lyrics(this.savedSong.lyrics),
+                this.songForm.public(this.savedSong.public),
+                this.songForm.user(this.savedSong.user)
+                this.title(this.savedSong.title)
+                this.savedSong = null;
+            }
+            this.setSongIndex(this.songIndex);
         }
 
         onDragstart = (data: ISongInfo, event) => {
