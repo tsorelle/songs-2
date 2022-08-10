@@ -127,7 +127,7 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
     {
         return array(
         'id'=>PDO::PARAM_INT,
-        'setname'=>PDO::PARAM_INT,
+        'setname'=>PDO::PARAM_STR,
         'user' => PDO::PARAM_STR);
     }
     private function addMember($setId, $songId) {
