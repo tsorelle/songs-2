@@ -101,6 +101,20 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
         }
     }
 
+    public function removeSet($setId)
+    {
+        /** @var Songset $set */
+        $set = $this->get($setId);
+        if ($set) {
+            $sql = 'DELETE FROM '.$this->getAssociationTableName().
+                ' WHERE setId = ?';
+            $this->executeStatement($sql,[$setId]);
+            if ($set->setname !== 'Default') {
+                $this->delete($setId);
+            }
+        }
+    }
+
     protected function getDatabaseId() {
         return null;
     }
@@ -149,13 +163,12 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
         return $stmt->fetchColumn();
     }
 
-    public function newSongSet($setName, string $username)
+    public function newSongSet($setName, $username)
     {
         $set = new Songset();
         $set->user = $username;
         $set->setname = $setName;
-        $set->id = $this->insert($set);
-        return $set;
+        return $this->insert($set);
     }
 
     public function changeSetName($setId,$setname) {

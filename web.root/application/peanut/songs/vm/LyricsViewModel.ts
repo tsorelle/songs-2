@@ -569,8 +569,12 @@ namespace Peanut {
 
 
         newSet = () => {
-
+            this.setForm.id (null);
+            this.setForm.setName('');
+            this.setForm.user = this.username();
+            this.initSetLists([]);
         };
+
         newSong = () => {
         }
 
@@ -648,9 +652,42 @@ namespace Peanut {
         cancelSetEdit = () => {
             this.page('songs');
         };
-        deleteSet  = () => {
 
-        }
+        confirmSetDeleteModal : any;
+        deleteSet = () => {
+            if (!this.confirmSetDeleteModal) {
+                this.confirmSetDeleteModal = new bootstrap.Modal(document.getElementById('confirm-set-delete-modal'));
+            }
+            this.confirmSetDeleteModal.show();
+        };
+
+        doDeleteSet = () => {
+            let me = this;
+            me.confirmSetDeleteModal.hide();
+            let setId = me.setForm.id();
+            me.services.executeService('RemoveSet', setId, (serviceResponse: IServiceResponse) => {
+                if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                    // let response = <ISongUpdateResponse>serviceResponse.Value;
+                    let invalidateSelected = me.selectedSet().id == setId;
+                    let setList = me.sets();
+                    setList = setList.filter((item: ISongSet) => {
+                        return item.id !== setId;
+                    })
+                    if (me.selectedSet().id == setId) {
+                        me.selectedSet(setList[0]);
+                    }
+                    me.sets(setList);
+                }
+            })
+                .fail(() => {
+                    let trace = me.services.getErrorInformation();
+                    if (1){} // set breakpoint here
+                })
+                .always(() => {
+                    me.page('songs');
+                });
+        };
+
         toggleUser  = () => {
 
         }

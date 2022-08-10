@@ -458,7 +458,7 @@ class SongsManager
         return empty($count);
     }
 
-    public function createSet($setName, string $username)
+    public function createSet($setName, $username)
     {
         return $this->getSongsetsRepository()->newSongSet($setName,$username);
     }
@@ -471,6 +471,10 @@ class SongsManager
         $this->getSongsetsRepository()->changeSetName($setId,$setName);
     }
 
+    public function removeSet($setId)
+    {
+        $this->getSongsetsRepository()->removeSet($setId);
+    }
 
 
 }
