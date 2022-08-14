@@ -31,6 +31,11 @@ class SongsRepository extends \Tops\db\TEntityRepository
         return 'tls_songs';
     }
 
+    public function deleteSong($id)
+    {
+
+    }
+
     protected function getDatabaseId() {
         return null;
     }

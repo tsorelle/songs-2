@@ -39,7 +39,7 @@ class SongsManager
 
     private $songsetsRepository;
     private function getSongsetsRepository() : SongsetsRepository {
-        if (!isset($this->songsRepository)) {
+        if (!isset($this->songsetsRepository)) {
             $this->songsetsRepository = new SongsetsRepository();
         }
         return $this->songsetsRepository;
@@ -328,9 +328,26 @@ class SongsManager
         return ($result === true);
     }
 
-    public function updateSong($song)
+    public function updateSong($updateRequest)
     {
-        return $song->id;
+        $repo = $this->getSongsRepository();
+        $id = $updateRequest->id ?? 0;
+        $setId = $updateRequest->setId ?? 0;
+        if ($id == 0) {
+            $song = new Song();
+            $song->assignFromObject($updateRequest);
+            $id = $repo->insert($song);
+        }
+        else {
+            $song = $repo->get($id);
+            $song->assignFromObject($updateRequest);
+            $repo->update($song);
+        }
+        if ($setId) {
+            $this->getSongsetsRepository()->addSongToSet($id,$setId);
+        }
+
+        return $id;
     }
 
     public function getFrontPageItems($type) {
@@ -474,6 +491,17 @@ class SongsManager
     public function removeSet($setId)
     {
         $this->getSongsetsRepository()->removeSet($setId);
+    }
+
+    public function deleteLyrics($id)
+    {
+        $page = $this->getSongpagesRepository()->getEntity($id,false,'songid');
+        if ($page) {
+            return false;
+        }
+        $this->getSongsetsRepository()->removeSongSets($$id);
+        $this->getSongsRepository()->delete($id);
+        return true;
     }
 
 

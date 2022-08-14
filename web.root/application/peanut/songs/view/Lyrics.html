@@ -16,6 +16,8 @@
                 <i class="fa-solid fa-rectangle-xmark"></i></button>
             <button title='Save'  data-bind="click:saveSong,visible:editMode" class="btn default">
                 <i class="fa-solid fa-floppy-disk"></i></button>
+            <button title='Delete'  data-bind="click:deleteSong,visible:canDelete" class="btn default">
+                <i class="fa-solid fa-trash-can"></i></button>
 
             <span data-bind="visible:loading" style="color:lightgrey">
             <i class="fa fa-spinner fa-pulse"></i> Loading '<span data-bind="text:loading"></span>...</span>
@@ -195,18 +197,20 @@
             <p><a href="#"  data-bind="click:home">Return to lyric page</a> </p>
             <p>The purpose of this application is to display lyric sheets in a readable fashion as a reminder prompt for a performer at a song-circle or other event.
                 It is designed to be used on a Kindle Fire but can be viewed on any device.</p>
+            <!-- todo: put image back if supported -->
+            <!--
             <p>This diagram explains the buttons on the menu bar of the man page.</p>
             <p>
-                <img alt='Menu diagram' src="/application/assets/images/menu-help.jpg" class="img-responsive" >
+                 <img alt='Menu diagram' src="/application/assets/images/menu-help.jpg" class="img-responsive">
             </p>
 
-            <!-- p>
+            <p>
                 You can create and edit your own songs and sets too.  If you'd like this please register on my songs site.
                 Indicate in the "Interests and Instruments" section that you'd like to put your own songs on the "Lyric Sheets" application.
 
                 <a href ="https://terrys-songs.net/user/register" target="_blank">Register on "Terry's Songs"</a>
-            </p -->
-
+            </p
+            -->
         </div>
     </div>
 
@@ -292,5 +296,8 @@
     <modal-confirm params="id:'confirm-set-delete-modal',headerText: 'Delete Set',
         bodyText: 'Delete lyric set?',
         confirmClick: doDeleteSet, translator:self"></modal-confirm>
+    <modal-confirm params="id:'confirm-song-delete-modal',headerText: 'Delete Song',
+        bodyText: 'Delete song?',
+        confirmClick: doDeleteSong, translator:self"></modal-confirm>
 </div>
 

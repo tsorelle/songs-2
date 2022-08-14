@@ -45,12 +45,30 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
             $this->getSongsTableName().' s ';
         if ($setid > 0) {
             $sql .= ' JOIN '.$this->getAssociationTableName().
-            ' m on m.songid = s.id WHERE m.setid = ?';
+            ' m on m.songid = s.id WHERE m.setid = ? '.
+            ' ORDER BY m.sequence';
             $params = [$setid];
+        } else {
+            $sql .= ' ORDER BY s.title';
         }
-        $sql .= ' ORDER BY s.title';
         $stmt = $this->executeStatement($sql,$params);
         return $stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    public function addSongToSet($songId,$setId) {
+        $sql = 'SELECT max(sequence)  FROM '.$this->getAssociationTableName().
+            ' WHERE setId = ?';
+        $stmt = $this->executeStatement($sql,[$setId]);
+        $sequence = $stmt->fetchColumn();
+        if (!$sequence) {
+            $sequence = 1;
+        }
+        else {
+            $sequence += 1;
+        }
+        $sql = 'INSERT INTO '.$this->getAssociationTableName().
+                ' (songId,setId,sequence) VALUES (?,?,?)';
+        $this->executeStatement($sql,[$songId,$setId,$sequence]);
     }
 
     public function getSongCount($setId)
@@ -93,7 +111,7 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
         $this->executeStatement($sql,[$setId]);
         $count = count($songIds);
         $sql = 'INSERT INTO '.$this->getAssociationTableName().
-            '(setId,songId,displayOrder) VALUES (?,?,?)';
+            '(setId,songId,sequence) VALUES (?,?,?)';
         for ($i = 0; $i < $count; $i++) {
             $order = $i + 1;
             $songId = $songIds[$i]->songId;
@@ -113,6 +131,13 @@ class SongsetsRepository extends \Tops\db\TEntityRepository
                 $this->delete($setId);
             }
         }
+    }
+
+    public function removeSongSets($songId)
+    {
+        $sql = 'DELETE FROM '.$this->getAssociationTableName().
+            ' WHERE songid = ?';
+        $this->executeStatement($sql,[$songId]);
     }
 
     protected function getDatabaseId() {

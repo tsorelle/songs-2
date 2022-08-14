@@ -34,6 +34,7 @@ namespace Peanut {
         // title: string;
         lyrics: string;
         notes: string;
+        public?: any;
     }
 
     interface IGetSongSetResponse extends IGetLyricsResponse {
@@ -143,6 +144,10 @@ namespace Peanut {
         showEditButton : KnockoutComputed<boolean>;
 
         showInfoButton = ko.observable(true);
+        canDelete = ko.computed(() => {
+            return this.editMode() && !!this.songForm.id();
+        })
+
         savedSong : any = null;
         init(successFunction?: () => void) {
             let me = this;
@@ -234,7 +239,6 @@ namespace Peanut {
         }
         
         loadSongLyrics = (response: IGetLyricsResponse) => {
-            this.songForm.title(this.title());
             this.songForm.lyrics(response.lyrics);
             let notes = (response.notes ??  '').trim();
             this.songForm.notes(notes);
@@ -255,6 +259,8 @@ namespace Peanut {
             let current = this.songList[this.songIndex];
             this.selectedSong(current);
             this.title(current.title);
+            this.songForm.title(current.title);
+            this.songForm.id(current.id);
         };
 
         goPage = (pageName: string) => {
@@ -314,6 +320,7 @@ namespace Peanut {
             me.services.executeService('Peanut.songs::GetSongLyrics', song.id, (serviceResponse: IServiceResponse) => {
                 if (serviceResponse.Result == Peanut.serviceResultSuccess) {
                     let response = <IGetLyricsResponse>serviceResponse.Value;
+                    // todo: set public domain
                     me.songForm.lyrics(response.lyrics);
                     me.songForm.notes(response.notes);
                     me.page('lyrics');
@@ -487,6 +494,38 @@ namespace Peanut {
             }
             this.setForm.selectedSongs(list);
         }
+
+        confirmSongDeleteModal : any;
+        deleteSong = () => {
+            if (!this.confirmSongDeleteModal) {
+                this.confirmSongDeleteModal = new bootstrap.Modal(document.getElementById('confirm-song-delete-modal'));
+            }
+            this.confirmSongDeleteModal.show();
+        }
+
+        doDeleteSong = () => {
+            let me = this;
+            me.confirmSongDeleteModal.hide();
+            let id = me.songForm.id();
+            me.services.executeService('DeleteSongLyrics', id, (serviceResponse: IServiceResponse) => {
+                if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                    let songs = this.songList.filter((s: ISongInfo) => {
+                        return s.id !== id;
+                    })
+                    me.loadSongList(songs);
+                    me.page('songs')
+                }
+            })
+                .fail(() => {
+                    let trace = me.services.getErrorInformation();
+                    if (1){} // set breakpoint here
+                })
+                .always(() => {
+                    me.page('songs');
+                });
+
+        }
+
         addToSetList = (song: ISongInfo) => {
             let me=this;
             // me.setForm.selectedSongs.push(song);
@@ -602,11 +641,12 @@ namespace Peanut {
             this.songForm.public(false);
             this.songForm.errorMessage('');
             this.songForm.user(this.username());
+            this.songForm.notes('');
             let currentSetName = this.selectedSet().id > 0 ? this.selectedSet().setname : '';
             this.songForm.currentSetName(currentSetName);
             this.songForm.includeInSet(currentSetName != '');
-             this.editMode(true);
-             this.page('lyrics');
+            this.editMode(true);
+            this.page('lyrics');
         };
 
         home = () => {
@@ -756,6 +796,10 @@ namespace Peanut {
                 setId: me.songForm.includeInSet() ? me.selectedSet().id : 0,
             }
 
+            if (this.songForm.includeInSet() && this.selectedSet().id > 0) {
+                request.setId = this.selectedSet().id;
+            }
+
             if (!request.title) {
                 me.songForm.errorMessage('Title is required');
                 return;
@@ -787,7 +831,6 @@ namespace Peanut {
                     me.page('songs');
                 });
         };
-
 
         cancelSongEdit = () => {
             if (this.editMode()) {
