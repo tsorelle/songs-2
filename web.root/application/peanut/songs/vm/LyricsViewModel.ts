@@ -199,6 +199,7 @@ namespace Peanut {
                     me.services.executeService('Peanut.songs::GetSongs', request,
                         (serviceResponse: IServiceResponse) => {
                             if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                                // todo: deal with empty song list
                                 let response = <IGetSongsResponse>serviceResponse.Value;
                                 me.maxSongColumnItems = Math.floor(response.catalogSize / 4);
                                 me.username(response.username);
@@ -387,6 +388,7 @@ namespace Peanut {
             me.services.executeService('Peanut.songs::GetSongs',
                 request, (serviceResponse: IServiceResponse) => {
                 if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                    // todo: deal with empty set
                     let response = <IGetSongSetResponse>serviceResponse.Value;
                     this.loadSongList(response.songs);
                     this.loadSongLyrics(response);
@@ -509,6 +511,11 @@ namespace Peanut {
             let id = me.songForm.id();
             me.services.executeService('DeleteSongLyrics', id, (serviceResponse: IServiceResponse) => {
                 if (serviceResponse.Result == Peanut.serviceResultSuccess) {
+                    // todo: restore state:
+                    /**
+                     * Refresh current set and list
+                     * select inital song
+                     */
                     let songs = this.songList.filter((s: ISongInfo) => {
                         return s.id !== id;
                     })
@@ -811,6 +818,15 @@ namespace Peanut {
             me.services.executeService('UpdateSong', request, (serviceResponse: IServiceResponse) => {
                 if (serviceResponse.Result == Peanut.serviceResultSuccess) {
                     let response = <ISongUpdateResponse>serviceResponse.Value;
+                    //todo: recover state:
+                    /**
+                     * refresh current set or full list
+                     * if updated
+                     *      select index of updated song, show lyrics
+                     * if inserted
+                     *      select index of current song, show lyrics
+                     */
+
                     // let songIndex = _.findIndex(response.songs, {id: response.id});
                     let songIndex = response.songs.findIndex((song: ISongInfo) => {
                         return (song.id === response.id);
