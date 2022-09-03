@@ -38,6 +38,10 @@ namespace PeanutContent {
         editorModalId = ko.observable('');
         htmlEditorId = ko.observable('');
         textEditorId = ko.observable('')
+        codeEditorId = ko.observable('');
+
+        codeView = ko.observable(false);
+        codeSource = ko.observable('');
 
         editorInitialized = false;
 
@@ -87,7 +91,8 @@ namespace PeanutContent {
             let editorId = me.contentId+'-html';
             me.htmlEditorId(editorId);
             me.textEditorId(me.contentId+'-text');
-            me.editorModalId(me.contentId+'-modal')
+            me.editorModalId(me.contentId+'-modal');
+            me.codeEditorId(me.contentId+'-code')
         }
 
         editHtml = () => {
@@ -141,6 +146,7 @@ namespace PeanutContent {
         }
 
         getEditorContent = () => {
+            tinymce.triggerSave();
             let element = <HTMLInputElement> document.getElementById(this.htmlEditorId());
             return element ? element.value : '';
         }
@@ -165,7 +171,25 @@ namespace PeanutContent {
                 modalElement.addEventListener('hidden.bs.modal',this.cancel);
                 this.editorModal = new bootstrap.Modal(document.getElementById(id));
             }
+            this.codeView(false);
             this.editorModal.show();
+        }
+
+        viewCode = () => {
+            let content = this.getEditorContent();
+            this.codeSource(content);
+            this.codeView(true);
+        }
+
+        hideCode = () => {
+            let id = this.htmlEditorId();
+            let editor = tinymce.get(id);
+            let content = this.codeSource();
+            editor.setContent(content);
+            this.codeView(false);
+        }
+        cancelCode = () => {
+            this.codeView(false);
         }
 
         initEditor = () => {
@@ -178,7 +202,7 @@ namespace PeanutContent {
             let id = this.htmlEditorId();
             tinymce.init({
                 selector: '#' + id,
-                toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | image | code",
+                toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | image",
                 plugins: "image imagetools link lists code paste",
                 min_height: mh,
                 default_link_target: "_blank",
