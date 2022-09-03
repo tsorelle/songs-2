@@ -45,15 +45,6 @@
         </div>
         <div style="margin-top: 2rem" class="mb-2 d-lg-none d-d-md-none d-print-none">
         </div>
-        <div class="info-button d-print-none" data-bind="visible:showInfoButton">
-            <a href="#" title="Show notes..."
-               id="song-list-button"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasRight"
-                    aria-controls="offcanvasRight">
-                <i class="fa-solid fa-comment-dots fa-flip-horizontal"></i>
-            </a>
-        </div>
 
         <div class="offcanvas offcanvas-end song-panel" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
             <div class="offcanvas-header offcanvas-songs-header">
@@ -112,9 +103,21 @@
         </div>
 
         <div class="row" style="padding-left: 1.5rem">
-            <div class="col-md-12" style="min-height: 5rem">
+            <div class="col-md-11" style="min-height: 5rem">
                 <lyrics-block params="lyrics:songForm.lyrics, canedit:editMode,
                     save:onSaveLyrics, columns:columnDisplay, textsize: textSize"></lyrics-block>
+            </div>
+            <div class="col-md-1">
+                <div class="info-button d-print-none" data-bind="visible:showInfoButton">
+                    <a href="#" title="Show notes..."
+                       id="song-list-button"
+                       data-bs-toggle="offcanvas"
+                       data-bs-target="#offcanvasRight"
+                       aria-controls="offcanvasRight">
+                        <i class="fa-solid fa-comment-dots fa-flip-horizontal"></i>
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>
@@ -122,9 +125,13 @@
     <div style="padding-top: 2ex" data-bind="visible:page()=='songs'">
         <div class="row" >
             <div class="col-md-2">
-                <div data-bind="visible:!signedIn()">
+                <div data-bind="hidden:signedIn">
                     <a href="/signin">
                         <i class="fa fa-user-circle" aria-hidden="true"></i> Sign In</a>
+                </div>
+
+                <div data-bind="visible:signedIn">
+                    <a class="ms-2" href="/signout"><i class="fas fa-sign-out-alt"></i> Sign Out</a>
                 </div>
                 <div><a href="#" data-bind="visible:signedIn,click:newSet">New set</a> </div>
             </div>
