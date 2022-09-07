@@ -41,7 +41,8 @@ class UpdateSongCommand extends \Tops\services\TServiceCommand
         $response = new \stdClass();
         $response->id = $manager->updateSong($request);
         // todo: current set only?
-        $response->songs = $manager->getSongInfoInSet();
+        $setId = $request->setId ?? 0;
+        $response->songs = $manager->getSongInfoInSet($setId);
         $this->setReturnValue($response);
     }
 }

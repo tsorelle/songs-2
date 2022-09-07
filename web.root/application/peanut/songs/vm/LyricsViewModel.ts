@@ -835,6 +835,9 @@ namespace Peanut {
                         songIndex = 0;
                     }
                     me.loadSongList(response.songs,songIndex);
+                    if (request.setId === 0) {
+                        me.selectedSet(me.sets()[0]);
+                    }
                     // me.songIndex = -1;
                 }
             })
