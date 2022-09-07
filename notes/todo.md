@@ -4,7 +4,4 @@
 # Phase 2 lyrics pages
 
 # issues
-- New set out of sync
-- Add new song, set reverts to all songs
-- need page title on lyrics page
 - 
