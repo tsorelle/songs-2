@@ -271,7 +271,7 @@ class SongsManager
         $this->updateSongIndex($page,$song);
         
         if ($types !== null) {
-            $this->updateSongTags($pageDto->songId,$types);
+            $this->updateSongTags($page->songId,$types);
         }
 
         $response->pageId = $pageId;
