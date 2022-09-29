@@ -162,7 +162,7 @@ class SongsManager
             $page = $repo->get($songPageId);
         }
         else {
-            $page = $repo->getSingleEntity('contentId=?',[$songPageId]);
+            $page = $repo->getSingleEntity('contentId=?',[$songPageId],true);
         }
         if (!$page) {
             return false;

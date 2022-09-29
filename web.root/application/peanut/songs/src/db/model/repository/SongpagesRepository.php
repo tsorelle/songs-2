@@ -18,6 +18,7 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
     const searchTypeNone = 0;
     const searchTypeTitle = 1;
     const searchTypeText = 2;
+    const searchTypeInactive = 3;
     const orderTitle = 1;
     const orderDate = 2;
     const orderDateDesc = 3;
@@ -189,7 +190,15 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
             $params = [$filter];
         }
 
-        if ($searchType == self::searchTypeTitle) {
+        $active = 1;
+        if ($searchType == self::searchTypeInactive) {
+            if ($searchTerms) {
+                $conditions[] = 'title like ?';
+                $params[] = "%$searchTerms%";
+            }
+            $active = 0;
+        }
+        else if ($searchType == self::searchTypeTitle) {
             $conditions[] = 'title like ?';
             $params[] = "%$searchTerms%";
         }
@@ -207,10 +216,12 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
             }
         }
 
-        if (!empty($conditions)) {
-            $sql .= ' WHERE '. implode(' AND ',$conditions).' AND active=1 ';
+        if (empty($conditions)) {
+            $sql .= ' WHERE p.active = ?';
         }
-
+        else {
+            $sql .= ' WHERE '. implode(' AND ',$conditions).' AND p.active = ?';
+        }
 
         $sql .= " ORDER BY $order ";
 
@@ -219,6 +230,7 @@ class SongpagesRepository extends \Tops\db\TEntityRepository
             $sql .=  sprintf('LIMIT %d,%d',$offset,$pageSize);
         }
 
+        $params[] = $active;
         return $this->executeStatement($sql,$params);
 
     }

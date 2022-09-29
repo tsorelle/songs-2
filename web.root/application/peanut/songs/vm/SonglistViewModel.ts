@@ -16,6 +16,7 @@ namespace Peanut {
     interface ISonglistInitResponse extends ISongListResponse{
         types: ILookupItem[];
         latest: ISongListItem;
+        isAdmin: any,
         filtered? : ILookupItem;
     }
     export class SonglistViewModel extends Peanut.ViewModelBase {
@@ -37,6 +38,7 @@ namespace Peanut {
         filterTitle = ko.observable('');
         songsFound = ko.observable(false);
         searchPosted = false;
+        isAdmin = false;
 
         currentSearchRequest : ISongSearchRequest = {
             pageSize: 12,
@@ -82,15 +84,30 @@ namespace Peanut {
                             if (serviceResponse.Result == Peanut.serviceResultSuccess) {
                                 let response = <ISonglistInitResponse>serviceResponse.Value;
                                 me.filterController = new selectListObservable(me.onFilterChange,response.types);
-                                me.searchTypeController = new selectListObservable(me.onSearchTypeChange,
-                                        [<ILookupItem>{
-                                            name: 'Title',
-                                            id: 1
-                                        },
+                                let dropdown =
+                                    [<ILookupItem>{
+                                        name: 'Title',
+                                        id: 1
+                                    },
                                         <ILookupItem>{
+
                                             name: 'Full Text',
                                             id: 2
-                                        }]
+                                        }];
+                                if (!!response.isAdmin) {
+                                    dropdown.push(
+                                        <ILookupItem>{
+                                            name: 'Inactive',
+                                            id: 3
+                                        }
+                                    )
+                                }
+
+
+                                me.searchTypeController =
+                                    new selectListObservable(
+                                        me.onSearchTypeChange,
+                                        dropdown
                                     );
 
                                 me.sortOrderController = new selectListObservable(null,
