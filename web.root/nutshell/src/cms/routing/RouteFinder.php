@@ -3,6 +3,7 @@
 namespace Nutshell\cms;
 
 use Peanut\users\AccountManager;
+use Tops\sys\TConfiguration;
 use Tops\sys\TUser;
 
 class RouteFinder
@@ -17,6 +18,24 @@ class RouteFinder
             $uri = 'home';
         }
         return $uri;
+    }
+
+    public static function matchWithRedirect($uri) {
+        $matched = self::match($uri);
+        if (!$matched) {
+            $settings = parse_ini_file(DIR_CONFIG_SITE . '/settings.ini', true);
+            if (isset($settings['locations']['defaultredirect']) ) {
+                $sub = $settings['locations']['defaultredirect'];
+                if ($sub) {
+                    $parts = explode('/', $uri);
+                    if ($parts) {
+                        $uri = "$sub/" . array_pop($parts);;
+                        return self::match($uri);
+                    }
+                }
+            }
+        }
+        return $matched;
     }
 
     public static function match($uri)

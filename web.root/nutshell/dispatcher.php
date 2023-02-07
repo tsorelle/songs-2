@@ -9,13 +9,13 @@ require 'nutshell/bootstrap/configure.php';
 require 'nutshell/src/cms/routing/RouteFinder.php';
 if (isset($_SERVER['REQUEST_URI']) && !empty($_SERVER['REQUEST_URI'])) {
     $uri = preg_replace("/(^\/)|(\/$)/","",$_SERVER['REQUEST_URI']);
-    if (\Nutshell\cms\RouteFinder::match($uri)) {
+    $matched = \Nutshell\cms\RouteFinder::matchWithRedirect($uri);
+    if ($matched) { // \Nutshell\cms\RouteFinder::match($uri)) {
         unset($uri);
         include_once DIR_CONFIG_SITE . "/peanut-bootstrap.php";
         \Peanut\Bootstrap::initialize();
 
         // check to see if autoload succeeded
-        // todo: delete after stabilization
        $requiredClasses = [
            '\Nutshell\cms\Router',
             'Peanut\users\AccountManager',
