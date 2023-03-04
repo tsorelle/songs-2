@@ -51,7 +51,8 @@ namespace Peanut {
             let searchstring = me.getPageVarialble('searchstring-value');
             if (searchstring) {
                 me.searchPosted = true;
-                me.currentSearchRequest.searchType = 2;
+                /// me.currentSearchRequest.searchType = 2;
+                me.currentSearchRequest.searchType = 1;
                 me.currentSearchRequest.searchTerms = searchstring;
             }
 
@@ -135,7 +136,8 @@ namespace Peanut {
                                 }
                                 else if (me.searchPosted) {
                                     me.filterTitle(response.songCount+' Songs found')
-                                    me.searchTypeController.setValue(2);
+                                    // me.searchTypeController.setValue(2);
+                                    me.searchTypeController.setValue(1);
                                     me.searchTerms(searchstring);
                                     me.showSearchTerms(true);
                                     me.showTextInfo(true);
@@ -236,7 +238,8 @@ namespace Peanut {
             this.currentSearchRequest.filter = null;
             this.filterController.setValue(null);
             this.currentSearchRequest.searchType = null;
-            this.searchTypeController.setValue(null);
+            // this.searchTypeController.setValue(null);
+            this.searchTypeController.setValue(1);
             this.currentSearchRequest.order = 1;
             this.sortOrder(1)
             this.currentSearchRequest.searchTerms = '';
