@@ -28,6 +28,7 @@ namespace Peanut {
 
     interface IGetSongsRequest {
         setId : any;
+        songId?: any;
         initializing? : any;
     }
     interface IGetLyricsResponse {
@@ -47,6 +48,7 @@ namespace Peanut {
         sets: ISongSet[];
         canedit: any;
         username: string;
+        songIndex? : any;
     }
 
     interface ISaveSetRequest {
@@ -152,6 +154,8 @@ namespace Peanut {
         init(successFunction?: () => void) {
             let me = this;
             Peanut.logger.write('Lyrics Init');
+            let songid = me.getPageVarialble('songid');
+
 
             // temp for initial text
             for (let i = 0; i < 4; i++) {
@@ -194,6 +198,7 @@ namespace Peanut {
 
                     let request = <IGetSongsRequest> {
                         setId: setId === null ? 0 : setId,
+                        songId: songid === null ? 0 : songid,
                         initializing: 1
                     }
                     me.services.executeService('Peanut.songs::GetSongs', request,
@@ -207,7 +212,7 @@ namespace Peanut {
                                 me.canedit(!!response.canedit);
                                 me.sets(response.sets);
                                 me.selectedSet(response.set);
-                                me.loadSongList(response.songs);
+                                me.loadSongList(response.songs,response.songIndex);
                                 me.loadSongLyrics(response);
                             }
                     })
@@ -259,7 +264,7 @@ namespace Peanut {
             this.songIndex = value;
             let current = this.songList[this.songIndex];
             this.selectedSong(current);
-            this.title(current.title);
+            this.title(current.title + ' - ' + current.id);
             this.songForm.title(current.title);
             this.songForm.id(current.id);
         };

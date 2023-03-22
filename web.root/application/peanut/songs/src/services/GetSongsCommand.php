@@ -35,10 +35,13 @@ class GetSongsCommand extends \Tops\services\TServiceCommand
     protected function run()
     {
         $setId = 0;
+        $songId = 0;
+        $songIndex = 0;
         $initializing = false;
         $request = $this->getRequest();
         if ($request) {
             $setId = $request->setId ?? 0;
+            $songId = $request->songId ?? 0;
             $initializing = isset($request->initializing);
         }
         $manager = new SongsManager();
@@ -65,11 +68,25 @@ class GetSongsCommand extends \Tops\services\TServiceCommand
             return;
         }
 
-        $song = $response->songs[0];
+        if (!$songId) {
+            $songId = $response->songs[0]->id;
+            $songIndex = 0;
+        }
+        else {
+            $count = count($response->songs);
+            for($i=0;$i<$count;$i++) {
+                $song = $response->songs[$i];
+                if ($song->id == $songId) {
+                    $songIndex = $i;
+                    break;
+                }
+            }
+        }
 
-        $songDetail = $manager->getSong($song->id);
+        $songDetail = $manager->getSong($songId);
         $response->lyrics = $songDetail->lyrics;
         $response->notes = $songDetail->notes;
+        $response->songIndex = $songIndex;
         $response->catalogSize = $manager->getSongCount($setId);
         $this->setReturnValue($response);
     }
