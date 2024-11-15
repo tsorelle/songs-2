@@ -55,7 +55,7 @@ namespace PeanutMailings {
             let me = this;
             // alert('HELLO resubscribe')
             me.showWaitMessage('Resubscribing...')
-            me.services.executeService('peanut.mailings::resubscribe',
+            me.services.executeService('peanut.mailings::Resubscribe',
                 {uid: me.uid,listId: me.listId},
                 function(serviceResponse: Peanut.IServiceResponse) {
                     if (serviceResponse.Result == Peanut.serviceResultSuccess) {
