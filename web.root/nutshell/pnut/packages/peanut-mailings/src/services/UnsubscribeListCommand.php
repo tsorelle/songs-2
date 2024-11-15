@@ -6,11 +6,11 @@
  * Time: 9:50 AM
  */
 
-namespace Peanut\contacts\services\messaging;
+namespace Peanut\mailings\services;
 
 
-use Peanut\QnutDirectory\db\DirectoryManager;
-use Peanut\QnutDirectory\db\model\ISubscriptionsManager;
+use Peanut\contacts\db\model\ISubscriptionsManager;
+use Peanut\mailings\services\SubscriptionsManager;
 use Tops\services\TServiceCommand;
 use Tops\sys\TConfiguration;
 use Tops\sys\TL;
@@ -28,7 +28,7 @@ class UnsubscribeListCommand extends TServiceCommand
         $response->translations = TLanguage::getTranslations([
             'manage-subscriptions'
         ]);
-        $response->subscriptionsLink = TConfiguration::getValue('subscriptionsUrl','pages','/subscriptions');
+        $response->subscriptionsLink = TConfiguration::getValue('subscriptionsUrl','pages');
         $response->message = TLanguage::text('unsubscribe-failed');
 
 
@@ -49,6 +49,7 @@ class UnsubscribeListCommand extends TServiceCommand
          * @var $subscriptionManager ISubscriptionsManager
          */
         $subscriptionManager = TObjectContainer::Get('peanut.emailingsmanager');
+        // $subscriptionManager = new SubscriptionsManager();
         $result = $subscriptionManager->unsubscribeEmail($request->uid,$request->listId);
         if (empty($result->personName)) {
             $this->addErrorMessage('dir-no-person-found');

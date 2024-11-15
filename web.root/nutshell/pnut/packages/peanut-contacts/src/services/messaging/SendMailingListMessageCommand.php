@@ -99,7 +99,8 @@ class SendMailingListMessageCommand extends TServiceCommand
         else {
             $queue = new EMailQueue();
             $queueResult = EMailQueue::QueueMessageList($request, $this->getUser()->getUserName());
-            $queueMailings = TConfiguration::getBoolean('queuemailings', 'mail', true);
+            // $queueMailings = TConfiguration::getBoolean('queuemailings', 'mail', true);
+            $queueMailings = true;
             if ($queueMailings) {
                 $count = $queueResult->count;
                 $action = 'submitted to message queue';

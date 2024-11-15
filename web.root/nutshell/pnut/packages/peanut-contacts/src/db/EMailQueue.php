@@ -7,7 +7,7 @@
  */
 
 namespace Peanut\contacts\db;
-
+// todo: review before use on songs site
 
 use Peanut\contacts\db\model\entity\EmailList;
 use Peanut\contacts\db\model\entity\EmailMessage;

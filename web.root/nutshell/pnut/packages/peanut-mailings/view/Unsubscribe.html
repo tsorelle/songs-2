@@ -1,0 +1,22 @@
+<div id="unsubscribe-load-message"><span class="fa fa-spinner fa-pulse fa-2x" style="color:lightgrey"></span></div>
+<div id="unsubscribe-view-container" class="row" style="display: none">
+    <div class="col-md-12">
+        <h2>
+            <strong><span data-bind="text:message"></span></strong>
+        </h2>
+        <p data-bind="visible:subscriptionsLink">
+            <a data-bind="attr:{href:subscriptionsLink}">
+                <translate params="code:'manage-subscriptions',translator:self"></translate>
+            </a>
+        </p>
+        <p data-bind="visible:!resubscribed()">
+            <strong>If you have unsubscribed in error...</strong><br>
+            <a href="#" data-bind="click:resubscribe">
+                Click this link to restore your subscription.
+            </a>
+        </p>
+        <p data-bind="visible:resubscribed">
+            Thanks.
+        </p>
+    </div>
+</div>

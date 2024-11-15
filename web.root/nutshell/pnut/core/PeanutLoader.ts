@@ -1,5 +1,5 @@
 /// <reference path="../../typings/custom/head.load.d.ts" />
-/// <reference path='Peanut.d.ts' />
+/// <reference path='peanut.d.ts' />
 namespace Peanut {
     const peanutVersionNumber = '0.3';
     const configPath =  '/peanut/settings';
